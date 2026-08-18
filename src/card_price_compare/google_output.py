@@ -51,6 +51,8 @@ CONDITION_LABELS = {
 
 HISTORY_HEADERS = ["実行日時", "全取得レコード", "比較行", "3サイト一致", "2サイト一致", "取得エラー"]
 JAPAN_TIME_ZONE = timezone(timedelta(hours=9), name="JST")
+MANUAL_UPDATE_URL = "https://pokeca-price-update.vercel.app"
+MANUAL_UPDATE_FORMULA = f'=HYPERLINK("{MANUAL_UPDATE_URL}","🔄 価格表を手動更新")'
 
 
 def _sheet_values(frame: pd.DataFrame) -> list[list[object]]:
@@ -133,6 +135,13 @@ def _ensure_summary_sheet(spreadsheet: object) -> None:
             value_input_option="USER_ENTERED",
         )
     summary.update_acell("A1", "ポケカ買取価格表（手動更新）")
+    # Keep the smartphone update entry point even after future cloud refreshes.
+    # Only the top-left cell is written because A9:B9 is merged in the live sheet.
+    summary.update(
+        values=[[MANUAL_UPDATE_FORMULA]],
+        range_name="A9",
+        value_input_option="USER_ENTERED",
+    )
 
 
 def publish_frames(

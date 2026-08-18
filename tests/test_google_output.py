@@ -3,11 +3,19 @@ import pytest
 
 from card_price_compare.collectors.collect_sheet import SPREADSHEET_ID
 from card_price_compare.google_output import (
+    MANUAL_UPDATE_FORMULA,
+    MANUAL_UPDATE_URL,
     _comparison_sheet_frame,
     _history_row,
     _raw_sheet_frame,
     publish_frames,
 )
+
+
+def test_manual_update_link_points_to_vercel_page() -> None:
+    assert MANUAL_UPDATE_URL == "https://pokeca-price-update.vercel.app"
+    assert MANUAL_UPDATE_URL in MANUAL_UPDATE_FORMULA
+    assert "価格表を手動更新" in MANUAL_UPDATE_FORMULA
 
 
 def test_collect_source_sheet_cannot_be_output_target(tmp_path) -> None:
