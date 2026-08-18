@@ -2,6 +2,9 @@
 
 買取ソムリエ、コレクトの公開Google価格表、runtoから価格を取得し、未開封ポケモンカードBOXの比較CSVを作成します。元サイトへの購入・買取申込やログインは行いません。
 
+対象サイト、名寄せ、手動更新、運用上のセキュリティ判断は
+[判断記録](docs/DECISIONS.md)にまとめています。
+
 ## 取得元
 
 - 買取ソムリエ（ポケモンカード）: <https://somurie-kaitori.com/products?category=2&subcategory=7>
