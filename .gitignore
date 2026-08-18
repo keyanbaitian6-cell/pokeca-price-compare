@@ -1,0 +1,20 @@
+.venv/
+.deps/
+.tmp/
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+
+# Generated price data and logs are recreated on every run.
+data/
+outputs/
+*.log
+
+# Never commit credentials or local environment files.
+.env
+.env.*
+*.pem
+*service-account*.json
+*credentials*.json
