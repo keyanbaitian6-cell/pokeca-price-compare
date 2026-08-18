@@ -75,7 +75,7 @@ CSVと照合キーでは互換性のため英語の状態コードを維持し�
 
 ## 定期更新
 
-スマホから必要な時だけ更新する場合は [MANUAL_UPDATE_SETUP.md](MANUAL_UPDATE_SETUP.md) を参照してください。スマホ用Webページ、合言葉、GitHub Actionsを使用し、自動スケジュールは設定しません。
+スマホから必要な時だけ更新する場合は [MANUAL_UPDATE_SETUP.md](MANUAL_UPDATE_SETUP.md) を参照してください。Vercelのスマホ用Webページ、合言葉、GitHub Actionsを使用し、自動スケジュールは設定しません。
 
 常駐ループではなくOSのスケジューラーを推奨します。失敗ログやPC再起動後の再実行を管理しやすいためです。
 

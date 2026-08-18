@@ -1,6 +1,6 @@
-# スマホ用「価格表を更新」ページの設定
+# Vercel版・スマホ用「価格表を更新」ページの設定
 
-この構成は自動スケジュールを作りません。スマホ用Webページで正しい合言葉が入力された時だけ、GitHub Actionsが1回実行されます。
+この構成は自動スケジュールを作りません。Vercelのスマホ用Webページで正しい合言葉が入力された時だけ、GitHub Actionsが1回実行されます。Google Apps Scriptは使用しないため、Googleの未確認アプリ警告も表示されません。
 
 ## 1. 非公開GitHubリポジトリを作る
 
@@ -17,7 +17,7 @@ GitHubへ再ログインした後、このフォルダを非公開リポジト�
 
 サービスアカウントには、出力先シートだけを編集者として共有します。collectの参照元シートは共有・編集しません。
 
-## 3. 更新起動専用のGitHubトークンを作る
+## 3. 更新起動専用のGitHubトークンを用意する
 
 GitHubの `Settings > Developer settings > Personal access tokens > Fine-grained tokens` で作成します。
 
@@ -25,41 +25,30 @@ GitHubの `Settings > Developer settings > Personal access tokens > Fine-grained
 - Repository permissions: `Actions: Read and write`
 - 有効期限: できるだけ短くし、期限を管理する
 
-このトークンはApps ScriptのScript Propertiesだけに保存し、HTMLやGoogleシートには書きません。
+このトークンはVercelのEnvironment Variablesだけに保存し、HTML、Googleシート、GitHubリポジトリには書きません。
 
-## 4. Apps Scriptへ3ファイルを登録する
+## 4. Vercelへ登録する
 
-出力先Googleシートを開き、`拡張機能 > Apps Script` を選びます。
+VercelでGitHubリポジトリ `pokeca-price-compare` をImportします。
 
-1. `apps-script/Code.gs` をスクリプトへ貼り付ける
-2. HTMLファイル `Index` を追加し、`apps-script/Index.html` を貼り付ける
-3. プロジェクト設定でマニフェスト表示を有効にし、`apps-script/appsscript.json` の内容へ置き換える
+1. Root Directoryを `vercel` にする
+2. Framework Presetは `Other` のままにする
+3. Environment Variablesを登録してからDeployする
 
-## 5. Script Propertiesを登録する
+## 5. Environment Variablesを登録する
 
-Apps Scriptの `プロジェクトの設定 > スクリプト プロパティ` に次を登録します。
+Vercelの `Project Settings > Environment Variables` に次を登録します。Production、Preview、Developmentのうち、少なくともProductionを選びます。
 
-| プロパティ | 値 |
+| 変数 | 値 |
 | --- | --- |
-| `GITHUB_OWNER` | `keyanbaitian6-cell` |
-| `GITHUB_REPO` | `pokeca-price-compare` |
 | `GITHUB_TOKEN` | 手順3で作成したトークン |
-| `UPDATE_PASSWORD` | 更新用の合言葉（他サービスで使っていないもの） |
-| `WORKFLOW_FILE` | `manual-update.yml` |
-| `WORKFLOW_REF` | `main` |
-| `MIN_INTERVAL_SECONDS` | `300` |
-| `OUTPUT_SPREADSHEET_ID` | `1N3mF4tIjuq8FC3JO5QnT2rPKPn-tu3I8lFLP8ZNysYI` |
+| `UPDATE_PASSWORD_HASH` | 更新用合言葉をSHA-256化した64桁の16進文字列 |
 
-## 6. Webアプリとして公開する
+合言葉そのものではなくハッシュだけを保存します。PowerShellでハッシュを作成する場合は、画面や履歴へ合言葉を残さない方法を使用してください。
 
-Apps Scriptの `デプロイ > 新しいデプロイ > ウェブアプリ` を選びます。
+## 6. 公開する
 
-- 次のユーザーとして実行: 自分
-- アクセスできるユーザー: 全員（匿名アクセスを含む設定）
-
-初回はGitHub Actionsを起動するための外部通信だけを承認します。Webアプリ自体はGoogleシートを読み取らず、価格表は固定リンクから開きます。発行された `/exec` URLをスマホで開き、合言葉を入力してテストします。
-
-アカウントの種類によって匿名公開を選べない場合は、`Googleアカウントを持つ全員` に変更します。その場合、利用者はGoogleへのログインが必要です。
+VercelのDeploy完了後に発行された `https://...vercel.app` をスマホで開きます。ページの利用時にGoogleやGitHubへのログインは不要です。
 
 ## 7. 動作確認
 
@@ -69,4 +58,4 @@ Apps Scriptの `デプロイ > 新しいデプロイ > ウェブアプリ` を�
 4. 「更新履歴」に新しい行が1行増えていることを確認する
 5. 間違った合言葉と5分以内の連打が拒否されることを確認する
 
-公開URLが確定したら、出力シートのサマリーに「価格表を手動更新」リンクを設置します。
+公開URLが確定したら、出力シートのサマリーに「価格表を手動更新」リンクを設置します。Vercelの環境変数を変更した場合は再デプロイします。
