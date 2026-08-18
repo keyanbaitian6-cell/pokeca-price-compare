@@ -43,9 +43,8 @@
       }
       button { color: #fff; background: #1769aa; }
       button:disabled { opacity: 0.55; }
-      button.secondary { margin-top: 10px; color: #17324d; background: #e7eef5; }
       a.button { margin-top: 12px; color: #fff; background: #26734d; }
-      #message, #status {
+      #message {
         display: none;
         margin-top: 18px;
         padding: 14px;
@@ -65,11 +64,15 @@
       <label for="passphrase">合言葉</label>
       <input id="passphrase" type="password" autocomplete="current-password" maxlength="128">
       <button id="updateButton" type="button" onclick="startUpdate()">価格表を更新する</button>
-      <button class="secondary" type="button" onclick="loadStatus()">現在の更新状況を確認</button>
 
       <div id="message" role="status" aria-live="polite"></div>
-      <div id="status" aria-live="polite"></div>
-      <a id="sheetLink" class="button" target="_blank" rel="noopener" hidden>価格表を開く</a>
+      <a
+        id="sheetLink"
+        class="button"
+        href="https://docs.google.com/spreadsheets/d/1N3mF4tIjuq8FC3JO5QnT2rPKPn-tu3I8lFLP8ZNysYI/edit"
+        target="_blank"
+        rel="noopener"
+      >価格表を開く</a>
 
       <p class="note">連打防止のため、更新開始後5分間は再実行できません。</p>
     </main>
@@ -99,36 +102,12 @@
             message.textContent = result.message;
             if (result.ok) {
               document.getElementById('passphrase').value = '';
-              const link = document.getElementById('sheetLink');
-              link.href = result.sheetUrl;
-              link.hidden = false;
             }
           })
           .withFailureHandler(showFailure)
           .startUpdate(passphrase);
       }
 
-      function loadStatus() {
-        const status = document.getElementById('status');
-        status.textContent = '確認しています…';
-        status.style.display = 'block';
-        google.script.run
-          .withSuccessHandler((result) => {
-            if (!result.ok) {
-              status.textContent = result.message;
-              return;
-            }
-            status.textContent =
-              `最終更新: ${result.lastUpdated}\n` +
-              `全取得: ${result.recordCount}件 / 比較: ${result.comparisonCount}件\n` +
-              `3サイト一致: ${result.threeSiteCount}件 / 2サイト一致: ${result.twoSiteCount}件\n` +
-              `取得エラー: ${result.errorCount}件`;
-            status.style.whiteSpace = 'pre-line';
-          })
-          .withFailureHandler(showFailure)
-          .getUpdateStatus();
-      }
     </script>
   </body>
 </html>
-

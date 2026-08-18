@@ -78,30 +78,6 @@ function startUpdate(passphrase) {
   }
 }
 
-function getUpdateStatus() {
-  const config = getConfig_();
-  try {
-    const spreadsheet = SpreadsheetApp.openById(config.OUTPUT_SPREADSHEET_ID);
-    const summary = spreadsheet.getSheetByName('サマリー');
-    if (!summary) {
-      return { ok: false, message: 'サマリータブが見つかりません。' };
-    }
-    const values = summary.getRange('B3:B8').getDisplayValues().flat();
-    return {
-      ok: true,
-      lastUpdated: values[0] || '未取得',
-      recordCount: values[1] || '-',
-      comparisonCount: values[2] || '-',
-      threeSiteCount: values[3] || '-',
-      twoSiteCount: values[4] || '-',
-      errorCount: values[5] || '-',
-    };
-  } catch (error) {
-    console.error('Status read failed');
-    return { ok: false, message: '更新状況を読み取れませんでした。' };
-  }
-}
-
 function getConfig_() {
   const properties = PropertiesService.getScriptProperties().getProperties();
   const config = Object.assign({}, DEFAULTS, properties);
@@ -131,4 +107,3 @@ function constantTimeEquals_(left, right) {
   }
   return difference === 0;
 }
-
