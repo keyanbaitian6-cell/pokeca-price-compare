@@ -9,6 +9,7 @@ from card_price_compare.google_output import (
     MANUAL_UPDATE_FORMULA,
     MANUAL_UPDATE_URL,
     SINGLE_LISTING_COLUMNS,
+    SUMMARY_COUNTER_LIMIT,
     SUMMARY_COUNTER_ROWS,
     _comparison_format_requests,
     _comparison_sheet_frame,
@@ -282,8 +283,26 @@ def test_summary_counters_match_the_comparison_tab_row_count() -> None:
 
     assert "BOX比較件数（2サイト以上）" in labels
     assert "1サイトのみ（単独掲載）" in labels
-    # The single listing counter reads the new history column G.
-    assert "更新履歴!G:G" in SUMMARY_COUNTER_ROWS[-1][1]
+    assert "取得エラー" in labels
+    single_listing = dict(SUMMARY_COUNTER_ROWS)["1サイトのみ（単独掲載）"]
+    assert "更新履歴!G:G" in single_listing
+
+
+def test_summary_write_stays_above_the_merged_link_row() -> None:
+    """Row 9 is the merged link and rows 10+ are maintained by hand."""
+    # A3 plus six rows ends at row 8, so nothing reaches row 9 or below.
+    assert len(SUMMARY_COUNTER_ROWS) == SUMMARY_COUNTER_LIMIT
+    assert SUMMARY_COUNTER_LIMIT == 6
+    assert all(len(row) == 2 for row in SUMMARY_COUNTER_ROWS)
+
+
+def test_summary_counters_read_the_newest_history_row_not_the_header() -> None:
+    """LOOKUP(2,1/(...)) resolved to the header row and showed column names."""
+    formulas = [row[1] for row in SUMMARY_COUNTER_ROWS]
+
+    assert not any("LOOKUP(" in formula for formula in formulas)
+    for formula in formulas[1:]:
+        assert "MATCH(MAX(更新履歴!A2:A),更新履歴!A:A,0)" in formula
 
 
 def test_history_row_converts_cloud_utc_timestamp_to_japan_time() -> None:

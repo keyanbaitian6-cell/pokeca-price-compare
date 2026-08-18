@@ -97,21 +97,38 @@ JAPAN_TIME_ZONE = timezone(timedelta(hours=9), name="JST")
 MANUAL_UPDATE_URL = "https://pokeca-price-update.vercel.app"
 MANUAL_UPDATE_FORMULA = f'=HYPERLINK("{MANUAL_UPDATE_URL}","🔄 価格表を手動更新")'
 
-# Row 9 holds the merged manual update link, so the counters stop at row 8 and
-# the error counter continues below the link.
 SUMMARY_COUNTER_RANGE = "A3"
-SUMMARY_ERROR_RANGE = "A11"
+
+
+def _latest_history_value(column: str) -> str:
+    """Expression for one column of the newest history row, without the '='.
+
+    The previous LOOKUP(2,1/(range<>"")) idiom needs its search vector sorted
+    and fills the rest of the column with errors, and it was resolving to the
+    header row, so every counter showed a column name instead of a number.
+    Matching the newest timestamp instead ties every counter to the same row
+    that 最終更新 reports.
+    """
+    return (
+        f"IFERROR(INDEX(更新履歴!{column}:{column},"
+        "MATCH(MAX(更新履歴!A2:A),更新履歴!A:A,0)),0)"
+    )
+
+
+# Row 9 holds the merged manual update link and rows 10 and below hold hand
+# written content, so everything this function writes has to fit in A3:B8.
 SUMMARY_COUNTER_ROWS = [
     ["最終更新", '=IFERROR(MAX(更新履歴!A2:A),"")'],
-    ["全取得レコード", '=IFERROR(LOOKUP(2,1/(更新履歴!A:A<>""),更新履歴!B:B),0)'],
-    ["BOX比較件数（2サイト以上）", '=IFERROR(LOOKUP(2,1/(更新履歴!A:A<>""),更新履歴!C:C),0)'],
-    ["3サイト一致", '=IFERROR(LOOKUP(2,1/(更新履歴!A:A<>""),更新履歴!D:D),0)'],
-    ["2サイト一致", '=IFERROR(LOOKUP(2,1/(更新履歴!A:A<>""),更新履歴!E:E),0)'],
-    ["1サイトのみ（単独掲載）", '=IFERROR(LOOKUP(2,1/(更新履歴!A:A<>""),更新履歴!G:G),0)'],
+    ["全取得レコード", "=" + _latest_history_value("B")],
+    ["BOX比較件数（2サイト以上）", "=" + _latest_history_value("C")],
+    [
+        "内訳（3サイト／2サイト）",
+        f'={_latest_history_value("D")}&" / "&{_latest_history_value("E")}',
+    ],
+    ["1サイトのみ（単独掲載）", "=" + _latest_history_value("G")],
+    ["取得エラー", "=" + _latest_history_value("F")],
 ]
-SUMMARY_ERROR_ROW = [
-    ["取得エラー", '=IFERROR(LOOKUP(2,1/(更新履歴!A:A<>""),更新履歴!F:F),0)']
-]
+SUMMARY_COUNTER_LIMIT = 6
 
 HIGH_SPREAD_RATE = 0.05
 # A 3.7% gap on a 135,000 yen box still hands over more money than a 32% gap on
@@ -599,14 +616,11 @@ def _ensure_summary_sheet(spreadsheet: object) -> None:
         summary = spreadsheet.add_worksheet(title=SUMMARY_SHEET_TITLE, rows=30, cols=9)
     summary.update_acell("A1", "ポケカ買取価格表（手動更新）")
     # Counters are refreshed every run so the labels keep matching the tabs.
+    # Nothing outside A3:B8 is written: row 9 is the merged link and the rows
+    # under it are maintained by hand.
     summary.update(
         values=SUMMARY_COUNTER_ROWS,
         range_name=SUMMARY_COUNTER_RANGE,
-        value_input_option="USER_ENTERED",
-    )
-    summary.update(
-        values=SUMMARY_ERROR_ROW,
-        range_name=SUMMARY_ERROR_RANGE,
         value_input_option="USER_ENTERED",
     )
     # Keep the smartphone update entry point even after future cloud refreshes.
