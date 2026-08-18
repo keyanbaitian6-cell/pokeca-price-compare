@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from .collectors.collect_sheet import fetch_collect_records
@@ -16,6 +16,7 @@ from .models import PriceRecord
 
 
 LOGGER = logging.getLogger("card_price_compare")
+JAPAN_TIME_ZONE = timezone(timedelta(hours=9), name="JST")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -45,7 +46,9 @@ def run(args: argparse.Namespace) -> int:
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    fetched_at = datetime.now().astimezone().isoformat(timespec="seconds")
+    # GitHub-hosted runners use UTC. Record the business timestamp in Japan time
+    # so local and cloud executions produce the same update history.
+    fetched_at = datetime.now(JAPAN_TIME_ZONE).isoformat(timespec="seconds")
     records: list[PriceRecord] = []
     errors: dict[str, str] = {}
     requester = PoliteRequester(build_session(), delay_seconds=max(args.request_delay, 0.5))

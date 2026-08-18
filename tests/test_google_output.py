@@ -70,3 +70,12 @@ def test_history_row_contains_manual_run_summary() -> None:
         fetched_at="2026-08-18T12:34:56+09:00",
         error_count=0,
     ) == ["2026-08-18 12:34", 3, 4, 1, 2, 0]
+
+
+def test_history_row_converts_cloud_utc_timestamp_to_japan_time() -> None:
+    assert _history_row(
+        pd.DataFrame(),
+        pd.DataFrame(),
+        fetched_at="2026-08-18T07:43:02+00:00",
+        error_count=0,
+    )[0] == "2026-08-18 16:43"

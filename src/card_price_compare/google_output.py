@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 
@@ -50,6 +50,7 @@ CONDITION_LABELS = {
 }
 
 HISTORY_HEADERS = ["実行日時", "全取得レコード", "比較行", "3サイト一致", "2サイト一致", "取得エラー"]
+JAPAN_TIME_ZONE = timezone(timedelta(hours=9), name="JST")
 
 
 def _sheet_values(frame: pd.DataFrame) -> list[list[object]]:
@@ -87,7 +88,11 @@ def _history_row(
     fetched_at: str,
     error_count: int,
 ) -> list[object]:
-    timestamp = datetime.fromisoformat(fetched_at).astimezone().strftime("%Y-%m-%d %H:%M")
+    timestamp = (
+        datetime.fromisoformat(fetched_at)
+        .astimezone(JAPAN_TIME_ZONE)
+        .strftime("%Y-%m-%d %H:%M")
+    )
     if comparison.empty or "matched_site_count" not in comparison:
         three_site_count = 0
         two_site_count = 0
@@ -180,7 +185,7 @@ def publish_frames(
     if not effective_fetched_at and not raw.empty and "fetched_at" in raw:
         effective_fetched_at = str(raw["fetched_at"].dropna().iloc[0])
     if not effective_fetched_at:
-        effective_fetched_at = datetime.now().astimezone().isoformat(timespec="seconds")
+        effective_fetched_at = datetime.now(JAPAN_TIME_ZONE).isoformat(timespec="seconds")
     history.append_row(
         _history_row(
             comparison,
