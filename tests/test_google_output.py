@@ -4,6 +4,7 @@ import pytest
 from card_price_compare.collectors.collect_sheet import SPREADSHEET_ID
 from card_price_compare.google_output import (
     COMPARISON_COLUMNS,
+    COMPARISON_HEADER_NOTES,
     HISTORY_HEADERS,
     MANUAL_UPDATE_FORMULA,
     MANUAL_UPDATE_URL,
@@ -11,6 +12,7 @@ from card_price_compare.google_output import (
     SUMMARY_COUNTER_ROWS,
     _comparison_format_requests,
     _comparison_sheet_frame,
+    _history_backfill_updates,
     _history_row,
     _raw_sheet_frame,
     _row_runs,
@@ -182,6 +184,7 @@ def test_row_runs_collapse_adjacent_rows() -> None:
 
 GREEN = {"red": 198 / 255, "green": 239 / 255, "blue": 206 / 255}
 RED = {"red": 192 / 255, "green": 0.0, "blue": 0.0}
+GOLD = {"red": 191 / 255, "green": 143 / 255, "blue": 0.0}
 YELLOW = {"red": 1.0, "green": 242 / 255, "blue": 204 / 255}
 
 
@@ -290,3 +293,78 @@ def test_history_row_converts_cloud_utc_timestamp_to_japan_time() -> None:
         fetched_at="2026-08-18T07:43:02+00:00",
         error_count=0,
     )[0] == "2026-08-18 16:43"
+
+
+def _text_ranges(requests: list[dict], color: dict) -> list[dict]:
+    return [
+        request["repeatCell"]["range"]
+        for request in requests
+        if "repeatCell" in request
+        and request["repeatCell"]["cell"]
+        .get("userEnteredFormat", {})
+        .get("textFormat", {})
+        .get("foregroundColor")
+        == color
+    ]
+
+
+def test_large_yen_gaps_are_marked_even_when_the_rate_is_small() -> None:
+    """A 3.7% gap on an expensive box still pays more than a 32% gap on a cheap one."""
+    frame = _comparison_sheet_frame(
+        pd.DataFrame(
+            [
+                _comparison_record("イーブイヒーローズ", "shrink_wrapped", collect=130_000, runto=135_000),
+                _comparison_record("白熱のアルカナ", "no_shrink", collect=9_000, runto=10_500),
+            ]
+        )
+    )
+
+    assert list(frame["商品名"]) == ["白熱のアルカナ", "イーブイヒーローズ"]
+    requests = _comparison_format_requests(7, frame)
+    # 白熱のアルカナ clears 5% but not 3,000 yen; イーブイヒーローズ is the reverse.
+    assert _text_ranges(requests, RED) == [_cell_range(7, (1, 2), 4)]
+    assert _text_ranges(requests, GOLD) == [_cell_range(7, (2, 3), 5)]
+
+
+def test_header_notes_explain_the_narrow_columns(comparison: pd.DataFrame) -> None:
+    requests = _comparison_format_requests(7, _comparison_sheet_frame(comparison))
+    notes = {
+        request["updateCells"]["range"]["startColumnIndex"]: request["updateCells"]["rows"][0][
+            "values"
+        ][0]["note"]
+        for request in requests
+        if "updateCells" in request
+    }
+
+    assert set(notes) == set(COMPARISON_HEADER_NOTES)
+    assert "状態推定" in notes[9]
+    assert all(request["updateCells"]["range"]["startRowIndex"] == 0 for request in requests if "updateCells" in request)
+
+
+def test_history_backfill_restates_rows_written_before_the_new_column() -> None:
+    rows = [
+        # Old layout: C counted every comparison row, G did not exist yet.
+        ["2026-08-17 09:00", 280, 147, 6, 66, 0],
+        ["2026-08-18 08:51", 280, 147, 6, 66, 0],
+        # Already migrated, so it must be left alone.
+        ["2026-08-18 21:25", 280, 73, 5, 68, 0, 74],
+    ]
+
+    assert _history_backfill_updates(rows) == [
+        {"range": "C2", "values": [[72]]},
+        {"range": "G2", "values": [[75]]},
+        {"range": "C3", "values": [[72]]},
+        {"range": "G3", "values": [[75]]},
+    ]
+
+
+def test_history_backfill_skips_rows_it_cannot_restate() -> None:
+    rows = [
+        [],
+        ["", "", "", "", "", ""],
+        ["2026-08-18 08:51", 280, "-", 6, 66, 0],
+        # A row whose counts cannot add up is left for a human to look at.
+        ["2026-08-18 08:52", 280, 70, 6, 66, 0],
+    ]
+
+    assert _history_backfill_updates(rows) == []

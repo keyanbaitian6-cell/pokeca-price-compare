@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
 
 import pandas as pd
 
 from .collectors.collect_sheet import SPREADSHEET_ID as COLLECT_SOURCE_SPREADSHEET_ID
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 SOURCE_LABELS = {
@@ -110,12 +114,25 @@ SUMMARY_ERROR_ROW = [
 ]
 
 HIGH_SPREAD_RATE = 0.05
+# A 3.7% gap on a 135,000 yen box still hands over more money than a 32% gap on
+# an 11,800 yen box, so the yen column carries its own threshold.
+HIGH_SPREAD_YEN = 3_000
 YEN_PATTERN = "¥#,##0"
 RATE_PATTERN = "0.0%"
 HEADER_BACKGROUND_HEX = "1F3864"
 BEST_PRICE_BACKGROUND_HEX = "C6EFCE"
 WARNING_BACKGROUND_HEX = "FFF2CC"
 HIGH_SPREAD_TEXT_HEX = "C00000"
+HIGH_SPREAD_YEN_TEXT_HEX = "BF8F00"
+
+COMPARISON_HEADER_NOTES = {
+    4: "差率 ＝ 差額 ÷ 最高値。5%以上は赤太字。表はこの列の降順です。",
+    5: "差額 ＝ 最高値 － 最安値。3,000円以上は金色の太字。率が低くても手取りの差が大きい商品を見落とさないための印です。",
+    9: (
+        "片方の店舗だけ状態の記載がない場合、同名商品の状態を当てはめて比較しています（状態推定）。"
+        "元の商品名と表記は「全取得」タブで確認できます。"
+    ),
+}
 
 COMPARISON_COLUMN_WIDTHS = [300, 100, 90, 130, 70, 90, 90, 90, 100, 80]
 SINGLE_LISTING_COLUMN_WIDTHS = [300, 100, 110, 110]
@@ -387,6 +404,17 @@ def _column_width_requests(sheet_id: int, widths: list[int]) -> list[dict[str, o
     ]
 
 
+def _note_request(sheet_id: int, row: int, column: int, note: str) -> dict[str, object]:
+    """Explain a column without spending header width on the explanation."""
+    return {
+        "updateCells": {
+            "range": _grid_range(sheet_id, row, row + 1, column, column + 1),
+            "rows": [{"values": [{"note": note}]}],
+            "fields": "note",
+        }
+    }
+
+
 def _freeze_request(sheet_id: int, rows: int, columns: int) -> dict[str, object]:
     return {
         "updateSheetProperties": {
@@ -422,6 +450,10 @@ def _comparison_format_requests(sheet_id: int, frame: pd.DataFrame) -> list[dict
         _header_format_request(sheet_id, column_count),
         _freeze_request(sheet_id, rows=1, columns=2),
     ]
+    requests += [
+        _note_request(sheet_id, 0, column, note)
+        for column, note in COMPARISON_HEADER_NOTES.items()
+    ]
     requests += _column_width_requests(sheet_id, COMPARISON_COLUMN_WIDTHS)
     if row_count:
         best_prices = list(frame["最高値"])
@@ -444,6 +476,11 @@ def _comparison_format_requests(sheet_id: int, frame: pd.DataFrame) -> list[dict
             for rate in frame["差率"]
         ]
         requests += _text_color_requests(sheet_id, high_spread, 4, HIGH_SPREAD_TEXT_HEX)
+        large_spread = [
+            isinstance(amount, (int, float)) and float(amount) >= HIGH_SPREAD_YEN
+            for amount in frame["差額"]
+        ]
+        requests += _text_color_requests(sheet_id, large_spread, 5, HIGH_SPREAD_YEN_TEXT_HEX)
         warned = [str(value).strip() != "" for value in frame["注意"]]
         requests += _background_requests(sheet_id, warned, 9, WARNING_BACKGROUND_HEX)
     requests += _basic_filter_requests(sheet_id, row_count, column_count)
@@ -519,6 +556,37 @@ def _history_row(
         int(error_count),
         single_site_count,
     ]
+
+
+def _history_backfill_updates(rows: list[list[object]]) -> list[dict[str, object]]:
+    """Restate history rows written before the 1サイトのみ column existed.
+
+    Older rows recorded every comparison row in C, including the single-store
+    ones, so C means something different from the rows written today. The old
+    rows already carry the 3-site and 2-site counts, so both new values follow
+    from the row itself and no scraped snapshot is needed.
+    """
+    updates: list[dict[str, object]] = []
+    for offset, row in enumerate(rows):
+        row_number = offset + 2
+        if not row or not str(row[0]).strip():
+            continue
+        if len(row) >= 7 and str(row[6]).strip():
+            continue
+        try:
+            total = int(str(row[2]).replace(",", ""))
+            three_site_count = int(str(row[3]).replace(",", ""))
+            two_site_count = int(str(row[4]).replace(",", ""))
+        except (IndexError, ValueError):
+            continue
+        single_site_count = total - three_site_count - two_site_count
+        if single_site_count < 0:
+            continue
+        updates.append(
+            {"range": f"C{row_number}", "values": [[three_site_count + two_site_count]]}
+        )
+        updates.append({"range": f"G{row_number}", "values": [[single_site_count]]})
+    return updates
 
 
 def _ensure_summary_sheet(spreadsheet: object) -> None:
@@ -621,6 +689,11 @@ def publish_frames(
     if header_row[: len(HISTORY_HEADERS)] != HISTORY_HEADERS:
         history.update(values=[HISTORY_HEADERS], range_name="A1", value_input_option="RAW")
         history.freeze(rows=1)
+
+    backfill = _history_backfill_updates(history.get_values("A2:G"))
+    if backfill:
+        history.batch_update(backfill, value_input_option="RAW")
+        LOGGER.info("更新履歴の過去%d行を新しい列定義へ補正しました", len(backfill) // 2)
 
     effective_fetched_at = fetched_at
     if not effective_fetched_at and not raw.empty and "fetched_at" in raw:
