@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from datetime import datetime
 from urllib.parse import urljoin
 
@@ -17,6 +18,8 @@ from ..normalize import (
     parse_price_range,
 )
 
+
+LOGGER = logging.getLogger(__name__)
 
 CATEGORY_URL = "https://runto666.com/product-category/card/"
 
@@ -144,6 +147,7 @@ def fetch_runto_records(
     timestamp = fetched_at or datetime.now().astimezone().isoformat(timespec="seconds")
     page_url: str | None = CATEGORY_URL
     page_number = 0
+    detail_number = 0
     records: list[PriceRecord] = []
     visited: set[str] = set()
 
@@ -154,12 +158,17 @@ def fetch_runto_records(
         response = requester.get(page_url)
         products, page_url = _parse_listing(response.text, response.url)
         page_number += 1
+        # One polite request per second means this collector is silent for over
+        # a minute. Log the progress so a normal run is not mistaken for a hang.
+        LOGGER.info("runto: 一覧%dページ目 商品%d件", page_number, len(products))
 
         for product in products:
             name = str(product["name"])
             url = str(product["url"])
             status = str(product["stock_status"])
             if bool(product["variable"]) and resolve_variants and classify_product_kind(name) == "sealed_box":
+                detail_number += 1
+                LOGGER.info("runto: 商品詳細%d件目 %s", detail_number, name)
                 detail = requester.get(url)
                 records.extend(
                     parse_runto_product_html(
@@ -194,5 +203,6 @@ def fetch_runto_records(
                     fetched_at=timestamp,
                 )
             )
+    LOGGER.info("runto: 一覧%dページ・商品詳細%d件から%d件取得", page_number, detail_number, len(records))
     return records
 
