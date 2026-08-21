@@ -9,8 +9,11 @@
   </head>
   <body>
     <main>
-      <h1>ポケカ買取価格表を更新</h1>
-      <p>合言葉を入力して更新を開始してください。完了まで通常は数分かかります。</p>
+      <header class="hero">
+        <p class="eyebrow">POKÉCA BUYBACK</p>
+        <h1>価格表を更新</h1>
+        <p class="lead">合言葉を入力して、最新の買取価格を取得します。</p>
+      </header>
 
       <form id="updateForm">
         <label for="passphrase">合言葉</label>
@@ -22,8 +25,16 @@
           maxlength="128"
           required
         >
-        <button class="update-button" type="submit" name="mode" value="standard">通常更新（3サイト）</button>
-        <button class="update-button" type="submit" name="mode" value="with_macho">マッチョ込み更新（15〜19時）</button>
+        <div class="actions" aria-label="更新方法">
+          <button class="update-button primary-action" type="submit" name="mode" value="standard">
+            <span class="action-title">通常更新</span>
+            <span class="action-detail">コレクト・runto・買取ソムリエ</span>
+          </button>
+          <button class="update-button macho-action" type="submit" name="mode" value="with_macho">
+            <span class="action-title">買取マッチョも更新</span>
+            <span class="action-detail">15:00〜19:00限定 ・ 4サイト</span>
+          </button>
+        </div>
       </form>
 
       <div id="message" role="status" aria-live="polite"></div>
@@ -32,9 +43,12 @@
         href="https://docs.google.com/spreadsheets/d/1N3mF4tIjuq8FC3JO5QnT2rPKPn-tu3I8lFLP8ZNysYI/edit"
         target="_blank"
         rel="noopener noreferrer"
-      >価格表を開く</a>
+      >価格表を見る <span aria-hidden="true">↗</span></a>
 
-      <p class="note">通常更新はコレクト・runto・買取ソムリエを更新します。買取マッチョを含む更新は、日本時間15:00〜19:00だけ実行できます。連打防止のため、更新開始後5分間は再実行できません。</p>
+      <aside class="note">
+        <strong>更新について</strong>
+        <span>完了まで数分かかります。更新開始後5分間は再実行できません。</span>
+      </aside>
     </main>
     <script src="/app.js" defer></script>
   </body>
