@@ -73,3 +73,19 @@ def test_macho_fetches_its_public_listing_once() -> None:
 
     assert requester.requested == [BUYBACK_PRICES_URL]
     assert len(records) == 5
+
+
+def test_macho_reports_price_adjustment_without_returning_empty_data() -> None:
+    class _AdjustmentRequester:
+        def get(self, url: str, **_: object) -> SimpleNamespace:
+            return SimpleNamespace(
+                text='<div class="flex flex-col rounded-xl border-2">調整中</div>',
+                url=url,
+            )
+
+    try:
+        fetch_macho_records(_AdjustmentRequester(), fetched_at="2026-08-21T12:00:00+09:00")
+    except RuntimeError as exc:
+        assert "調整中" in str(exc)
+    else:  # pragma: no cover - keeps the expected failure explicit
+        raise AssertionError("価格がないページを正常データとして扱ってはいけません。")

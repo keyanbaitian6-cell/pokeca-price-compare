@@ -113,5 +113,7 @@ def fetch_macho_records(
         fetched_at=timestamp,
     )
     if not records:
+        if "調整中" in response.text:
+            raise RuntimeError("買取マッチョの全商品が現在「調整中」で、買取価格が掲載されていません。")
         raise RuntimeError("買取マッチョから商品を1件も取得できませんでした。")
     return records
