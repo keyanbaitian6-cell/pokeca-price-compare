@@ -3,8 +3,10 @@ from types import SimpleNamespace
 from card_price_compare.collectors.macho import (
     BUYBACK_PRICES_URL,
     fetch_macho_records,
+    is_macho_price_window,
     parse_macho_buyback_html,
 )
+from datetime import datetime, timezone
 
 
 MACHO_HTML = """
@@ -69,10 +71,21 @@ def test_macho_cards_keep_box_conditions_and_exclude_pack_buyback() -> None:
 def test_macho_fetches_its_public_listing_once() -> None:
     requester = _FakeRequester()
 
-    records = fetch_macho_records(requester, fetched_at="2026-08-21T12:00:00+09:00")
+    records = fetch_macho_records(
+        requester,
+        fetched_at="2026-08-21T12:00:00+09:00",
+        now=datetime(2026, 8, 21, 6, 0, tzinfo=timezone.utc),
+    )
 
     assert requester.requested == [BUYBACK_PRICES_URL]
     assert len(records) == 5
+
+
+def test_macho_price_window_is_15_to_19_japan_time() -> None:
+    assert is_macho_price_window(datetime(2026, 8, 21, 5, 59, 59, tzinfo=timezone.utc)) is False
+    assert is_macho_price_window(datetime(2026, 8, 21, 6, 0, tzinfo=timezone.utc)) is True
+    assert is_macho_price_window(datetime(2026, 8, 21, 9, 59, 59, tzinfo=timezone.utc)) is True
+    assert is_macho_price_window(datetime(2026, 8, 21, 10, 0, tzinfo=timezone.utc)) is False
 
 
 def test_macho_reports_price_adjustment_without_returning_empty_data() -> None:
@@ -84,7 +97,11 @@ def test_macho_reports_price_adjustment_without_returning_empty_data() -> None:
             )
 
     try:
-        fetch_macho_records(_AdjustmentRequester(), fetched_at="2026-08-21T12:00:00+09:00")
+        fetch_macho_records(
+            _AdjustmentRequester(),
+            fetched_at="2026-08-21T12:00:00+09:00",
+            now=datetime(2026, 8, 21, 6, 0, tzinfo=timezone.utc),
+        )
     except RuntimeError as exc:
         assert "調整中" in str(exc)
     else:  # pragma: no cover - keeps the expected failure explicit

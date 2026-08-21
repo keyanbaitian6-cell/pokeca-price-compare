@@ -57,3 +57,16 @@ test('5分を過ぎた完了済み実行は再実行できる', async (context) 
   const now = Date.parse('2026-08-18T09:06:00Z');
   assert.equal(await _test.getCooldownMinutes('dummy-token', now), 0);
 });
+
+test('買取マッチョ込み更新は日本時間15時から19時未満だけ許可する', () => {
+  assert.equal(_test.isMachoPriceWindow(new Date('2026-08-21T05:59:59Z')), false);
+  assert.equal(_test.isMachoPriceWindow(new Date('2026-08-21T06:00:00Z')), true);
+  assert.equal(_test.isMachoPriceWindow(new Date('2026-08-21T09:59:59Z')), true);
+  assert.equal(_test.isMachoPriceWindow(new Date('2026-08-21T10:00:00Z')), false);
+});
+
+test('更新方法ごとに実行する取得元を固定する', () => {
+  assert.equal(_test.requestedSources('standard'), 'collect,runto,somurie');
+  assert.equal(_test.requestedSources('with_macho'), 'collect,runto,somurie,macho');
+  assert.equal(_test.requestedSources('unknown'), null);
+});

@@ -24,7 +24,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="未開封ポケカBOXの買取価格を比較します。")
     parser.add_argument(
         "--sources",
-        default="collect,runto,somurie,macho",
+        default="collect,runto,somurie",
         help="collect,runto,somurie,macho のカンマ区切り",
     )
     parser.add_argument("--output-dir", default="data", help="CSV保存先")

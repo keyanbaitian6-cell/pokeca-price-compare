@@ -22,7 +22,8 @@
           maxlength="128"
           required
         >
-        <button id="updateButton" type="submit">価格表を更新する</button>
+        <button class="update-button" type="submit" name="mode" value="standard">通常更新（3サイト）</button>
+        <button class="update-button" type="submit" name="mode" value="with_macho">マッチョ込み更新（15〜19時）</button>
       </form>
 
       <div id="message" role="status" aria-live="polite"></div>
@@ -33,7 +34,7 @@
         rel="noopener noreferrer"
       >価格表を開く</a>
 
-      <p class="note">連打防止のため、更新開始後5分間は再実行できません。</p>
+      <p class="note">通常更新はコレクト・runto・買取ソムリエを更新します。買取マッチョを含む更新は、日本時間15:00〜19:00だけ実行できます。連打防止のため、更新開始後5分間は再実行できません。</p>
     </main>
     <script src="/app.js" defer></script>
   </body>

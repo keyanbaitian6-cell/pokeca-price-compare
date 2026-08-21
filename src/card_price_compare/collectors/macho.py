@@ -8,6 +8,7 @@ until the site provides detail pages.
 """
 
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from bs4 import BeautifulSoup
 
@@ -26,6 +27,14 @@ _CONDITION_BY_BADGE = {
     "ペリ無": "no_perforation",
 }
 _PACK_BADGES = {"パック", "統一パック"}
+JAPAN_TIME_ZONE = ZoneInfo("Asia/Tokyo")
+
+
+def is_macho_price_window(now: datetime | None = None) -> bool:
+    """Return whether the store's published-price window is currently open."""
+    timestamp = now or datetime.now(JAPAN_TIME_ZONE)
+    hour = timestamp.astimezone(JAPAN_TIME_ZONE).hour
+    return 15 <= hour < 19
 
 
 def _card_badges(card: object) -> list[str]:
@@ -103,8 +112,13 @@ def fetch_macho_records(
     requester: PoliteRequester,
     *,
     fetched_at: str | None = None,
+    now: datetime | None = None,
 ) -> list[PriceRecord]:
     """Fetch 買取マッチョ's one public buyback-price page."""
+    # Keep this guard in the collector as well as the Vercel button so a local
+    # command cannot accidentally access the site outside its pricing window.
+    if not is_macho_price_window(now):
+        raise RuntimeError("買取マッチョの取得は、日本時間15:00〜19:00だけ実行できます。")
     timestamp = fetched_at or datetime.now().astimezone().isoformat(timespec="seconds")
     response = requester.get(BUYBACK_PRICES_URL)
     records = parse_macho_buyback_html(

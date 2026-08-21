@@ -6,6 +6,8 @@ const WORKFLOW_FILE = 'manual-update.yml';
 const WORKFLOW_REF = 'main';
 const MIN_INTERVAL_MS = 5 * 60 * 1000;
 const GITHUB_API_VERSION = '2022-11-28';
+const STANDARD_SOURCES = 'collect,runto,somurie';
+const MACHO_SOURCES = 'collect,runto,somurie,macho';
 
 function sendJson(response, status, body) {
   response.setHeader('Cache-Control', 'no-store');
@@ -30,6 +32,30 @@ function verifyPassphrase(passphrase, expectedHash) {
   const actual = crypto.createHash('sha256').update(passphrase, 'utf8').digest();
   const expected = Buffer.from(expectedHash, 'hex');
   return actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
+}
+
+function isMachoPriceWindow(now = new Date()) {
+  // The source publishes its prices only from 15:00 through 18:59 JST.
+  const hour = Number(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Tokyo',
+      hour: '2-digit',
+      hourCycle: 'h23',
+    })
+      .formatToParts(now)
+      .find((part) => part.type === 'hour')?.value,
+  );
+  return hour >= 15 && hour < 19;
+}
+
+function requestedSources(mode) {
+  if (mode === 'standard') {
+    return STANDARD_SOURCES;
+  }
+  if (mode === 'with_macho') {
+    return MACHO_SOURCES;
+  }
+  return null;
 }
 
 function githubHeaders(token) {
@@ -74,7 +100,7 @@ async function getCooldownMinutes(token, now = Date.now()) {
   return 0;
 }
 
-async function dispatchWorkflow(token) {
+async function dispatchWorkflow(token, sources) {
   const path =
     `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/workflows/` +
     `${WORKFLOW_FILE}/dispatches`;
@@ -83,7 +109,7 @@ async function dispatchWorkflow(token) {
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ref: WORKFLOW_REF }),
+      body: JSON.stringify({ ref: WORKFLOW_REF, inputs: { sources } }),
     },
     token,
   );
@@ -125,6 +151,17 @@ async function handler(request, response) {
     return sendJson(response, 401, { ok: false, message: '合言葉が違います。' });
   }
 
+  const sources = requestedSources(request.body?.mode);
+  if (!sources) {
+    return sendJson(response, 400, { ok: false, message: '更新方法を選び直してください。' });
+  }
+  if (sources === MACHO_SOURCES && !isMachoPriceWindow()) {
+    return sendJson(response, 403, {
+      ok: false,
+      message: '買取マッチョ込み更新は、日本時間15:00〜19:00に実行してください。',
+    });
+  }
+
   try {
     const cooldownMinutes = await getCooldownMinutes(token);
     if (cooldownMinutes > 0) {
@@ -134,7 +171,7 @@ async function handler(request, response) {
       });
     }
 
-    await dispatchWorkflow(token);
+    await dispatchWorkflow(token, sources);
     return sendJson(response, 202, {
       ok: true,
       message: '更新を受け付けました。通常は数分で価格表へ反映されます。',
@@ -153,5 +190,7 @@ module.exports._test = {
   dispatchWorkflow,
   getCooldownMinutes,
   isSameOrigin,
+  isMachoPriceWindow,
+  requestedSources,
   verifyPassphrase,
 };

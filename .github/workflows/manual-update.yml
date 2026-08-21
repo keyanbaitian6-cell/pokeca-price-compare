@@ -2,6 +2,12 @@ name: ポケカ価格表を手動更新
 
 on:
   workflow_dispatch:
+    inputs:
+      sources:
+        description: 実行する取得元（Vercelの更新画面から指定）
+        required: true
+        default: collect,runto,somurie
+        type: string
 
 permissions:
   contents: read
@@ -42,12 +48,14 @@ jobs:
           GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
           OUTPUT_SPREADSHEET_ID: "1N3mF4tIjuq8FC3JO5QnT2rPKPn-tu3I8lFLP8ZNysYI"
           PYTHONPATH: src
+          SOURCES: ${{ inputs.sources }}
         shell: bash
         run: |
           credentials_path="$RUNNER_TEMP/google-credentials.json"
           printf '%s' "$GOOGLE_CREDENTIALS_JSON" > "$credentials_path"
           python -m card_price_compare \
             --strict \
+            --sources "$SOURCES" \
             --output-dir "$RUNNER_TEMP/card-price-output" \
             --google-spreadsheet-id "$OUTPUT_SPREADSHEET_ID" \
             --google-credentials "$credentials_path"
