@@ -16,9 +16,15 @@ SOURCE_LABELS = {
     "collect": "コレクト",
     "runto": "runto",
     "somurie": "買取ソムリエ",
+    "macho": "買取マッチョ",
 }
-PRICE_COLUMN_LABELS = ["コレクト", "runto", "買取ソムリエ"]
-PRICE_SOURCE_COLUMNS = ["collect_price_yen", "runto_price_yen", "somurie_price_yen"]
+PRICE_COLUMN_LABELS = ["コレクト", "runto", "買取ソムリエ", "買取マッチョ"]
+PRICE_SOURCE_COLUMNS = [
+    "collect_price_yen",
+    "runto_price_yen",
+    "somurie_price_yen",
+    "macho_price_yen",
+]
 
 # The comparison tab only answers "which store pays more"; the original store
 # names stay on the raw tab so this table can stay narrow enough to read.
@@ -32,6 +38,7 @@ COMPARISON_COLUMNS = [
     "コレクト",
     "runto",
     "買取ソムリエ",
+    "買取マッチョ",
     "注意",
 ]
 COMPARISON_SOURCE_COLUMNS = [
@@ -41,6 +48,7 @@ COMPARISON_SOURCE_COLUMNS = [
     "collect_price_yen",
     "runto_price_yen",
     "somurie_price_yen",
+    "macho_price_yen",
     "best_site",
     "best_price_yen",
     "spread_yen",
@@ -73,10 +81,16 @@ CONDITION_LABELS = {
     "unspecified": "状態不明",
     "sealed_unspecified": "未開封（状態不明）",
 }
+PRODUCT_KIND_LABELS = {
+    "sealed_box": "未開封BOX",
+    "single_pack": "パック買取",
+    "sealed_other": "未開封その他",
+    "single_card": "シングルカード",
+    "unknown": "未分類",
+}
 # Shown in the narrow 注意 column. The full meaning is "some stores did not
 # state the condition", recorded in docs/DECISIONS.md.
 CONDITION_INFERRED_LABEL = "状態推定"
-ALL_SITES_TIED_LABEL = "3店同額"
 
 COMPARISON_SHEET_TITLE = "比較"
 SINGLE_LISTING_SHEET_TITLE = "単独掲載"
@@ -88,7 +102,7 @@ HISTORY_HEADERS = [
     "実行日時",
     "全取得レコード",
     "比較行（2サイト以上）",
-    "3サイト一致",
+    "3サイト以上",
     "2サイト一致",
     "取得エラー",
     "1サイトのみ",
@@ -122,7 +136,7 @@ SUMMARY_COUNTER_ROWS = [
     ["全取得レコード", "=" + _latest_history_value("B")],
     ["BOX比較件数（2サイト以上）", "=" + _latest_history_value("C")],
     [
-        "内訳（3サイト／2サイト）",
+        "内訳（3サイト以上／2サイト）",
         f'={_latest_history_value("D")}&" / "&{_latest_history_value("E")}',
     ],
     ["1サイトのみ（単独掲載）", "=" + _latest_history_value("G")],
@@ -145,13 +159,13 @@ HIGH_SPREAD_YEN_TEXT_HEX = "BF8F00"
 COMPARISON_HEADER_NOTES = {
     4: "差率 ＝ 差額 ÷ 最高値。5%以上は赤太字。表はこの列の降順です。",
     5: "差額 ＝ 最高値 － 最安値。3,000円以上は金色の太字。率が低くても手取りの差が大きい商品を見落とさないための印です。",
-    9: (
+    10: (
         "片方の店舗だけ状態の記載がない場合、同名商品の状態を当てはめて比較しています（状態推定）。"
         "元の商品名と表記は「全取得」タブで確認できます。"
     ),
 }
 
-COMPARISON_COLUMN_WIDTHS = [300, 100, 90, 130, 70, 90, 90, 90, 100, 80]
+COMPARISON_COLUMN_WIDTHS = [300, 100, 90, 130, 70, 90, 90, 90, 100, 100, 80]
 SINGLE_LISTING_COLUMN_WIDTHS = [300, 100, 110, 110]
 RAW_COLUMN_WIDTHS = [80, 300, 220, 220, 110, 100, 100, 100, 100, 100, 90, 220, 120, 150, 150]
 
@@ -185,8 +199,10 @@ def _store_label(value: object) -> str:
     sources = [part.strip() for part in str(value or "").split(",") if part.strip()]
     if not sources:
         return ""
-    if len(sources) >= len(SOURCE_LABELS):
-        return ALL_SITES_TIED_LABEL
+    # Keep the compact tie label for three (the existing layout) or four stores
+    # without pretending that an absent fourth source is tied.
+    if len(sources) >= 3:
+        return f"{len(sources)}店同額"
     return "・".join(SOURCE_LABELS.get(source, source) for source in sources)
 
 
@@ -265,6 +281,10 @@ def _raw_sheet_frame(frame: pd.DataFrame) -> pd.DataFrame:
     prepared = frame.rename(columns=RAW_HEADERS).copy()
     if "状態" in prepared:
         prepared["状態"] = prepared["状態"].map(_display_condition)
+    if "商品区分" in prepared:
+        prepared["商品区分"] = prepared["商品区分"].map(
+            lambda value: PRODUCT_KIND_LABELS.get(str(value), value)
+        )
     return prepared
 
 
@@ -476,7 +496,12 @@ def _comparison_format_requests(sheet_id: int, frame: pd.DataFrame) -> list[dict
         best_prices = list(frame["最高値"])
         requests.append(_clip_request(sheet_id, row_count, column_count))
         requests.append(_number_format_request(sheet_id, row_count, 2, 3, "NUMBER", YEN_PATTERN))
-        requests.append(_number_format_request(sheet_id, row_count, 5, 9, "NUMBER", YEN_PATTERN))
+        requests.append(_number_format_request(sheet_id, row_count, 5, 6, "NUMBER", YEN_PATTERN))
+        requests.append(
+            _number_format_request(
+                sheet_id, row_count, 6, 6 + len(PRICE_COLUMN_LABELS), "NUMBER", YEN_PATTERN
+            )
+        )
         requests.append(
             _number_format_request(sheet_id, row_count, 4, 5, "PERCENT", RATE_PATTERN)
         )
@@ -499,7 +524,7 @@ def _comparison_format_requests(sheet_id: int, frame: pd.DataFrame) -> list[dict
         ]
         requests += _text_color_requests(sheet_id, large_spread, 5, HIGH_SPREAD_YEN_TEXT_HEX)
         warned = [str(value).strip() != "" for value in frame["注意"]]
-        requests += _background_requests(sheet_id, warned, 9, WARNING_BACKGROUND_HEX)
+        requests += _background_requests(sheet_id, warned, 6 + len(PRICE_COLUMN_LABELS), WARNING_BACKGROUND_HEX)
     requests += _basic_filter_requests(sheet_id, row_count, column_count)
     return requests
 
@@ -547,8 +572,10 @@ def _raw_format_requests(sheet_id: int, frame: pd.DataFrame) -> list[dict[str, o
 def _site_counts(comparison: pd.DataFrame) -> tuple[int, int, int]:
     if comparison.empty or "matched_site_count" not in comparison:
         return 0, 0, 0
-    counts = comparison["matched_site_count"].value_counts()
-    return int(counts.get(3, 0)), int(counts.get(2, 0)), int(counts.get(1, 0))
+    counts = pd.to_numeric(comparison["matched_site_count"], errors="coerce").fillna(0)
+    # With four sources, D must include 4-site matches; otherwise the summary
+    # breakdown no longer adds up to the two-or-more-site comparison count.
+    return int((counts >= 3).sum()), int((counts == 2).sum()), int((counts == 1).sum())
 
 
 def _history_row(

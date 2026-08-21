@@ -1,6 +1,6 @@
 # ポケカ未開封BOX 買取価格比較
 
-買取ソムリエ、コレクトの公開Google価格表、runtoから価格を取得し、未開封ポケモンカードBOXの比較CSVを作成します。元サイトへの購入・買取申込やログインは行いません。
+買取ソムリエ、コレクトの公開Google価格表、runto、買取マッチョから価格を取得し、未開封ポケモンカードBOXの比較CSVを作成します。元サイトへの購入・買取申込やログインは行いません。
 
 対象サイト、名寄せ、手動更新、運用上のセキュリティ判断は
 [判断記録](docs/DECISIONS.md)にまとめています。
@@ -11,6 +11,7 @@
 - 買取ソムリエ（ポケモンカード・その他、現在0件）: <https://somurie-kaitori.com/products?category=2&subcategory=13>
 - コレクト: <https://docs.google.com/spreadsheets/d/1uNtzhQBeiPmGR8rjqgwNdesCHbD4Nr6Y4ecZAjBE15g/htmlview>
 - runto: <https://runto666.com/product-category/card/>
+- 買取マッチョ: <https://kaitori.alc-japan.co.jp/buyback-prices>
 
 コレクトのシートは参照専用です。スクリプトはこのIDをGoogle出力先として拒否します。
 
@@ -58,6 +59,8 @@ python3 -m venv .venv
 
 CSVと照合キーでは互換性のため英語の状態コードを維持します。閲覧用のGoogleスプレッドシートとExcelブックでは、`shrink_wrapped` を「シュリンク有」、`no_shrink` を「シュリンク無」、`no_perforation` を「ぺりぺり無」、`unspecified` を「状態不明」と表示します。
 
+買取マッチョはBOXとパックの買取価格を同じ一覧に掲載しています。明示的な「パック」「統一パック」行、または800円以下の行は「パック買取」として「全取得」タブに残し、BOX比較と単独掲載から除外します。
+
 名寄せではUnicodeをNFKC正規化してからシリーズ名、状態語、BOX表記、M3/M5/M1Lなどの品番を除去します。買取ソムリエのカードに個別ページのリンクがない場合は一覧URLを保存し、将来リンクが追加された場合は個別URLを優先します。
 
 ## Googleスプレッドシート出力
@@ -80,40 +83,16 @@ CSVと照合キーでは互換性のため英語の状態コードを維持し�
 1サイトしか掲載していない商品は「単独掲載」タブへ分離し、買取価格の降順で表示します。
 元の商品名は「全取得」タブで確認できるため、「比較」タブには載せません。
 
-## 定期更新
+## 手動更新
 
-スマホから必要な時だけ更新する場合は [MANUAL_UPDATE_SETUP.md](MANUAL_UPDATE_SETUP.md) を参照してください。Vercelのスマホ用Webページ、合言葉、GitHub Actionsを使用し、自動スケジュールは設定しません。
-
-常駐ループではなくOSのスケジューラーを推奨します。失敗ログやPC再起動後の再実行を管理しやすいためです。
-
-### Windows タスク スケジューラ
-
-操作には次を指定します。
-
-- プログラム: `powershell.exe`
-- 引数: `-NoProfile -ExecutionPolicy Bypass -File "C:\path\to\kakaku\scripts\run_compare.ps1"`
-- 開始: `C:\path\to\kakaku`
-
-Google出力も行う場合は、実行ユーザーの環境変数に以下を設定します。
-
-```text
-CARD_PRICE_OUTPUT_SHEET_ID=出力先ID
-GOOGLE_APPLICATION_CREDENTIALS=C:\secure\service-account.json
-```
-
-### macOS cron例（1時間ごと）
-
-```cron
-0 * * * * cd /path/to/kakaku && .venv/bin/python -m card_price_compare >> data/scheduler.log 2>&1
-```
-
-更新間隔はサイト負荷を考慮し、まず1時間以上を推奨します。利用規約と公開範囲に変更がないか定期的に確認してください。
+スマホから必要な時だけ更新する場合は [MANUAL_UPDATE_SETUP.md](MANUAL_UPDATE_SETUP.md) を参照してください。Vercelのスマホ用Webページ、合言葉、GitHub Actionsを使用します。自動スケジュール、Windowsタスク スケジューラ、cronは設定しません。
 
 ## 保守ポイント
 
 - コレクト: `collectors/collect_sheet.py` の表列対応
 - runto: `li.product`、`.price`、`form.variations_form`
 - 買取ソムリエ: `.ant-card`
+- 買取マッチョ: `div.flex.flex-col.rounded-xl.border-2`、`button.line-clamp-2`、`span.font-mono.font-black`
 - 名寄せ: `normalize.py`
 
 HTML構造変更で0件になった場合は正常終了させず、`run_summary.json`へエラーを記録します。アクセス間隔は既定1秒で、429/5xxには指数バックオフ付きで再試行します。

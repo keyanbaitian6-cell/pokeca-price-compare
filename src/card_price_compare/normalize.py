@@ -44,6 +44,9 @@ _SET_CODE_RE = re.compile(r"(?<![0-9A-Za-z])M\d+[A-Za-z]?(?![0-9A-Za-z])", re.IG
 _PRODUCT_NAME_ALIASES = {
     # Collect omits the official trailing "ex" while the other stores retain it.
     "シャイニートレジャー": "シャイニートレジャーex",
+    # 買取マッチョ abbreviates the same current product as メガドリーム;
+    # collect and runto publish it as MEGAドリームex.
+    "メガドリーム": "ドリームex",
 }
 
 
