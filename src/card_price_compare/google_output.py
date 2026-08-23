@@ -97,6 +97,12 @@ SINGLE_LISTING_SHEET_TITLE = "単独掲載"
 RAW_SHEET_TITLE = "全取得"
 HISTORY_SHEET_TITLE = "更新履歴"
 SUMMARY_SHEET_TITLE = "サマリー"
+TREND_SHEET_TITLE = "価格推移（シュリンク有）"
+TREND_HEADERS = ["日付", "商品名", "最高値", "最高値の店"]
+TREND_COLUMN_WIDTHS = [100, 260, 100, 150]
+TREND_CHART_START_COLUMN = 5
+TREND_CHART_COLUMNS = 10
+TREND_CHART_ROW_GAP = 16
 
 HISTORY_HEADERS = [
     "実行日時",
@@ -633,6 +639,172 @@ def _history_backfill_updates(rows: list[list[object]]) -> list[dict[str, object
     return updates
 
 
+def _shrink_trend_frame(comparison: pd.DataFrame, *, fetched_at: str) -> pd.DataFrame:
+    """One current highest price per explicitly shrink-wrapped box."""
+    if comparison.empty:
+        return pd.DataFrame(columns=TREND_HEADERS)
+    eligible = comparison[
+        (comparison["condition"] == "shrink_wrapped")
+        & (~comparison["condition_inferred"].fillna(False).astype(bool))
+        & comparison["best_price_yen"].notna()
+    ].copy()
+    if eligible.empty:
+        return pd.DataFrame(columns=TREND_HEADERS)
+    day = datetime.fromisoformat(fetched_at).astimezone(JAPAN_TIME_ZONE).date().isoformat()
+    prepared = pd.DataFrame(
+        {
+            "日付": day,
+            "商品名": eligible["product_name_normalized"].astype(str),
+            "最高値": eligible["best_price_yen"].astype(int),
+            "最高値の店": eligible["best_site"].map(_store_label),
+        }
+    )
+    return prepared.sort_values(["商品名", "日付"], kind="mergesort").reset_index(drop=True)
+
+
+def _trend_history_frame(rows: list[list[object]]) -> pd.DataFrame:
+    """Read the tab's narrow history table without touching its charts."""
+    if not rows or rows[0][: len(TREND_HEADERS)] != TREND_HEADERS:
+        return pd.DataFrame(columns=TREND_HEADERS)
+    values = [row[: len(TREND_HEADERS)] for row in rows[1:] if any(str(value).strip() for value in row)]
+    return pd.DataFrame(values, columns=TREND_HEADERS)
+
+
+def _merge_trend_history(existing: pd.DataFrame, current: pd.DataFrame) -> pd.DataFrame:
+    """Keep only the highest observed price for each box on each JST date."""
+    combined = pd.concat([existing, current], ignore_index=True)
+    if combined.empty:
+        return pd.DataFrame(columns=TREND_HEADERS)
+    combined = combined.copy()
+    combined["日付"] = combined["日付"].astype(str).str.strip()
+    combined["商品名"] = combined["商品名"].astype(str).str.strip()
+    combined["最高値"] = pd.to_numeric(combined["最高値"], errors="coerce")
+    combined = combined[(combined["日付"] != "") & (combined["商品名"] != "") & combined["最高値"].notna()]
+    combined["最高値"] = combined["最高値"].astype(int)
+    # The newest row wins when prices are equal, so its store label stays current.
+    combined = combined.sort_values(["日付", "商品名", "最高値"], ascending=[True, True, False], kind="mergesort")
+    merged = combined.drop_duplicates(["日付", "商品名"], keep="first")
+    return merged.sort_values(["商品名", "日付"], kind="mergesort").reset_index(drop=True)[TREND_HEADERS]
+
+
+def _trend_chart_ids(spreadsheet: object, sheet_id: int) -> list[int]:
+    metadata = spreadsheet.fetch_sheet_metadata(
+        params={"fields": "sheets(properties(sheetId),charts(chartId))"}
+    )
+    for sheet in metadata.get("sheets", []):
+        if sheet.get("properties", {}).get("sheetId") == sheet_id:
+            return [int(chart["chartId"]) for chart in sheet.get("charts", [])]
+    return []
+
+
+def _trend_chart_requests(sheet_id: int, frame: pd.DataFrame, chart_ids: list[int]) -> list[dict[str, object]]:
+    requests: list[dict[str, object]] = [
+        {"deleteEmbeddedObject": {"objectId": chart_id}} for chart_id in chart_ids
+    ]
+    for chart_index, (product_name, group) in enumerate(frame.groupby("商品名", sort=False)):
+        start_row = int(group.index.min()) + 1
+        end_row = start_row + len(group)
+        anchor_column = TREND_CHART_START_COLUMN + (chart_index % 2) * TREND_CHART_COLUMNS
+        anchor_row = (chart_index // 2) * TREND_CHART_ROW_GAP
+        requests.append(
+            {
+                "addChart": {
+                    "chart": {
+                        "spec": {
+                            "title": f"{product_name}｜シュリンク有最高値",
+                            "basicChart": {
+                                "chartType": "LINE",
+                                "legendPosition": "NO_LEGEND",
+                                "axis": [
+                                    {"position": "BOTTOM_AXIS", "title": "日付"},
+                                    {"position": "LEFT_AXIS", "title": "最高値（円）"},
+                                ],
+                                "domains": [
+                                    {
+                                        "domain": {
+                                            "sourceRange": {
+                                                "sources": [
+                                                    _grid_range(sheet_id, start_row, end_row, 0, 1)
+                                                ]
+                                            }
+                                        }
+                                    }
+                                ],
+                                "series": [
+                                    {
+                                        "series": {
+                                            "sourceRange": {
+                                                "sources": [
+                                                    _grid_range(sheet_id, start_row, end_row, 2, 3)
+                                                ]
+                                            }
+                                        },
+                                        "targetAxis": "LEFT_AXIS",
+                                        "colorStyle": {"rgbColor": _color("15735A")},
+                                    }
+                                ],
+                                "headerCount": 0,
+                            },
+                        },
+                        "position": {
+                            "overlayPosition": {
+                                "anchorCell": {
+                                    "sheetId": sheet_id,
+                                    "rowIndex": anchor_row,
+                                    "columnIndex": anchor_column,
+                                },
+                                "widthPixels": 430,
+                                "heightPixels": 250,
+                            }
+                        },
+                    }
+                }
+            }
+        )
+    return requests
+
+
+def _publish_shrink_trends(
+    spreadsheet: object,
+    comparison: pd.DataFrame,
+    *,
+    fetched_at: str,
+) -> None:
+    """Upsert daily shrink-wrapped peaks and rebuild one line chart per box."""
+    import gspread
+
+    try:
+        worksheet = spreadsheet.worksheet(TREND_SHEET_TITLE)
+        existing = _trend_history_frame(worksheet.get_values("A1:D"))
+        chart_ids = _trend_chart_ids(spreadsheet, worksheet.id)
+    except gspread.WorksheetNotFound:
+        worksheet = spreadsheet.add_worksheet(title=TREND_SHEET_TITLE, rows=100, cols=25)
+        existing = pd.DataFrame(columns=TREND_HEADERS)
+        chart_ids = []
+
+    trend = _merge_trend_history(existing, _shrink_trend_frame(comparison, fetched_at=fetched_at))
+    required_rows = max(len(trend) + 10, ((trend["商品名"].nunique() + 1) // 2) * TREND_CHART_ROW_GAP + 2, 100)
+    if worksheet.row_count < required_rows or worksheet.col_count < 25:
+        worksheet.resize(rows=max(worksheet.row_count, required_rows), cols=max(worksheet.col_count, 25))
+    worksheet.clear()
+    worksheet.update(values=_sheet_values(trend), range_name="A1", value_input_option="RAW")
+    requests = [
+        _reset_format_request(worksheet.id),
+        _header_format_request(worksheet.id, len(TREND_HEADERS)),
+        _freeze_request(worksheet.id, rows=1, columns=0),
+        *_column_width_requests(worksheet.id, TREND_COLUMN_WIDTHS),
+    ]
+    if not trend.empty:
+        requests.extend(
+            [
+                _clip_request(worksheet.id, len(trend), len(TREND_HEADERS)),
+                _number_format_request(worksheet.id, len(trend), 2, 3, "NUMBER", YEN_PATTERN),
+            ]
+        )
+    requests.extend(_trend_chart_requests(worksheet.id, trend, chart_ids))
+    spreadsheet.batch_update({"requests": requests})
+
+
 def _ensure_summary_sheet(spreadsheet: object) -> None:
     try:
         summary = spreadsheet.worksheet(SUMMARY_SHEET_TITLE)
@@ -749,6 +921,11 @@ def publish_frames(
             error_count=error_count,
         ),
         value_input_option="USER_ENTERED",
+    )
+    _publish_shrink_trends(
+        spreadsheet,
+        comparison,
+        fetched_at=effective_fetched_at,
     )
     _ensure_summary_sheet(spreadsheet)
     return f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/edit"
