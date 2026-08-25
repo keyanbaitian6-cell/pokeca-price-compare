@@ -1,5 +1,6 @@
 import pandas as pd
 import pytest
+from gspread.utils import ValueRenderOption
 
 from card_price_compare.collectors.collect_sheet import SPREADSHEET_ID
 from card_price_compare.google_output import (
@@ -19,6 +20,9 @@ from card_price_compare.google_output import (
     _row_runs,
     _single_listing_sheet_frame,
     _store_label,
+    _trend_history_frame,
+    _merge_trend_history,
+    _publish_shrink_trends,
     publish_frames,
     split_comparison,
 )
@@ -79,6 +83,68 @@ def test_manual_update_link_points_to_vercel_page() -> None:
     assert MANUAL_UPDATE_URL == "https://pokeca-price-update.vercel.app"
     assert MANUAL_UPDATE_URL in MANUAL_UPDATE_FORMULA
     assert "価格表を手動更新" in MANUAL_UPDATE_FORMULA
+
+
+def test_trend_history_refuses_to_overwrite_an_unrecognized_table() -> None:
+    with pytest.raises(ValueError, match="既存データを保護"):
+        _trend_history_frame([["別の列", "商品名", "最高値", "最高値の店"]])
+
+
+def test_trend_history_keeps_a_currency_formatted_previous_price() -> None:
+    headers = ["日付", "商品名", "最高値", "最高値の店"]
+    existing = pd.DataFrame([["2026-08-24", "151", "¥55,000", "runto"]], columns=headers)
+    current = pd.DataFrame([["2026-08-25", "151", 56_000, "コレクト"]], columns=headers)
+
+    merged = _merge_trend_history(existing, current)
+
+    assert merged.to_dict("records") == [
+        {"日付": "2026-08-24", "商品名": "151", "最高値": 55_000, "最高値の店": "runto"},
+        {"日付": "2026-08-25", "商品名": "151", "最高値": 56_000, "最高値の店": "コレクト"},
+    ]
+
+
+def test_trend_publish_reads_history_as_unformatted_values(comparison: pd.DataFrame) -> None:
+    class FakeWorksheet:
+        id = 123
+        row_count = 100
+        col_count = 25
+
+        def __init__(self) -> None:
+            self.value_render_option = None
+            self.updated_values = None
+
+        def get_values(self, _range: str, *, value_render_option: ValueRenderOption):
+            self.value_render_option = value_render_option
+            return [["日付", "商品名", "最高値", "最高値の店"], ["2026-08-24", "ストームエメラルダ", 17_000, "runto"]]
+
+        def update(self, *, values: list[list[object]], **_kwargs: object) -> None:
+            self.updated_values = values
+
+        def resize(self, **_kwargs: object) -> None:
+            pass
+
+    class FakeSpreadsheet:
+        def __init__(self, worksheet: FakeWorksheet) -> None:
+            self._worksheet = worksheet
+
+        def worksheet(self, _title: str) -> FakeWorksheet:
+            return self._worksheet
+
+        def fetch_sheet_metadata(self, **_kwargs: object) -> dict[str, object]:
+            return {"sheets": [{"properties": {"sheetId": 123}, "charts": []}]}
+
+        def batch_update(self, _body: dict[str, object]) -> None:
+            pass
+
+    worksheet = FakeWorksheet()
+    _publish_shrink_trends(
+        FakeSpreadsheet(worksheet),
+        comparison,
+        fetched_at="2026-08-25T10:00:00+09:00",
+    )
+
+    assert worksheet.value_render_option == ValueRenderOption.unformatted
+    assert [row[0] for row in worksheet.updated_values[1:]] == ["2026-08-24", "2026-08-25"]
 
 
 def test_collect_source_sheet_cannot_be_output_target(tmp_path) -> None:

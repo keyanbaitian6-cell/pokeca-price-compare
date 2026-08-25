@@ -664,8 +664,12 @@ def _shrink_trend_frame(comparison: pd.DataFrame, *, fetched_at: str) -> pd.Data
 
 def _trend_history_frame(rows: list[list[object]]) -> pd.DataFrame:
     """Read the tab's narrow history table without touching its charts."""
-    if not rows or rows[0][: len(TREND_HEADERS)] != TREND_HEADERS:
+    if not rows:
         return pd.DataFrame(columns=TREND_HEADERS)
+    if rows[0][: len(TREND_HEADERS)] != TREND_HEADERS:
+        raise ValueError(
+            f"{TREND_SHEET_TITLE} の履歴ヘッダーが一致しないため、既存データを保護して更新を中止しました。"
+        )
     values = [row[: len(TREND_HEADERS)] for row in rows[1:] if any(str(value).strip() for value in row)]
     return pd.DataFrame(values, columns=TREND_HEADERS)
 
@@ -678,7 +682,12 @@ def _merge_trend_history(existing: pd.DataFrame, current: pd.DataFrame) -> pd.Da
     combined = combined.copy()
     combined["日付"] = combined["日付"].astype(str).str.strip()
     combined["商品名"] = combined["商品名"].astype(str).str.strip()
-    combined["最高値"] = pd.to_numeric(combined["最高値"], errors="coerce")
+    # Existing Sheet values may be returned as formatted currency strings such
+    # as "¥14,500". Keep them as history instead of treating them as invalid.
+    combined["最高値"] = pd.to_numeric(
+        combined["最高値"].astype(str).str.replace(r"[^0-9.-]", "", regex=True),
+        errors="coerce",
+    )
     combined = combined[(combined["日付"] != "") & (combined["商品名"] != "") & combined["最高値"].notna()]
     combined["最高値"] = combined["最高値"].astype(int)
     # The newest row wins when prices are equal, so its store label stays current.
@@ -772,10 +781,13 @@ def _publish_shrink_trends(
 ) -> None:
     """Upsert daily shrink-wrapped peaks and rebuild one line chart per box."""
     import gspread
+    from gspread.utils import ValueRenderOption
 
     try:
         worksheet = spreadsheet.worksheet(TREND_SHEET_TITLE)
-        existing = _trend_history_frame(worksheet.get_values("A1:D"))
+        existing = _trend_history_frame(
+            worksheet.get_values("A1:D", value_render_option=ValueRenderOption.unformatted)
+        )
         chart_ids = _trend_chart_ids(spreadsheet, worksheet.id)
     except gspread.WorksheetNotFound:
         worksheet = spreadsheet.add_worksheet(title=TREND_SHEET_TITLE, rows=100, cols=25)
@@ -786,7 +798,8 @@ def _publish_shrink_trends(
     required_rows = max(len(trend) + 10, ((trend["商品名"].nunique() + 1) // 2) * TREND_CHART_ROW_GAP + 2, 100)
     if worksheet.row_count < required_rows or worksheet.col_count < 25:
         worksheet.resize(rows=max(worksheet.row_count, required_rows), cols=max(worksheet.col_count, 25))
-    worksheet.clear()
+    # Do not clear the worksheet: a failed/malformed history read must never
+    # turn a daily refresh into deletion of every prior price observation.
     worksheet.update(values=_sheet_values(trend), range_name="A1", value_input_option="RAW")
     requests = [
         _reset_format_request(worksheet.id),
