@@ -226,8 +226,10 @@ def split_comparison(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 def _comparison_sheet_frame(frame: pd.DataFrame) -> pd.DataFrame:
-    """Build the 比較 tab: only rows that at least two stores list."""
+    """Build the 比較 tab from shrink-wrapped rows listed by two or more stores."""
     multi_site, _ = split_comparison(frame)
+    if not multi_site.empty:
+        multi_site = multi_site[multi_site["condition"] == "shrink_wrapped"].copy()
     if multi_site.empty:
         return pd.DataFrame(columns=COMPARISON_COLUMNS)
 
