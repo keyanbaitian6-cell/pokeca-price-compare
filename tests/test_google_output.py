@@ -1,3 +1,4 @@
+import gspread
 import pandas as pd
 import pytest
 from gspread.utils import ValueRenderOption
@@ -10,19 +11,29 @@ from card_price_compare.google_output import (
     MANUAL_UPDATE_FORMULA,
     MANUAL_UPDATE_URL,
     SINGLE_LISTING_COLUMNS,
+    SPREADSHEET_TITLE,
     SUMMARY_COUNTER_LIMIT,
     SUMMARY_COUNTER_ROWS,
+    TREND_ARCHIVE_SHEET_TITLE,
+    TREND_FIXED_COLUMNS,
+    TREND_HEADERS,
+    TREND_SHEET_TITLE,
     _comparison_format_requests,
     _comparison_sheet_frame,
+    _ensure_summary_sheet,
     _history_backfill_updates,
     _history_row,
+    _merge_trend_history,
+    _prepare_history_rows,
+    _publish_shrink_trends,
     _raw_sheet_frame,
     _row_runs,
+    _shrink_trend_frame,
     _single_listing_sheet_frame,
     _store_label,
     _trend_history_frame,
-    _merge_trend_history,
-    _publish_shrink_trends,
+    _trend_matrix_frame,
+    _trend_sparkline_formula,
     publish_frames,
     split_comparison,
 )
@@ -101,48 +112,224 @@ def test_trend_history_keeps_a_currency_formatted_previous_price() -> None:
     ]
 
 
-def test_trend_publish_reads_history_as_unformatted_values(comparison: pd.DataFrame) -> None:
-    class FakeWorksheet:
-        id = 123
-        row_count = 100
-        col_count = 25
-
-        def __init__(self) -> None:
-            self.value_render_option = None
-            self.updated_values = None
-
-        def get_values(self, _range: str, *, value_render_option: ValueRenderOption):
-            self.value_render_option = value_render_option
-            return [["日付", "商品名", "最高値", "最高値の店"], ["2026-08-24", "ストームエメラルダ", 17_000, "runto"]]
-
-        def update(self, *, values: list[list[object]], **_kwargs: object) -> None:
-            self.updated_values = values
-
-        def resize(self, **_kwargs: object) -> None:
-            pass
-
-    class FakeSpreadsheet:
-        def __init__(self, worksheet: FakeWorksheet) -> None:
-            self._worksheet = worksheet
-
-        def worksheet(self, _title: str) -> FakeWorksheet:
-            return self._worksheet
-
-        def fetch_sheet_metadata(self, **_kwargs: object) -> dict[str, object]:
-            return {"sheets": [{"properties": {"sheetId": 123}, "charts": []}]}
-
-        def batch_update(self, _body: dict[str, object]) -> None:
-            pass
-
-    worksheet = FakeWorksheet()
-    _publish_shrink_trends(
-        FakeSpreadsheet(worksheet),
-        comparison,
-        fetched_at="2026-08-25T10:00:00+09:00",
+def test_merge_trend_history_normalizes_split_set_code_names_and_prefers_current_store() -> None:
+    existing = pd.DataFrame(
+        [
+            ["2026-10-01", "テラスタルフェスex sv8a", 12_500, "買取ソムリエ"],
+            ["2026-10-01", "テラスタルフェスex", 12_000, "コレクト"],
+            ["2026-10-02", "テラスタルフェスex", 12_500, "コレクト"],
+        ],
+        columns=TREND_HEADERS,
+    )
+    current = pd.DataFrame(
+        [["2026-10-02", "テラスタルフェスex", 12_500, "コレクト・買取ソムリエ"]],
+        columns=TREND_HEADERS,
     )
 
-    assert worksheet.value_render_option == ValueRenderOption.unformatted
-    assert [row[0] for row in worksheet.updated_values[1:]] == ["2026-08-24", "2026-08-25"]
+    merged = _merge_trend_history(existing, current)
+
+    assert merged.to_dict("records") == [
+        {
+            "日付": "2026-10-01",
+            "商品名": "テラスタルフェスex",
+            "最高値": 12_500,
+            "最高値の店": "買取ソムリエ",
+        },
+        {
+            "日付": "2026-10-02",
+            "商品名": "テラスタルフェスex",
+            "最高値": 12_500,
+            "最高値の店": "コレクト・買取ソムリエ",
+        },
+    ]
+
+
+def test_shrink_trend_frame_uses_raw_explicit_shrink_wrapped_when_comparison_is_inferred(
+    comparison: pd.DataFrame,
+) -> None:
+    raw = pd.DataFrame(
+        [
+            {
+                "source": "collect",
+                "product_name_normalized": "白銀のランス",
+                "condition": "shrink_wrapped",
+                "product_kind": "sealed_box",
+                "price_yen": 17_000,
+                "stock_status": "active",
+            },
+            {
+                "source": "runto",
+                "product_name_normalized": "白銀のランス",
+                "condition": "unspecified",
+                "product_kind": "sealed_box",
+                "price_yen": 17_500,
+                "stock_status": "active",
+            },
+        ]
+    )
+
+    trend = _shrink_trend_frame(
+        comparison, fetched_at="2026-08-25T17:00:00+09:00", raw=raw
+    )
+
+    assert trend.to_dict("records") == [
+        {
+            "日付": "2026-08-25",
+            "商品名": "白銀のランス",
+            "最高値": 17_000,
+            "最高値の店": "コレクト",
+        }
+    ]
+
+
+def test_trend_matrix_frame_orders_moving_boxes_first_and_computes_deltas() -> None:
+    history = pd.DataFrame(
+        [
+            ["2026-10-01", "安定BOX", 20_000, "コレクト"],
+            ["2026-10-08", "安定BOX", 20_000, "コレクト"],
+            ["2026-10-09", "安定BOX", 20_000, "コレクト"],
+            ["2026-10-01", "急騰BOX", 10_000, "runto"],
+            ["2026-10-08", "急騰BOX", 11_000, "runto"],
+            ["2026-10-09", "急騰BOX", 12_500, "買取ソムリエ"],
+            ["2026-09-01", "古い絶版BOX", 30_000, "コレクト"],
+        ],
+        columns=TREND_HEADERS,
+    )
+
+    matrix = _trend_matrix_frame(history)
+
+    assert list(matrix.columns) == TREND_FIXED_COLUMNS + ["10/09", "10/08", "10/01", "09/01"]
+    assert list(matrix["商品名"]) == ["急騰BOX", "安定BOX"]
+    top = matrix.iloc[0]
+    assert top["最新最高値"] == 12_500
+    assert top["最高値の店"] == "買取ソムリエ"
+    assert top["前回比"] == 1_500
+    assert top["7日前比"] == 2_500
+    assert top["10/09"] == 12_500
+    assert top["10/08"] == 11_000
+    assert top["09/01"] == ""
+
+
+def test_trend_sparkline_formula_plots_chronologically() -> None:
+    formula = _trend_sparkline_formula(row_number=2, num_dates=4)
+    assert "G2:J2" in formula
+    assert "SEQUENCE(4)" in formula
+    assert "FALSE" in formula
+    assert _trend_sparkline_formula(row_number=2, num_dates=1) == ""
+
+
+def test_trend_publish_migrates_legacy_sheet_to_hidden_archive_and_renders_matrix(
+    comparison: pd.DataFrame,
+) -> None:
+    class FakeWorksheet:
+        def __init__(
+            self,
+            sheet_id: int,
+            title: str,
+            initial_rows: list[list[object]] | None = None,
+        ) -> None:
+            self.id = sheet_id
+            self.title = title
+            self.row_count = 3000
+            self.col_count = 25
+            self.initial_rows = initial_rows or []
+            self.value_render_options: list[object] = []
+            self.updates: list[tuple[str, list[list[object]], str]] = []
+            self.cleared = False
+            self.resized_to: tuple[int, int] | None = None
+
+        def get_values(self, _range: str, *, value_render_option: ValueRenderOption):
+            self.value_render_options.append(value_render_option)
+            if _range == "A1:F1":
+                return self.initial_rows[:1]
+            return self.initial_rows
+
+        def clear(self) -> None:
+            self.cleared = True
+
+        def update(
+            self,
+            *,
+            values: list[list[object]],
+            range_name: str,
+            value_input_option: str,
+        ) -> None:
+            self.updates.append((range_name, values, value_input_option))
+
+        def resize(self, *, rows: int, cols: int) -> None:
+            self.row_count = rows
+            self.col_count = cols
+            self.resized_to = (rows, cols)
+
+    class FakeSpreadsheet:
+        def __init__(self, worksheets: dict[str, FakeWorksheet]) -> None:
+            self.worksheets = worksheets
+            self.batches: list[dict[str, object]] = []
+            self._next_id = 500
+
+        def worksheet(self, title: str) -> FakeWorksheet:
+            if title not in self.worksheets:
+                raise gspread.WorksheetNotFound(title)
+            return self.worksheets[title]
+
+        def add_worksheet(self, *, title: str, rows: int, cols: int) -> FakeWorksheet:
+            ws = FakeWorksheet(self._next_id, title)
+            ws.row_count = rows
+            ws.col_count = cols
+            self._next_id += 1
+            self.worksheets[title] = ws
+            return ws
+
+        def fetch_sheet_metadata(self, **_kwargs: object) -> dict[str, object]:
+            return {"sheets": [{"properties": {"sheetId": 123}, "charts": [{"chartId": 999}]}]}
+
+        def batch_update(self, body: dict[str, object]) -> None:
+            self.batches.append(body)
+
+    legacy_trend_ws = FakeWorksheet(
+        123,
+        TREND_SHEET_TITLE,
+        [
+            ["日付", "商品名", "最高値", "最高値の店"],
+            ["2026-08-24", "ストームエメラルダ", 17_000, "runto"],
+        ],
+    )
+    fake_spreadsheet = FakeSpreadsheet({TREND_SHEET_TITLE: legacy_trend_ws})
+
+    previous_prices = _publish_shrink_trends(
+        fake_spreadsheet,
+        comparison,
+        fetched_at="2026-08-25T17:00:00+09:00",
+    )
+
+    assert all(
+        opt == ValueRenderOption.unformatted for opt in legacy_trend_ws.value_render_options
+    )
+    archive_ws = fake_spreadsheet.worksheets[TREND_ARCHIVE_SHEET_TITLE]
+    assert archive_ws.updates[0][1] == [
+        ["日付", "商品名", "最高値", "最高値の店"],
+        ["2026-08-24", "ストームエメラルダ", 17_000, "runto"],
+        ["2026-08-25", "ストームエメラルダ", 18_000, "3店同額"],
+    ]
+    assert legacy_trend_ws.cleared is True
+    matrix_values = legacy_trend_ws.updates[0][1]
+    assert matrix_values[0] == TREND_FIXED_COLUMNS + ["08/25", "08/24"]
+    assert matrix_values[1][:5] == ["ストームエメラルダ", 18_000, "3店同額", 1_000, ""]
+    assert matrix_values[1][6:] == [18_000, 17_000]
+    assert legacy_trend_ws.updates[1][0] == "F2:F2"
+    assert legacy_trend_ws.updates[1][2] == "USER_ENTERED"
+    assert "SPARKLINE" in str(legacy_trend_ws.updates[1][1][0][0])
+
+    # Legacy chart 999 was deleted before resizing, and archive sheet was hidden.
+    all_requests = [req for batch in fake_spreadsheet.batches for req in batch["requests"]]
+    assert {"deleteEmbeddedObject": {"objectId": 999}} in all_requests
+    assert {
+        "updateSheetProperties": {
+            "properties": {"sheetId": archive_ws.id, "hidden": True},
+            "fields": "hidden",
+        }
+    } in all_requests
+    assert previous_prices == {"ストームエメラルダ": 17_000}
 
 
 def test_collect_source_sheet_cannot_be_output_target(tmp_path) -> None:
@@ -162,15 +349,27 @@ def test_single_site_rows_move_out_of_the_comparison_tab(comparison: pd.DataFram
     assert list(single_site["product_name_normalized"]) == ["第1弾", "e 基本 海からの風"]
 
 
-def test_comparison_tab_keeps_ten_readable_columns(comparison: pd.DataFrame) -> None:
+def test_comparison_tab_keeps_eleven_readable_columns(comparison: pd.DataFrame) -> None:
     prepared = _comparison_sheet_frame(comparison)
 
     assert list(prepared.columns) == COMPARISON_COLUMNS
+    assert len(COMPARISON_COLUMNS) == 11
     assert len(prepared) == 2
     assert set(prepared["状態"]) == {"シュリンク有"}
     assert "ステラミラクル" not in prepared["商品名"].tolist()
     # The original store names stay on the raw tab instead of widening this one.
     assert "runto商品名" not in prepared.columns
+
+
+def test_comparison_tab_computes_previous_price_deltas(comparison: pd.DataFrame) -> None:
+    prepared = _comparison_sheet_frame(
+        comparison,
+        previous_prices={"ストームエメラルダ": 17_200},
+    )
+
+    by_name = prepared.set_index("商品名")
+    assert by_name.loc["ストームエメラルダ", "前回比"] == 800
+    assert by_name.loc["白銀のランス", "前回比"] == ""
 
 
 def test_comparison_tab_is_sorted_by_spread_rate(comparison: pd.DataFrame) -> None:
@@ -255,6 +454,8 @@ GREEN = {"red": 198 / 255, "green": 239 / 255, "blue": 206 / 255}
 RED = {"red": 192 / 255, "green": 0.0, "blue": 0.0}
 GOLD = {"red": 191 / 255, "green": 143 / 255, "blue": 0.0}
 YELLOW = {"red": 1.0, "green": 242 / 255, "blue": 204 / 255}
+UP_GREEN = {"red": 19 / 255, "green": 115 / 255, "blue": 51 / 255}
+DOWN_BLUE = {"red": 25 / 255, "green": 103 / 255, "blue": 210 / 255}
 
 
 def _ranges_with_background(requests: list[dict], color: dict) -> list[dict]:
@@ -283,15 +484,15 @@ def test_comparison_formatting_highlights_the_best_price_cells(
     prepared = _comparison_sheet_frame(comparison)
     requests = _comparison_format_requests(123, prepared)
 
-    # runto wins row 1; row 2 is a three-way tie, so all three go green.
+    # runto wins row 1; row 2 is a three-way tie, so all three go green (cols 7, 8, 9).
     assert _ranges_with_background(requests, GREEN) == [
-        _cell_range(123, (2, 3), 6),
-        _cell_range(123, (1, 3), 7),
-        _cell_range(123, (2, 3), 8),
+        _cell_range(123, (2, 3), 7),
+        _cell_range(123, (1, 3), 8),
+        _cell_range(123, (2, 3), 9),
     ]
 
 
-def test_comparison_formatting_marks_high_spread_rates_and_warnings() -> None:
+def test_comparison_formatting_marks_high_spread_rates_deltas_and_warnings() -> None:
     prepared = _comparison_sheet_frame(
         pd.DataFrame(
             [
@@ -306,23 +507,15 @@ def test_comparison_formatting_marks_high_spread_rates_and_warnings() -> None:
                     inferred=True,
                 ),
             ]
-        )
+        ),
+        previous_prices={"ステラミラクル": 11_000, "白銀のランス": 18_000},
     )
     requests = _comparison_format_requests(7, prepared)
 
-    red_ranges = [
-        request["repeatCell"]["range"]
-        for request in requests
-        if "repeatCell" in request
-        and request["repeatCell"]["cell"]
-        .get("userEnteredFormat", {})
-        .get("textFormat", {})
-        .get("foregroundColor")
-        == RED
-    ]
-    # Only ステラミラクル clears the 5% threshold; 白銀のランス keeps its warning.
-    assert red_ranges == [_cell_range(7, (1, 2), 4)]
-    assert _ranges_with_background(requests, YELLOW) == [_cell_range(7, (2, 3), 9)]
+    assert _text_ranges(requests, RED) == [_cell_range(7, (1, 2), 5)]
+    assert _text_ranges(requests, UP_GREEN) == [_cell_range(7, (1, 2), 3)]
+    assert _text_ranges(requests, DOWN_BLUE) == [_cell_range(7, (2, 3), 3)]
+    assert _ranges_with_background(requests, YELLOW) == [_cell_range(7, (2, 3), 10)]
 
 
 def test_comparison_formatting_freezes_the_name_and_condition_columns(
@@ -359,6 +552,23 @@ def test_history_row_reports_single_site_rows_separately() -> None:
     assert len(HISTORY_HEADERS) == 7
 
 
+def test_prepare_history_rows_sorts_newest_first_and_backfills_legacy_rows() -> None:
+    existing = [
+        ["2026-08-17 09:00", "280", "147", "6", "66", "0"],
+        ["2026-08-18 08:51", 280, 73, 5, 68, 0, 74],
+    ]
+    new_row = ["2026-08-18 17:00", 263, 78, 7, 71, 0, 62]
+
+    prepared = _prepare_history_rows(existing, new_row, max_rows=2)
+
+    assert prepared == [
+        ["2026-08-18 17:00", 263, 78, 7, 71, 0, 62],
+        ["2026-08-18 08:51", 280, 73, 5, 68, 0, 74],
+    ]
+    full = _prepare_history_rows(existing, new_row)
+    assert full[-1] == ["2026-08-17 09:00", 280, 72, 6, 66, 0, 75]
+
+
 def test_summary_counters_match_the_comparison_tab_row_count() -> None:
     labels = [row[0] for row in SUMMARY_COUNTER_ROWS]
 
@@ -371,7 +581,6 @@ def test_summary_counters_match_the_comparison_tab_row_count() -> None:
 
 def test_summary_write_stays_above_the_merged_link_row() -> None:
     """Row 9 is the merged link and rows 10+ are maintained by hand."""
-    # A3 plus six rows ends at row 8, so nothing reaches row 9 or below.
     assert len(SUMMARY_COUNTER_ROWS) == SUMMARY_COUNTER_LIMIT
     assert SUMMARY_COUNTER_LIMIT == 6
     assert all(len(row) == 2 for row in SUMMARY_COUNTER_ROWS)
@@ -384,6 +593,71 @@ def test_summary_counters_read_the_newest_history_row_not_the_header() -> None:
     assert not any("LOOKUP(" in formula for formula in formulas)
     for formula in formulas[1:]:
         assert "MATCH(MAX(更新履歴!A2:A),更新履歴!A:A,0)" in formula
+
+
+def test_ensure_summary_sheet_removes_deprecated_macho_row() -> None:
+    class FakeSummary:
+        id = 10
+
+        def __init__(self) -> None:
+            self.a1 = None
+            self.updates: list[tuple[str, list[list[object]]]] = []
+
+        def update_acell(self, cell: str, value: str) -> None:
+            if cell == "A1":
+                self.a1 = value
+
+        def update(
+            self,
+            *,
+            values: list[list[object]],
+            range_name: str,
+            value_input_option: str,
+        ) -> None:
+            self.updates.append((range_name, values))
+
+        def get_values(self, _range: str) -> list[list[str]]:
+            return [
+                ["取得元", "URL"],
+                ["collect", "https://example.com/collect"],
+                ["runto", "https://example.com/runto"],
+                ["買取ソムリエ", "https://example.com/somurie"],
+                ["買取マッチョ", "https://kaitori.alc-japan.co.jp/buyback-prices"],
+                ["一部店舗で状態が不明な価格を含む比較は、比較表で橙色の注意表示を付けています。"],
+            ]
+
+    class FakeSpreadsheet:
+        def __init__(self, summary: FakeSummary) -> None:
+            self.summary = summary
+            self.batches: list[dict[str, object]] = []
+
+        def worksheet(self, _title: str) -> FakeSummary:
+            return self.summary
+
+        def batch_update(self, body: dict[str, object]) -> None:
+            self.batches.append(body)
+
+    summary = FakeSummary()
+    spreadsheet = FakeSpreadsheet(summary)
+    _ensure_summary_sheet(spreadsheet)
+
+    assert summary.a1 == SPREADSHEET_TITLE
+    assert spreadsheet.batches == [
+        {
+            "requests": [
+                {
+                    "deleteDimension": {
+                        "range": {
+                            "sheetId": 10,
+                            "dimension": "ROWS",
+                            "startIndex": 13,
+                            "endIndex": 14,
+                        }
+                    }
+                }
+            ]
+        }
+    ]
 
 
 def test_history_row_converts_cloud_utc_timestamp_to_japan_time() -> None:
@@ -413,7 +687,9 @@ def test_large_yen_gaps_are_marked_even_when_the_rate_is_small() -> None:
     frame = _comparison_sheet_frame(
         pd.DataFrame(
             [
-                _comparison_record("イーブイヒーローズ", "shrink_wrapped", collect=130_000, runto=135_000),
+                _comparison_record(
+                    "イーブイヒーローズ", "shrink_wrapped", collect=130_000, runto=135_000
+                ),
                 _comparison_record("白熱のアルカナ", "no_shrink", collect=9_000, runto=10_500),
             ]
         )
@@ -421,9 +697,9 @@ def test_large_yen_gaps_are_marked_even_when_the_rate_is_small() -> None:
 
     assert list(frame["商品名"]) == ["イーブイヒーローズ"]
     requests = _comparison_format_requests(7, frame)
-    # The no-shrink row is excluded; the expensive shrink-wrapped box still marks its yen gap.
+    # The no-shrink row is excluded; the expensive shrink-wrapped box still marks its yen gap (col 6).
     assert _text_ranges(requests, RED) == []
-    assert _text_ranges(requests, GOLD) == [_cell_range(7, (1, 2), 5)]
+    assert _text_ranges(requests, GOLD) == [_cell_range(7, (1, 2), 6)]
 
 
 def test_header_notes_explain_the_narrow_columns(comparison: pd.DataFrame) -> None:
@@ -437,8 +713,13 @@ def test_header_notes_explain_the_narrow_columns(comparison: pd.DataFrame) -> No
     }
 
     assert set(notes) == set(COMPARISON_HEADER_NOTES)
-    assert "状態推定" in notes[9]
-    assert all(request["updateCells"]["range"]["startRowIndex"] == 0 for request in requests if "updateCells" in request)
+    assert "前回比" in notes[3]
+    assert "状態推定" in notes[10]
+    assert all(
+        request["updateCells"]["range"]["startRowIndex"] == 0
+        for request in requests
+        if "updateCells" in request
+    )
 
 
 def test_history_backfill_restates_rows_written_before_the_new_column() -> None:

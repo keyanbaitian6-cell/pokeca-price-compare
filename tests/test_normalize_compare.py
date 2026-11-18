@@ -131,3 +131,35 @@ def test_no_perforation_remains_a_separate_comparable_condition() -> None:
     assert len(comparison) == 1
     assert comparison.iloc[0]["condition"] == "no_perforation"
     assert comparison.iloc[0]["matched_site_count"] == 1
+
+
+def test_sv_s_sm_set_codes_series_spacing_and_store_aliases_align() -> None:
+    from card_price_compare.normalize import classify_product_kind
+
+    assert (
+        normalize_product_name("ポケモンカードゲーム テラスタルフェスex （SV8a）シュリンク付きボックス")
+        == "テラスタルフェスex"
+    )
+    assert normalize_product_name("ハイクラスパック VSTARユニバース (S12a)") == "vstarユニバース"
+    assert normalize_product_name("タッグオールスターズ SM12a") == "タッグオールスターズ"
+    assert (
+        normalize_product_name("ポケモンカードゲーム ソード & シールド 拡張パック ロストアビス")
+        == "ロストアビス"
+    )
+    assert (
+        normalize_product_name("ポケモンカードゲーム ソード シールド パラダイムトリガー")
+        == "パラダイムトリガー"
+    )
+    assert normalize_product_name("強化拡張パック ポケモン GO") == "pokemon go"
+    assert (
+        normalize_product_name("ポケモンセンタートウホク")
+        == normalize_product_name("スペシャルBOX ポケモンセンタートウホク")
+        == "スペシャル ポケモンセンタートウホク"
+    )
+    assert (
+        normalize_product_name("デラックスホワイトフレア")
+        == normalize_product_name("拡張パックデラックス「ホワイトフレア」")
+        == "ホワイトフレア デラックス"
+    )
+    assert classify_product_kind("ポケモンセンタートウホク") == "sealed_box"
+

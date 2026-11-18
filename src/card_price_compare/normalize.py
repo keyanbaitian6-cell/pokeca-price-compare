@@ -20,11 +20,13 @@ _PRODUCT_NAME_NOISE_TOKENS = (
 )
 
 # Longer phrases must be removed first so a short token cannot leave a suffix.
-_SERIES_NAMES = (
-    "スカーレット&バイオレット",
-    "ダイヤモンド&パール",
-    "ソード&シールド",
-    "サン&ムーン",
+# Allow optional spaces and optional '&' so variants like "ソード & シールド"
+# and "ソード シールド" are removed alongside "ソード&シールド".
+_SERIES_PATTERNS = (
+    re.compile(r"スカーレット\s*&?\s*バイオレット", re.IGNORECASE),
+    re.compile(r"ダイヤモンド\s*&?\s*パール", re.IGNORECASE),
+    re.compile(r"ソード\s*&?\s*シールド", re.IGNORECASE),
+    re.compile(r"サン\s*&?\s*ムーン", re.IGNORECASE),
 )
 _CONDITION_NAME_TOKENS = (
     "シュリンク付きボックス",
@@ -40,10 +42,21 @@ _CONDITION_NAME_TOKENS = (
     "ボックス",
     "box",
 )
-_SET_CODE_RE = re.compile(r"(?<![0-9A-Za-z])M\d+[A-Za-z]?(?![0-9A-Za-z])", re.IGNORECASE)
+_SET_CODE_RE = re.compile(
+    r"(?<![0-9A-Za-z])(?:SV|SM|S|M)\d+[A-Za-z]?(?![0-9A-Za-z])",
+    re.IGNORECASE,
+)
 _PRODUCT_NAME_ALIASES = {
     # Collect omits the official trailing "ex" while the other stores retain it.
     "シャイニートレジャー": "シャイニートレジャーex",
+    "ポケモン go": "pokemon go",
+    "ポケモンセンタートウホク": "スペシャル ポケモンセンタートウホク",
+    "ポケモンセンターヒロシマ": "スペシャル ポケモンセンターヒロシマ",
+    "ポケモンセンターフクオカ": "スペシャル ポケモンセンターフクオカ",
+    "デラックスブラックボルト": "ブラックボルト デラックス",
+    "デラックスホワイトフレア": "ホワイトフレア デラックス",
+    "ブラックボルトdx": "ブラックボルト デラックス",
+    "ホワイトフレアdx": "ホワイトフレア デラックス",
 }
 
 
@@ -101,6 +114,9 @@ def classify_product_kind(text: str, *, force_box: bool = False) -> str:
         "強化拡張パック",
         "ハイクラスパック",
         "未開封白箱",
+        "ポケモンセンタートウホク",
+        "ポケモンセンターヒロシマ",
+        "ポケモンセンターフクオカ",
     )
     if any(marker in normalized for marker in box_markers):
         return "sealed_box"
@@ -127,8 +143,8 @@ def normalize_product_name(name: str) -> str:
         else:
             text = text.replace(normalized_token, " ")
     text = re.sub(r"pokemon\s*card\s*game", "", text)
-    for series_name in sorted(_SERIES_NAMES, key=len, reverse=True):
-        text = text.replace(series_name.casefold(), " ")
+    for series_pattern in _SERIES_PATTERNS:
+        text = series_pattern.sub(" ", text)
     # Some stores write the series marker directly before Japanese text
     # (for example "MEGAドリームex"), where an ASCII word boundary does not match.
     text = re.sub(r"(?<![a-z])mega", "", text)
@@ -136,7 +152,7 @@ def normalize_product_name(name: str) -> str:
     for token in sorted(_CONDITION_NAME_TOKENS, key=len, reverse=True):
         text = text.replace(token.casefold(), " ")
     # Parentheses are separators, not identity. After making them whitespace,
-    # remove standalone store set codes such as M3, M5 and M1L.
+    # remove standalone store set codes such as SV8a, S12a, M3, M5 and M1L.
     text = re.sub(r"[()（）]", " ", text)
     text = _SET_CODE_RE.sub(" ", text)
     text = text.translate(str.maketrans({"「": "", "」": "", "『": "", "』": "", "【": "", "】": ""}))
