@@ -7,7 +7,6 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from .collectors.collect_sheet import fetch_collect_records
-from .collectors.macho import fetch_macho_records
 from .collectors.runto import fetch_runto_records
 from .collectors.somurie import fetch_somurie_records
 from .compare import build_box_comparison, records_to_frame
@@ -25,7 +24,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--sources",
         default="collect,runto,somurie",
-        help="collect,runto,somurie,macho のカンマ区切り",
+        help="collect,runto,somurie のカンマ区切り",
     )
     parser.add_argument("--output-dir", default="data", help="CSV保存先")
     parser.add_argument("--request-delay", type=float, default=1.0, help="同一処理内のHTTPアクセス間隔（秒）")
@@ -45,7 +44,7 @@ def _write_csv(frame: object, path: Path) -> None:
 
 def run(args: argparse.Namespace) -> int:
     requested_sources = {part.strip().lower() for part in args.sources.split(",") if part.strip()}
-    unknown = requested_sources - {"collect", "runto", "somurie", "macho"}
+    unknown = requested_sources - {"collect", "runto", "somurie"}
     if unknown:
         raise ValueError(f"未対応の取得元です: {', '.join(sorted(unknown))}")
 
@@ -58,7 +57,7 @@ def run(args: argparse.Namespace) -> int:
     errors: dict[str, str] = {}
     requester = PoliteRequester(build_session(), delay_seconds=max(args.request_delay, 0.5))
 
-    for source in ("collect", "runto", "somurie", "macho"):
+    for source in ("collect", "runto", "somurie"):
         if source not in requested_sources:
             continue
         try:
@@ -72,8 +71,6 @@ def run(args: argparse.Namespace) -> int:
                     resolve_variants=not args.no_runto_variants,
                     fetched_at=fetched_at,
                 )
-            elif source == "macho":
-                source_records = fetch_macho_records(requester, fetched_at=fetched_at)
             else:
                 source_records = fetch_somurie_records(
                     headless=not args.somurie_headed,

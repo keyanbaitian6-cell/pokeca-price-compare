@@ -101,12 +101,6 @@ button {
   box-shadow: 0 6px 12px rgba(21, 115, 90, 0.18);
 }
 
-.macho-action {
-  color: #25475b;
-  border: 1px solid #cbd9e1;
-  background: #f5f9fb;
-}
-
 .action-title,
 .action-detail { display: block; }
 .action-title { font-size: 1rem; }

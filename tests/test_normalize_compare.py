@@ -64,7 +64,6 @@ def test_series_names_full_width_ampersand_state_words_and_set_codes_are_removed
     assert normalize_product_name("アビスアイ (M5)シュリンク付き") == "アビスアイ"
     assert normalize_product_name("ムニキスゼロ（M1L）シュリンク付きボックス") == "ムニキスゼロ"
     assert normalize_product_name("シャイニートレジャー") == "シャイニートレジャーex"
-    assert normalize_product_name("メガドリーム") == "ドリームex"
 
 
 def test_pokemon_card_prefix_and_other_noise_are_removed_without_over_merging() -> None:

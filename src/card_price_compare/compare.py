@@ -6,7 +6,7 @@ from .models import PriceRecord
 from .normalize import normalize_product_name
 
 
-SOURCE_ORDER = ["collect", "runto", "somurie", "macho"]
+SOURCE_ORDER = ["collect", "runto", "somurie"]
 ACTUAL_CONDITIONS = {"shrink_wrapped", "no_shrink", "no_perforation"}
 UNSPECIFIED_CONDITIONS = {"unspecified", "sealed_unspecified"}
 COMPARABLE_CONDITIONS = ACTUAL_CONDITIONS | UNSPECIFIED_CONDITIONS
@@ -25,7 +25,6 @@ def build_box_comparison(raw: pd.DataFrame) -> pd.DataFrame:
         "collect_price_yen",
         "runto_price_yen",
         "somurie_price_yen",
-        "macho_price_yen",
         "best_site",
         "best_price_yen",
         "spread_yen",
@@ -33,7 +32,6 @@ def build_box_comparison(raw: pd.DataFrame) -> pd.DataFrame:
         "collect_name",
         "runto_name",
         "somurie_name",
-        "macho_name",
     ]
     if raw.empty:
         return pd.DataFrame(columns=output_columns)

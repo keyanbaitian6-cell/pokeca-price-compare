@@ -35,10 +35,9 @@ def _comparison_record(
     collect: int | None = None,
     runto: int | None = None,
     somurie: int | None = None,
-    macho: int | None = None,
     inferred: bool = False,
 ) -> dict[str, object]:
-    prices = {"collect": collect, "runto": runto, "somurie": somurie, "macho": macho}
+    prices = {"collect": collect, "runto": runto, "somurie": somurie}
     present = {source: price for source, price in prices.items() if price is not None}
     best_price = max(present.values())
     best_site = ",".join(source for source, price in present.items() if price == best_price)
@@ -50,7 +49,6 @@ def _comparison_record(
         "collect_price_yen": collect,
         "runto_price_yen": runto,
         "somurie_price_yen": somurie,
-        "macho_price_yen": macho,
         "best_site": best_site,
         "best_price_yen": best_price,
         "spread_yen": spread,
@@ -164,7 +162,7 @@ def test_single_site_rows_move_out_of_the_comparison_tab(comparison: pd.DataFram
     assert list(single_site["product_name_normalized"]) == ["第1弾", "e 基本 海からの風"]
 
 
-def test_comparison_tab_keeps_compact_readable_columns(comparison: pd.DataFrame) -> None:
+def test_comparison_tab_keeps_ten_readable_columns(comparison: pd.DataFrame) -> None:
     prepared = _comparison_sheet_frame(comparison)
 
     assert list(prepared.columns) == COMPARISON_COLUMNS
@@ -173,7 +171,6 @@ def test_comparison_tab_keeps_compact_readable_columns(comparison: pd.DataFrame)
     assert "ステラミラクル" not in prepared["商品名"].tolist()
     # The original store names stay on the raw tab instead of widening this one.
     assert "runto商品名" not in prepared.columns
-    assert "買取マッチョ" in prepared.columns
 
 
 def test_comparison_tab_is_sorted_by_spread_rate(comparison: pd.DataFrame) -> None:
@@ -325,7 +322,7 @@ def test_comparison_formatting_marks_high_spread_rates_and_warnings() -> None:
     ]
     # Only ステラミラクル clears the 5% threshold; 白銀のランス keeps its warning.
     assert red_ranges == [_cell_range(7, (1, 2), 4)]
-    assert _ranges_with_background(requests, YELLOW) == [_cell_range(7, (2, 3), 10)]
+    assert _ranges_with_background(requests, YELLOW) == [_cell_range(7, (2, 3), 9)]
 
 
 def test_comparison_formatting_freezes_the_name_and_condition_columns(
@@ -360,18 +357,6 @@ def test_history_row_reports_single_site_rows_separately() -> None:
         error_count=0,
     ) == ["2026-08-18 12:34", 3, 3, 1, 2, 0, 1]
     assert len(HISTORY_HEADERS) == 7
-
-
-def test_history_groups_three_and_four_site_matches_together() -> None:
-    comparison = pd.DataFrame({"matched_site_count": [4, 3, 2, 1]})
-
-    assert _history_row(
-        comparison,
-        pd.DataFrame({"source": ["collect"]}),
-        fetched_at="2026-08-21T18:58:24+09:00",
-        error_count=0,
-    )[3:5] == [2, 1]
-    assert HISTORY_HEADERS[3] == "3サイト以上"
 
 
 def test_summary_counters_match_the_comparison_tab_row_count() -> None:
@@ -452,7 +437,7 @@ def test_header_notes_explain_the_narrow_columns(comparison: pd.DataFrame) -> No
     }
 
     assert set(notes) == set(COMPARISON_HEADER_NOTES)
-    assert "状態推定" in notes[10]
+    assert "状態推定" in notes[9]
     assert all(request["updateCells"]["range"]["startRowIndex"] == 0 for request in requests if "updateCells" in request)
 
 
