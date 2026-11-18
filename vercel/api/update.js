@@ -54,7 +54,7 @@ async function githubRequest(path, options, token) {
 async function getCooldownMinutes(token, now = Date.now()) {
   const path =
     `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/actions/workflows/` +
-    `${WORKFLOW_FILE}/runs?event=workflow_dispatch&per_page=1`;
+    `${WORKFLOW_FILE}/runs?per_page=1`;
   const response = await githubRequest(path, { method: 'GET' }, token);
   if (!response.ok) {
     throw new Error(`GitHub workflow history returned HTTP ${response.status}`);

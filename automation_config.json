@@ -2,9 +2,11 @@
   "output_spreadsheet_id": "1N3mF4tIjuq8FC3JO5QnT2rPKPn-tu3I8lFLP8ZNysYI",
   "output_spreadsheet_url": "https://docs.google.com/spreadsheets/d/1N3mF4tIjuq8FC3JO5QnT2rPKPn-tu3I8lFLP8ZNysYI/edit",
   "output_title": "ポケカ買取価格表（手動更新）",
-  "update_mode": "manual",
+  "update_mode": "scheduled_and_manual",
   "output_time_zone": "Asia/Tokyo",
-  "automatic_schedule": false,
+  "automatic_schedule": true,
+  "schedule_time_zone": "Asia/Tokyo",
+  "schedule_local_time": "17:00",
   "collect_source_spreadsheet_id": "1uNtzhQBeiPmGR8rjqgwNdesCHbD4Nr6Y4ecZAjBE15g",
   "protected_source_note": "コレクトの参照元シートには書き込まず、output_spreadsheet_idだけを更新する。"
 }

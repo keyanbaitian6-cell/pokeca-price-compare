@@ -80,9 +80,10 @@ CSVと照合キーでは互換性のため英語の状態コードを維持し�
 1サイトしか掲載していない商品は「単独掲載」タブへ分離し、買取価格の降順で表示します。
 元の商品名は「全取得」タブで確認できるため、「比較」タブには載せません。
 
-## 手動更新
+## 自動更新・手動更新
 
-スマホから必要な時だけ更新する場合は [MANUAL_UPDATE_SETUP.md](MANUAL_UPDATE_SETUP.md) を参照してください。Vercelのスマホ用Webページ、合言葉、GitHub Actionsを使用します。自動スケジュール、Windowsタスク スケジューラ、cronは設定しません。
+GitHub Actionsのスケジュールにより、毎日17:00（日本時間）ごろに自動で価格表を更新します。
+スマホから任意のタイミングで手動更新する場合は [MANUAL_UPDATE_SETUP.md](MANUAL_UPDATE_SETUP.md) を参照してください。Vercelのスマホ用Webページ、合言葉、GitHub Actionsを使用します。
 
 ## 保守ポイント
 

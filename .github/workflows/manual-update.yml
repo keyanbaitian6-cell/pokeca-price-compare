@@ -2,6 +2,9 @@ name: ポケカ価格表を手動更新
 
 on:
   workflow_dispatch:
+  schedule:
+    # 毎日 17:00 JST (08:00 UTC) に自動実行
+    - cron: "0 8 * * *"
 
 permissions:
   contents: read
