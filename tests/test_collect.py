@@ -13,3 +13,10 @@ def test_parse_collect_box_columns() -> None:
     assert boxes[0].match_key == "ストームエメラルダ|shrink_wrapped"
     assert boxes[1].condition == "no_shrink"
 
+
+def test_default_cli_sources_pause_collect() -> None:
+    from card_price_compare.cli import build_parser
+
+    args = build_parser().parse_args([])
+    assert args.sources == "runto,somurie"
+

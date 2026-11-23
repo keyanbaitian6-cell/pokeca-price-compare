@@ -9,10 +9,10 @@
 
 - 買取ソムリエ（ポケモンカード）: <https://somurie-kaitori.com/products?category=2&subcategory=7>
 - 買取ソムリエ（ポケモンカード・その他、現在0件）: <https://somurie-kaitori.com/products?category=2&subcategory=13>
-- コレクト: <https://docs.google.com/spreadsheets/d/1uNtzhQBeiPmGR8rjqgwNdesCHbD4Nr6Y4ecZAjBE15g/htmlview>
 - runto: <https://runto666.com/product-category/card/>
+- コレクト（一時中断・既定の取得対象外）: <https://docs.google.com/spreadsheets/d/1uNtzhQBeiPmGR8rjqgwNdesCHbD4Nr6Y4ecZAjBE15g/htmlview>
 
-コレクトのシートは参照専用です。スクリプトはこのIDをGoogle出力先として拒否します。
+コレクトのシートは参照専用です。スクリプトはこのIDをGoogle出力先として拒否します（現在、既定の取得対象からは一時中断しており、再開時は `--sources collect,runto,somurie` または既定値の変更で有効化できます）。
 
 ## セットアップ
 

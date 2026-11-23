@@ -23,8 +23,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="未開封ポケカBOXの買取価格を比較します。")
     parser.add_argument(
         "--sources",
-        default="collect,runto,somurie",
-        help="collect,runto,somurie のカンマ区切り",
+        default="runto,somurie",
+        help="runto,somurie,collect のカンマ区切り（既定: runto,somurie。collect は一時中断）",
     )
     parser.add_argument("--output-dir", default="data", help="CSV保存先")
     parser.add_argument("--request-delay", type=float, default=1.0, help="同一処理内のHTTPアクセス間隔（秒）")
