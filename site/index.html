@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>トレカ損益ラボ｜ポケカ売却・PSA鑑定・オリパ期待値の無料計算ツール集</title>
+  <meta name="description" content="ポケモンカード・トレカのメルカリvs買取店の手取り比較、PSA鑑定の損益分岐点、オリパ還元率・爆死確率、未開封BOXの資産管理まで無料で一発計算できるツール集。登録不要・スマホ対応。">
+  <link rel="canonical" href="https://keyanbaitian6-cell.github.io/pokeca-price-compare/">
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#0F6E56">
+
+  <meta property="og:site_name" content="トレカ損益ラボ">
+  <meta property="og:title" content="トレカ損益ラボ｜ポケカ売却・PSA鑑定・オリパ期待値の無料計算ツール集">
+  <meta property="og:description" content="メルカリと買取店はどっちが得？PSA10はいくらから黒字？オリパの実質還元率は？トレカ売買の損益をスマホで瞬時に計算。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://keyanbaitian6-cell.github.io/pokeca-price-compare/">
+  <meta property="og:image" content="https://keyanbaitian6-cell.github.io/pokeca-price-compare/assets/ogp.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "トレカ損益ラボ",
+    "url": "https://keyanbaitian6-cell.github.io/pokeca-price-compare/",
+    "description": "ポケモンカード・トレカ売却の手取り比較、PSA鑑定の損益分岐点、オリパ期待値、未開封BOX資産管理の無料計算ツール集"
+  }
+  </script>
+</head>
+<body>
+  <div id="prDisclosureBar" class="pr-bar" hidden>
+    <div class="container pr-bar-inner">
+      <span class="pr-tag">PR</span>
+      <span>当サイトはアフィリエイト広告（プロモーション）を含みます。計算ロジックは中立に算出しています。</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand-link" href="./index.html">
+        <img class="brand-mark" src="./assets/favicon.svg" alt="" width="34" height="34">
+        <span class="brand-text">
+          <span class="brand-name">トレカ損益ラボ</span>
+          <span class="brand-sub">TCG Profit Lab</span>
+        </span>
+      </a>
+      <button id="navToggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="メニューを開く">
+        ☰
+      </button>
+      <nav id="siteNav" class="site-nav" aria-label="メインナビゲーション">
+        <a class="nav-link" data-page="home" href="./index.html">トップ</a>
+        <a class="nav-link" data-page="sell-compare" href="./sell-compare.html">フリマ vs 買取</a>
+        <a class="nav-link" data-page="psa" href="./psa.html">PSA鑑定 損益</a>
+        <a class="nav-link" data-page="oripa" href="./oripa.html">オリパ期待値</a>
+        <a class="nav-link" data-page="portfolio" href="./portfolio.html">BOX資産管理</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero-grid" aria-label="サイト概要">
+      <div>
+        <p class="hero-eyebrow">FREE TCG CALCULATOR SUITE</p>
+        <h1>ポケカ・トレカの「手取り」と「期待値」を10秒で可視化</h1>
+        <p class="lead">
+          「メルカリと買取店どっちが得？」「PSA鑑定に出して元が取れる？」「このオリパの実質還元率は？」——
+          感覚で損をしがちなトレカ売買の判断を、手数料・送料・確率まで含めて正確に計算できる無料ツール集です。
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#quick-compare">今すぐ売却手取りを比較</a>
+          <a class="btn btn-secondary" href="./psa.html">PSA鑑定の損益を計算</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="./assets/ogp.jpg" alt="トレカ損益ラボの損益分析イラスト" width="640" height="360">
+      </div>
+    </section>
+
+    <section aria-labelledby="hubTitle">
+      <div class="section-head">
+        <div>
+          <h2 id="hubTitle">用途から計算ツールを選ぶ</h2>
+          <p class="section-sub">すべて登録不要・無料・ブラウザ完結。スマホでも片手で操作できます。</p>
+        </div>
+      </div>
+
+      <div class="tool-hub-grid">
+        <a class="tool-card" href="./sell-compare.html">
+          <div>
+            <div class="tool-card-kicker">TOOL 01 / 売却判断</div>
+            <h3>フリマ vs 買取店 手取り比較</h3>
+            <p>メルカリ・Yahoo!フリマ・ラクマ・magi・スニダンと買取店の手取り＆損益分岐点を一括比較。</p>
+          </div>
+          <span class="tool-card-cta">ツールを開く →</span>
+        </a>
+
+        <a class="tool-card" href="./psa.html">
+          <div>
+            <div class="tool-card-kicker">TOOL 02 / 鑑定投資</div>
+            <h3>PSA鑑定 損益分岐点シミュレーター</h3>
+            <p>素体価格・鑑定料・往復送料按分から、PSA10最低黒字ラインと必要取得率（勝率）を算出。</p>
+          </div>
+          <span class="tool-card-cta">ツールを開く →</span>
+        </a>
+
+        <a class="tool-card" href="./oripa.html">
+          <div>
+            <div class="tool-card-kicker">TOOL 03 / 確率分析</div>
+            <h3>オリパ還元率・爆死確率計算機</h3>
+            <p>超幾何分布（非復元）で実質還元率・アド確率・爆死率を厳密計算。10連運試しガチャ付き。</p>
+          </div>
+          <span class="tool-card-cta">ツールを開く →</span>
+        </a>
+
+        <a class="tool-card" href="./portfolio.html">
+          <div>
+            <div class="tool-card-kicker">TOOL 04 / 資産管理</div>
+            <h3>未開封BOX・カード 資産ポートフォリオ</h3>
+            <p>保有BOXやPSA品の含み損益・利回り・売却手取り目安をブラウザ内に自動保存。CSV入出力対応。</p>
+          </div>
+          <span class="tool-card-cta">ツールを開く →</span>
+        </a>
+      </div>
+    </section>
+
+    <div class="ad-slot" data-ad-slot="topBanner" hidden></div>
+
+    <!-- 主力ツールをトップページで即利用可能に -->
+    <section id="quick-compare" aria-labelledby="quickCompareTitle">
+      <div class="section-head">
+        <div>
+          <h2 id="quickCompareTitle">クイック計算：フリマ vs 買取店 手取り比較</h2>
+          <p class="section-sub">価格を入力するだけで、手数料・送料・梱包費を差し引いた実質手取りと損益分岐点を自動計算します。</p>
+        </div>
+        <a class="btn btn-secondary btn-sm" href="./sell-compare.html">詳細版＆ガイドを見る →</a>
+      </div>
+
+      <div class="calc-layout">
+        <div class="panel">
+          <h3 class="panel-title">条件を入力</h3>
+
+          <div class="preset-row" role="group" aria-label="商品タイププリセット">
+            <button type="button" class="preset-btn is-active" data-item-preset="box">未開封BOX（1箱）</button>
+            <button type="button" class="preset-btn" data-item-preset="single">シングルカード</button>
+            <button type="button" class="preset-btn" data-item-preset="psa">PSA鑑定品</button>
+            <button type="button" class="preset-btn" data-item-preset="bulk">複数BOX・まとめ</button>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label" for="fleaPrice">フリマ販売予定価格</label>
+              <div class="input-wrap">
+                <input id="fleaPrice" class="input-control has-suffix num" type="number" min="0" step="100" value="12500">
+                <span class="input-suffix">円</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="buybackPrice">買取店の査定額</label>
+              <div class="input-wrap">
+                <input id="buybackPrice" class="input-control has-suffix num" type="number" min="0" step="100" value="10500">
+                <span class="input-suffix">円</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label" for="platformSelect">フリマサービス</label>
+              <select id="platformSelect" class="select-control"></select>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="feeRate">販売手数料率</label>
+              <div class="input-wrap">
+                <input id="feeRate" class="input-control has-suffix num" type="number" min="0" max="50" step="0.5" value="10">
+                <span class="input-suffix">%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="shippingPreset">発送方法（送料プリセット）</label>
+            <select id="shippingPreset" class="select-control"></select>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label" for="shippingCost">送料</label>
+              <div class="input-wrap">
+                <input id="shippingCost" class="input-control has-suffix num" type="number" min="0" step="10" value="520">
+                <span class="input-suffix">円</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="packingCost">梱包資材費 <span class="field-hint">ローダー等</span></label>
+              <div class="input-wrap">
+                <input id="packingCost" class="input-control has-suffix num" type="number" min="0" step="10" value="120">
+                <span class="input-suffix">円</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label" for="buybackCost">買取側の諸費用 <span class="field-hint">交通費等</span></label>
+              <div class="input-wrap">
+                <input id="buybackCost" class="input-control has-suffix num" type="number" min="0" step="50" value="0">
+                <span class="input-suffix">円</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="purchaseCost">仕入れ原価 <span class="field-hint">任意・利益計算用</span></label>
+              <div class="input-wrap">
+                <input id="purchaseCost" class="input-control has-suffix num" type="number" min="0" step="100" value="0" placeholder="未入力可">
+                <span class="input-suffix">円</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="range-header">
+              <label class="field-label" for="effortCost" style="margin:0;">フリマ出品の手間・リスク換算</label>
+              <span id="effortCostLabel" class="range-value">0円</span>
+            </div>
+            <input id="effortCost" class="range-control" type="range" min="0" max="2000" step="100" value="0">
+          </div>
+        </div>
+
+        <div class="panel panel-sticky">
+          <div id="verdictBox" class="verdict-box">
+            <p id="verdictKicker" class="verdict-kicker">計算結果</p>
+            <h3 id="verdictHeadline" class="verdict-headline">—</h3>
+            <p id="verdictSub" class="verdict-sub"></p>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-label">フリマ実質手取り</div>
+              <div id="fleaNetValue" class="kpi-value num">—</div>
+              <div id="fleaNetMeta" class="kpi-meta">—</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">買取店実質手取り</div>
+              <div id="buybackNetValue" class="kpi-value num">—</div>
+              <div id="buybackNetMeta" class="kpi-meta">—</div>
+            </div>
+          </div>
+
+          <div class="bar-block" aria-label="手取りとコストの内訳バー">
+            <div class="bar-item">
+              <div class="bar-head">
+                <span>フリマ手取り</span>
+                <span id="barFleaAmount" class="num">—</span>
+              </div>
+              <div class="bar-track">
+                <div id="barFleaNet" class="bar-fill-net" style="width:0%"></div>
+                <div id="barFleaCost" class="bar-fill-cost" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-head">
+                <span>買取店手取り</span>
+                <span id="barBuybackAmount" class="num">—</span>
+              </div>
+              <div class="bar-track">
+                <div id="barBuybackNet" class="bar-fill-buyback" style="width:0%"></div>
+                <div id="barBuybackCost" class="bar-fill-cost" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="bar-legend">
+              <span><span class="legend-dot" style="background:var(--brand)"></span>フリマ手取り</span>
+              <span><span class="legend-dot" style="background:var(--gold)"></span>買取店手取り</span>
+              <span><span class="legend-dot" style="background:#d7cec0"></span>手数料・送料・諸費用</span>
+            </div>
+          </div>
+
+          <div class="breakeven-box">
+            <h4 class="breakeven-title">損益分岐ライン（逆算）</h4>
+            <ul id="breakevenList" class="breakeven-list"></ul>
+          </div>
+
+          <div id="profitSection" class="kpi-grid" hidden>
+            <div class="kpi-card">
+              <div class="kpi-label">フリマ売却時の純利益</div>
+              <div id="profitFlea" class="kpi-value num">—</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">買取店売却時の純利益</div>
+              <div id="profitBuyback" class="kpi-value num">—</div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <a id="sellShareBtn" class="btn btn-secondary btn-sm" href="#" target="_blank" rel="noopener noreferrer">Xで結果をシェア</a>
+            <button id="sellCopyBtn" class="btn btn-secondary btn-sm" type="button">結果をコピー</button>
+            <span id="sellCopyToast" class="copy-toast" role="status" aria-live="polite"></span>
+          </div>
+
+          <div id="sellRecBox" class="rec-box"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;">
+        <h3 style="margin:0 0 12px;font-size:1.06rem;">主要フリマ・買取店 横断手取り比較</h3>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>売却ルート</th>
+                <th class="num-cell">手数料 / 諸費用</th>
+                <th class="num-cell">実質手取り</th>
+                <th class="num-cell">買取店との差</th>
+                <th class="num-cell">買取に勝つ出品額</th>
+              </tr>
+            </thead>
+            <tbody id="platformTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div class="ad-slot" data-ad-slot="bottomBanner" hidden></div>
+
+    <article class="content-section">
+      <h2>なぜトレカ売買では「見た目価格」ではなく「手取り計算」が重要なのか？</h2>
+      <p>
+        ポケモンカード未開封BOXや高額シングルカードを売却するとき、フリマの販売相場は買取店の査定額より10〜20%高く見えます。
+        しかし、メルカリの10%手数料・宅急便コンパクト送料（520円）・梱包資材費（100〜150円）を合計すると、
+        <strong>1万円のBOXでは約1,640円（約16.4%）がコストとして差し引かれます</strong>。
+      </p>
+      <p>
+        つまり、フリマ相場が12,000円でも手取りは10,360円となり、買取査定が10,500円であれば「フリマの方が高く売れるはずなのに実際は損していた」という逆転現象が頻繁に起きます。
+        トレカ損益ラボでは、売却判断・PSA鑑定の提出基準・オリパの期待値・保有BOXの含み益まで、数字ベースで冷静に判断できる環境を無料で提供しています。
+      </p>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <p class="footer-title">トレカ損益ラボ（TCG Profit Lab）</p>
+          <p style="margin:0;">ポケモンカード・トレカの売却手取り、PSA鑑定、オリパ期待値、BOX資産管理を無料で計算できる個人向けWebツール集です。</p>
+        </div>
+        <div>
+          <p class="footer-title">無料計算ツール</p>
+          <ul class="footer-links">
+            <li><a href="./sell-compare.html">フリマ vs 買取店 手取り比較</a></li>
+            <li><a href="./psa.html">PSA鑑定 損益分岐点シミュレーター</a></li>
+            <li><a href="./oripa.html">オリパ還元率・爆死確率計算機</a></li>
+            <li><a href="./portfolio.html">未開封BOX・カード資産管理</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="footer-title">サイト情報</p>
+          <ul class="footer-links">
+            <li><a href="./privacy.html">プライバシーポリシー・免責事項</a></li>
+            <li><a data-x-link href="#" target="_blank" rel="noopener noreferrer" hidden>公式X</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span data-site-operator>トレカ損益ラボ運営</span></span>
+        <span>最終更新: <span data-site-updated>2026-11-24</span></span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initSellComparePage } from './js/page-sell-compare.js';
+    initSellComparePage('home');
+  </script>
+</body>
+</html>

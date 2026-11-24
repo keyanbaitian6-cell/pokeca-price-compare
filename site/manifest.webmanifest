@@ -1,0 +1,16 @@
+{
+  "name": "トレカ損益ラボ（TCG Profit Lab）",
+  "short_name": "トレカ損益ラボ",
+  "description": "ポケカ・トレカ売却の手取り比較、PSA鑑定損益、オリパ期待値、BOX資産管理の無料計算ツール集",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F7F5F0",
+  "theme_color": "#0F6E56",
+  "icons": [
+    {
+      "src": "./assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
