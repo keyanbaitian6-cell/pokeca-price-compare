@@ -1,0 +1,72 @@
+{
+  "project": {
+    "title": "トレカBOX買取比較（汎用ひな形）",
+    "comparison_mode": "highest",
+    "currency_symbol": "¥",
+    "spreadsheet_id": "",
+    "manual_update_url": ""
+  },
+  "safety": {
+    "request_delay_seconds": 2.5,
+    "timeout_seconds": 20.0,
+    "max_pages_per_source": 5,
+    "respect_robots_txt": true
+  },
+  "normalization": {
+    "strip_phrases": [
+      "未開封BOX",
+      "シュリンク付き",
+      "シュリンクあり",
+      "シュリンク有",
+      "BOX"
+    ],
+    "strip_regex": [
+      "\\b(?:SV|SM|S|M)\\d+[a-zA-Z]?\\b"
+    ],
+    "aliases": {
+      "サンプル拡張パックA": "拡張パックA"
+    }
+  },
+  "alerts": {
+    "highlight_spread_rate": 0.05,
+    "highlight_spread_yen": 3000,
+    "targets": [
+      {
+        "item": "拡張パックA",
+        "condition": "シュリンク有",
+        "target_price_yen": 12000
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "tcg_shop_a",
+      "label": "カードショップA（公開一覧ページ）",
+      "enabled": true,
+      "type": "html_list",
+      "url": "https://tcg-shop-a.example/buyback-list",
+      "default_condition": "シュリンク有",
+      "selectors": {
+        "item": ".card-item",
+        "name": ".card-name",
+        "price": ".card-price",
+        "condition": ".card-condition",
+        "link": "a"
+      }
+    },
+    {
+      "id": "tcg_shop_b",
+      "label": "カードショップB（公開一覧ページ）",
+      "enabled": true,
+      "type": "html_list",
+      "url": "https://tcg-shop-b.example/prices",
+      "default_condition": "シュリンク有",
+      "selectors": {
+        "item": "li.product",
+        "name": "h2",
+        "price": ".price",
+        "link": "a"
+      }
+    }
+  ]
+}

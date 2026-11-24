@@ -1,0 +1,49 @@
+{
+  "project": {
+    "title": "スニーカー・推し活グッズ在庫＆値下げ監視",
+    "comparison_mode": "lowest",
+    "currency_symbol": "¥",
+    "spreadsheet_id": "",
+    "manual_update_url": ""
+  },
+  "safety": {
+    "request_delay_seconds": 3.0,
+    "timeout_seconds": 20.0,
+    "max_pages_per_source": 3,
+    "respect_robots_txt": true
+  },
+  "normalization": {
+    "strip_phrases": ["【限定】", "【予約】", "新品未開封", "送料込み"],
+    "strip_regex": [],
+    "aliases": {}
+  },
+  "alerts": {
+    "highlight_spread_rate": 0.05,
+    "highlight_spread_yen": 1500,
+    "targets": [
+      {
+        "item": "推し活アクリルスタンド 限定Ver.",
+        "condition": "新品",
+        "target_price_yen": 4000
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "goods_single_demo",
+      "label": "グッズ公式ショップ（個別ページ監視サンプル）",
+      "enabled": true,
+      "type": "html_single",
+      "urls": [
+        "sample_pages/shop_single_item.html"
+      ],
+      "default_condition": "新品",
+      "selectors": {
+        "name": "h1.detail-title",
+        "price": ".detail-price",
+        "condition": ".detail-condition",
+        "stock": ".detail-stock"
+      }
+    }
+  ]
+}

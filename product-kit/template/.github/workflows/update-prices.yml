@@ -1,0 +1,65 @@
+name: 価格比較スプレッドシートを自動更新
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 毎日 17:00 JST (08:00 UTC) に1回だけ自動実行（対象サイトへ負荷をかけない低頻度設定）
+    # 時刻を変えたい場合は docs/SETUP_GUIDE.md の「JST→UTC早見表」を参照してください
+    - cron: "0 8 * * *"
+
+permissions:
+  contents: read
+
+# 連続実行を防ぎ、実行中に再起動された場合は待機させる
+concurrency:
+  group: price-monitor-auto-update
+  cancel-in-progress: false
+
+jobs:
+  update-prices:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TZ: Asia/Tokyo
+
+    steps:
+      - name: ソースコードを取得
+        uses: actions/checkout@v4
+
+      - name: Python 3.12 を準備
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-google.txt
+
+      - name: ライブラリをインストール
+        run: python -m pip install -r requirements-google.txt
+
+      - name: config.json の安全チェック
+        env:
+          PYTHONPATH: src
+        run: python -m price_monitor --config config.json --check-config
+
+      - name: 価格を取得してGoogleスプレッドシートを更新
+        env:
+          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+          OUTPUT_SPREADSHEET_ID: ${{ secrets.OUTPUT_SPREADSHEET_ID }}
+          PYTHONPATH: src
+        shell: bash
+        run: |
+          if [ -z "$GOOGLE_CREDENTIALS_JSON" ] || [ -z "$OUTPUT_SPREADSHEET_ID" ]; then
+            echo "エラー: GitHub Secrets に GOOGLE_CREDENTIALS_JSON と OUTPUT_SPREADSHEET_ID を登録してください。" >&2
+            exit 1
+          fi
+          credentials_path="$RUNNER_TEMP/google-credentials.json"
+          umask 077
+          printf '%s' "$GOOGLE_CREDENTIALS_JSON" > "$credentials_path"
+          python -m price_monitor \
+            --config config.json \
+            --strict \
+            --output-dir "$RUNNER_TEMP/price-monitor-output" \
+            --google-spreadsheet-id "$OUTPUT_SPREADSHEET_ID" \
+            --google-credentials "$credentials_path"

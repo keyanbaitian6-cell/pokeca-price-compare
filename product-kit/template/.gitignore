@@ -1,0 +1,22 @@
+# ローカル環境・一時ファイル
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+node_modules/
+.DS_Store
+Thumbs.db
+
+# 実行時に自動生成されるデータ
+data/
+outputs/
+*.log
+
+# 【重要】認証情報・秘密鍵は絶対にGitへコミットしない
+.env
+.env.*
+*.pem
+*.key
+*service-account*.json
+*credentials*.json
+google-key.json

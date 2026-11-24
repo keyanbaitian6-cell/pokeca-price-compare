@@ -1,0 +1,66 @@
+{
+  "project": {
+    "title": "レトロゲーム・中古カメラ買取比較表",
+    "comparison_mode": "highest",
+    "currency_symbol": "¥",
+    "spreadsheet_id": "",
+    "manual_update_url": ""
+  },
+  "safety": {
+    "request_delay_seconds": 2.5,
+    "timeout_seconds": 20.0,
+    "max_pages_per_source": 5,
+    "respect_robots_txt": true
+  },
+  "normalization": {
+    "strip_phrases": ["【買取強化】", "美品", "箱説付", "完品"],
+    "strip_regex": ["\\([A-Z0-9-]+\\)"],
+    "aliases": {
+      "GR3": "RICOH GR III",
+      "GBA SP ファミコンカラー": "ゲームボーイアドバンスSP ファミコンカラー"
+    }
+  },
+  "alerts": {
+    "highlight_spread_rate": 0.08,
+    "highlight_spread_yen": 5000,
+    "targets": [
+      {
+        "item": "RICOH GR III",
+        "condition": "中古美品",
+        "target_price_yen": 120000
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "kaitori_a",
+      "label": "買取店A（公開価格表ページ）",
+      "enabled": true,
+      "type": "html_list",
+      "url": "https://kaitori-a.example/camera-list",
+      "default_condition": "中古美品",
+      "selectors": {
+        "item": "tr.price-row",
+        "name": "td.item-name",
+        "price": "td.buyback-price",
+        "condition": "td.rank",
+        "link": "td.item-name a"
+      }
+    },
+    {
+      "id": "kaitori_b",
+      "label": "買取店B（公開CSV価格表）",
+      "enabled": true,
+      "type": "csv_feed",
+      "url": "https://kaitori-b.example/public-prices.csv",
+      "default_condition": "中古美品",
+      "columns": {
+        "name": "商品名",
+        "condition": "ランク",
+        "price": "買取上限価格",
+        "stock": "受付状況",
+        "url": "詳細URL"
+      }
+    }
+  ]
+}
