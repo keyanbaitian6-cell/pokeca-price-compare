@@ -52,7 +52,16 @@ python3 -m venv .venv
 
 - `data/raw_prices.csv`: 取得した全レコード
 - `data/box_comparison.csv`: 同一商品・同一シュリンク状態で比較したBOX価格
-- `data/run_summary.json`: 取得件数、状態推定件数、価格差20%超の検査結果、サイト別エラー
+- `data/shrink_trend_history.csv`: ローカル実行時に蓄積するシュリンク有BOXの日次推移履歴
+- `data/market_insights.json`: 店舗名を匿名化した市況分析結果（前回比・7日前比ランキング、価格差注目BOX、地合いサマリー）
+- `data/ai_prompts.md` / `data/ai_prompts.json`: 無料/Web版のChatGPT・Gemini・Claudeへそのまま貼れるX投稿用（3パターン）・週次note用プロンプト＆下書き素材（APIキー不要）
+- `data/run_summary.json`: 取得件数、状態推定件数、価格差20%超の検査結果、地合い概要、サイト別エラー
+
+外部サイトへアクセスせずに保存済みCSVからプロンプトだけ再生成する場合:
+
+```bash
+python -m card_price_compare --from-local-data --output-dir data
+```
 
 異なる実状態は別商品として扱います。片方のサイトだけ状態が `unspecified` の場合は同名商品の実状態行へ価格を補完し、内部データでは `condition_inferred` フラグ、閲覧用シートでは「注意」列に「状態推定」と表示します。`shrink_wrapped` と `no_shrink` は統合しません。runtoの価格幅は商品詳細のバリエーションJSONを取得して、シュリンク有・無などを個別価格に展開します。
 
@@ -82,6 +91,12 @@ CSVと照合キーでは互換性のため英語の状態コードを維持し�
 - **単独掲載**: 1サイトのみ掲載の商品を、買取価格の降順で分離表示
 - **更新履歴**: 実行履歴を新しい順（最新が2行目）で表示
 - **全取得**: 取得した全レコード（元の商品名・URLの確認用）
+- **発信プロンプト**: 特定店舗名を匿名化した市況ダイジェスト、毎日のX投稿用プロンプト3パターン（速報系／気づき系／ツール誘導系）、週次note記事作成用プロンプト、クイック下書きベース、無料計算ツール「トレカ損益ラボ」誘導テンプレートを1セルずつ配置（D列をコピーしてWeb版生成AIへそのまま貼付可能）
+
+## 生成AI連携・X/note収益化＆無料ツール連携
+
+- X/note発信＆収益化ロードマップ・投稿ルーティン: [docs/X_NOTE_MONETIZATION_PLAYBOOK.md](docs/X_NOTE_MONETIZATION_PLAYBOOK.md)
+- 無料計算ツール集「トレカ損益ラボ」（`site/`）収益化ガイド: [MONETIZATION_GUIDE.md](MONETIZATION_GUIDE.md)
 
 ## 自動更新・手動更新
 

@@ -7,7 +7,15 @@ from pathlib import Path
 import pandas as pd
 
 from .collectors.collect_sheet import SPREADSHEET_ID as COLLECT_SOURCE_SPREADSHEET_ID
+from .market_analysis import analyze_market
 from .normalize import normalize_product_name
+from .prompt_builder import (
+    PROMPT_SHEET_HEADERS,
+    TOOL_SITE_BASE_URL,
+    PromptBundle,
+    build_prompt_bundle,
+    write_prompt_outputs,
+)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -89,6 +97,7 @@ TREND_SHEET_TITLE = "価格推移（シュリンク有）"
 SINGLE_LISTING_SHEET_TITLE = "単独掲載"
 HISTORY_SHEET_TITLE = "更新履歴"
 RAW_SHEET_TITLE = "全取得"
+PROMPT_SHEET_TITLE = "発信プロンプト"
 TREND_ARCHIVE_SHEET_TITLE = "推移データ（保管用）"
 
 TREND_HEADERS = ["日付", "商品名", "最高値", "最高値の店"]
@@ -187,9 +196,19 @@ TREND_HEADER_NOTES = {
     ),
 }
 
+PROMPT_HEADER_NOTES = {
+    3: (
+        "この列のセルを1回選択してコピーし、無料/Web版のChatGPT・Gemini・Claudeへそのまま貼り付けて使えます"
+        "（APIキー課金不要）。特定店舗名や店舗別の生価格表は自動除外済みです。"
+    ),
+    4: "誘導先の無料計算ツール「トレカ損益ラボ」URLや収益導線（note・ASP）のメモです。ASP案内時は必ず #PR 表記を入れてください。",
+}
+PROMPT_CATEGORY_ACCENT_HEX = "E8F0FE"
+
 COMPARISON_COLUMN_WIDTHS = [280, 95, 95, 90, 130, 70, 90, 95, 95, 105, 80]
 SINGLE_LISTING_COLUMN_WIDTHS = [300, 100, 120, 110]
 RAW_COLUMN_WIDTHS = [80, 300, 220, 220, 110, 100, 100, 100, 100, 100, 90, 220, 120, 150, 150]
+PROMPT_COLUMN_WIDTHS = [115, 215, 220, 680, 255]
 
 
 def _sheet_values(frame: pd.DataFrame) -> list[list[object]]:
@@ -1190,13 +1209,13 @@ def _trend_matrix_format_requests(
     return requests
 
 
-def _publish_shrink_trends(
+def _publish_shrink_trends_with_history(
     spreadsheet: object,
     comparison: pd.DataFrame,
     *,
     fetched_at: str,
     raw: pd.DataFrame | None = None,
-) -> dict[str, int]:
+) -> tuple[dict[str, int], pd.DataFrame]:
     """Archive full daily shrink-wrapped history in a hidden tab and render a 30-day matrix."""
     import gspread
     from gspread.utils import ValueRenderOption
@@ -1307,7 +1326,107 @@ def _publish_shrink_trends(
     spreadsheet.batch_update({"requests": requests})
 
     current_day = datetime.fromisoformat(fetched_at).astimezone(JAPAN_TIME_ZONE).date().isoformat()
-    return _previous_shrink_prices(trend, comparison, current_day=current_day)
+    return _previous_shrink_prices(trend, comparison, current_day=current_day), trend
+
+
+def _publish_shrink_trends(
+    spreadsheet: object,
+    comparison: pd.DataFrame,
+    *,
+    fetched_at: str,
+    raw: pd.DataFrame | None = None,
+) -> dict[str, int]:
+    """Backwards-compatible wrapper returning only previous shrink-wrapped prices."""
+    previous_prices, _ = _publish_shrink_trends_with_history(
+        spreadsheet,
+        comparison,
+        fetched_at=fetched_at,
+        raw=raw,
+    )
+    return previous_prices
+
+
+def _prompt_format_requests(sheet_id: int, row_count: int) -> list[dict[str, object]]:
+    """Format the 発信プロンプト tab for single-cell copy/paste on PC and mobile."""
+    column_count = len(PROMPT_SHEET_HEADERS)
+    requests: list[dict[str, object]] = [
+        _reset_format_request(sheet_id),
+        _header_format_request(sheet_id, column_count),
+        _freeze_request(sheet_id, rows=1, columns=2),
+    ]
+    requests += _row_height_requests(sheet_id, row_count, header_px=34, data_px=165)
+    requests += [
+        _note_request(sheet_id, 0, column, note)
+        for column, note in PROMPT_HEADER_NOTES.items()
+    ]
+    requests += _column_width_requests(sheet_id, PROMPT_COLUMN_WIDTHS)
+    if row_count:
+        requests.append(
+            {
+                "repeatCell": {
+                    "range": _grid_range(sheet_id, 1, row_count + 1, 0, column_count),
+                    "cell": {
+                        "userEnteredFormat": {
+                            "wrapStrategy": "WRAP",
+                            "verticalAlignment": "TOP",
+                        }
+                    },
+                    "fields": "userEnteredFormat(wrapStrategy,verticalAlignment)",
+                }
+            }
+        )
+        requests += _zebra_requests(sheet_id, row_count, column_count)
+        requests.append(
+            {
+                "repeatCell": {
+                    "range": _grid_range(sheet_id, 1, row_count + 1, 0, 1),
+                    "cell": {
+                        "userEnteredFormat": {
+                            "backgroundColor": _color(PROMPT_CATEGORY_ACCENT_HEX),
+                            "textFormat": {"bold": True, "foregroundColor": _color(HEADER_BACKGROUND_HEX)},
+                            "horizontalAlignment": "CENTER",
+                            "verticalAlignment": "TOP",
+                        }
+                    },
+                    "fields": "userEnteredFormat(backgroundColor,textFormat,horizontalAlignment,verticalAlignment)",
+                }
+            }
+        )
+        requests.append(
+            {
+                "repeatCell": {
+                    "range": _grid_range(sheet_id, 1, row_count + 1, 1, 2),
+                    "cell": {"userEnteredFormat": {"textFormat": {"bold": True}}},
+                    "fields": "userEnteredFormat.textFormat",
+                }
+            }
+        )
+    return requests
+
+
+def _publish_prompt_sheet(spreadsheet: object, bundle: PromptBundle) -> object:
+    """Write store-anonymized AI prompt entries into the dedicated 発信プロンプト tab."""
+    rows = bundle.to_sheet_rows()
+    data_row_count = max(0, len(rows) - 1)
+    needed_rows = max(len(rows) + 3, 15)
+    needed_columns = len(PROMPT_SHEET_HEADERS)
+    try:
+        worksheet = spreadsheet.worksheet(PROMPT_SHEET_TITLE)
+        worksheet.clear()
+        if worksheet.row_count != needed_rows or worksheet.col_count != needed_columns:
+            worksheet.resize(rows=needed_rows, cols=needed_columns)
+    except Exception as exc:
+        if exc.__class__.__name__ != "WorksheetNotFound":
+            raise
+        worksheet = spreadsheet.add_worksheet(
+            title=PROMPT_SHEET_TITLE,
+            rows=needed_rows,
+            cols=needed_columns,
+        )
+    # Use RAW so lines starting with '+', '-', or '=' in prompts are never parsed as formulas.
+    worksheet.update(values=rows, range_name="A1", value_input_option="RAW")
+    spreadsheet.batch_update({"requests": _prompt_format_requests(worksheet.id, data_row_count)})
+    return worksheet
 
 
 def _remove_deprecated_summary_sources(spreadsheet: object, summary: object) -> None:
@@ -1373,6 +1492,7 @@ def _reorder_sheets(spreadsheet: object) -> None:
         (SINGLE_LISTING_SHEET_TITLE, False),
         (HISTORY_SHEET_TITLE, False),
         (RAW_SHEET_TITLE, False),
+        (PROMPT_SHEET_TITLE, False),
         (TREND_ARCHIVE_SHEET_TITLE, True),
     ]
     requests: list[dict[str, object]] = []
@@ -1405,6 +1525,9 @@ def publish_frames(
     raw: pd.DataFrame,
     fetched_at: str | None = None,
     error_count: int = 0,
+    prompt_output_dir: str | Path | None = None,
+    skip_prompts: bool = False,
+    tool_base_url: str = TOOL_SITE_BASE_URL,
 ) -> str:
     """Refresh output tabs and append history; never write to the Collect source sheet."""
     if spreadsheet_id == COLLECT_SOURCE_SPREADSHEET_ID:
@@ -1424,7 +1547,7 @@ def publish_frames(
     if not effective_fetched_at:
         effective_fetched_at = datetime.now(JAPAN_TIME_ZONE).isoformat(timespec="seconds")
 
-    previous_prices = _publish_shrink_trends(
+    previous_prices, trend_history = _publish_shrink_trends_with_history(
         spreadsheet,
         comparison,
         fetched_at=effective_fetched_at,
@@ -1495,5 +1618,16 @@ def publish_frames(
     )
 
     _ensure_summary_sheet(spreadsheet)
+    if not skip_prompts:
+        insights = analyze_market(
+            comparison,
+            trend_history,
+            fetched_at=effective_fetched_at,
+        )
+        bundle = build_prompt_bundle(insights, tool_base_url=tool_base_url)
+        _publish_prompt_sheet(spreadsheet, bundle)
+        if prompt_output_dir is not None:
+            write_prompt_outputs(insights, bundle, prompt_output_dir)
+
     _reorder_sheets(spreadsheet)
     return f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/edit"
