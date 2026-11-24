@@ -6,7 +6,7 @@
   "output_time_zone": "Asia/Tokyo",
   "automatic_schedule": true,
   "schedule_time_zone": "Asia/Tokyo",
-  "schedule_local_time": "17:00",
+  "schedule_local_time": "13:42",
   "collect_source_spreadsheet_id": "1uNtzhQBeiPmGR8rjqgwNdesCHbD4Nr6Y4ecZAjBE15g",
   "protected_source_note": "コレクトの参照元シートには書き込まず、output_spreadsheet_idだけを更新する。"
 }

@@ -85,7 +85,7 @@ CSVと照合キーでは互換性のため英語の状態コードを維持し�
 
 ## 自動更新・手動更新
 
-GitHub Actionsのスケジュールにより、毎日17:00（日本時間）ごろに自動で価格表を更新します。
+GitHub Actionsのスケジュールにより、毎日13:42（日本時間）ごろに自動で価格表を更新します。
 スマホから任意のタイミングで手動更新する場合は [MANUAL_UPDATE_SETUP.md](MANUAL_UPDATE_SETUP.md) を参照してください。Vercelのスマホ用Webページ、合言葉、GitHub Actionsを使用します。
 
 ## 保守ポイント
