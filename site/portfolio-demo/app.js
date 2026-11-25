@@ -514,6 +514,7 @@
       archAnimating: false,
       mobileRunning: false,
       mobileCooldownUntil: 0,
+      mobileTimers: [],
       freshItemIds: new Set(),
     };
 
@@ -753,7 +754,11 @@
               metrics.deltaPrev > 0 ? 'cell-delta-up' : metrics.deltaPrev < 0 ? 'cell-delta-down' : 'cell-delta-flat';
             const d7Class =
               metrics.delta7d > 0 ? 'cell-delta-up' : metrics.delta7d < 0 ? 'cell-delta-down' : 'cell-delta-flat';
-            const recentCols = item.history.slice(-5).reverse();
+            const h = item.history;
+            const recentCols =
+              h.length >= 6
+                ? [h[h.length - 1], h[h.length - 2], h[h.length - 4], h[h.length - 5], h[0]]
+                : h.slice(-5).reverse();
             return `
               <tr class="${state.freshItemIds.has(item.id) ? 'is-fresh-row' : ''}">
                 <td class="cell-product">${escapeHtml(item.name)}</td>
@@ -875,8 +880,35 @@
       });
     }
 
+    function clearMobileTimers() {
+      state.mobileTimers.forEach((id) => window.clearTimeout(id));
+      state.mobileTimers = [];
+    }
+
+    function formatJstStamp(date) {
+      try {
+        const parts = new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Tokyo',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }).formatToParts(date);
+        const map = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+        return `${map.year}-${map.month}-${map.day} ${map.hour}:${map.minute}`;
+      } catch (_err) {
+        const pad = (n) => String(n).padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      }
+    }
+
     if (resetDemoBtn) {
       resetDemoBtn.addEventListener('click', () => {
+        clearMobileTimers();
+        state.mobileRunning = false;
+        if (mobileTriggerBtn) mobileTriggerBtn.disabled = false;
         state.datasets = createInitialDatasets();
         state.freshItemIds.clear();
         state.mobileCooldownUntil = 0;
@@ -904,16 +936,18 @@
           return;
         }
 
+        const targetGenre = state.genre;
         state.mobileRunning = true;
         mobileTriggerBtn.disabled = true;
+        clearMobileTimers();
         setMobileStatus('1/3 合言葉SHA-256照合OK → GitHub Actions ワークフローを起動しています...', '');
 
-        window.setTimeout(() => {
+        const step2Timer = window.setTimeout(() => {
           setMobileStatus('2/3 対象サイトを巡回中（1秒間隔アクセス制御・名寄せ検証中）...', '');
         }, 700);
 
-        window.setTimeout(() => {
-          const ds = state.datasets[state.genre];
+        const step3Timer = window.setTimeout(() => {
+          const ds = state.datasets[targetGenre];
           state.freshItemIds.clear();
 
           // Apply realistic fresh market moves to 2 items
@@ -927,12 +961,11 @@
             item.prices[targetShop] = Math.max(1000, item.prices[targetShop] + delta);
             const newMetrics = computeItemMetrics(item, ds);
             item.history = item.history.slice(1).concat(newMetrics.bestPrice);
+            item.sevenDayAgo = item.history[0];
             state.freshItemIds.add(item.id);
           });
 
-          const nowDate = new Date();
-          const pad = (n) => String(n).padStart(2, '0');
-          const stamp = `${nowDate.getFullYear()}-${pad(nowDate.getMonth() + 1)}-${pad(nowDate.getDate())} ${pad(nowDate.getHours())}:${pad(nowDate.getMinutes())}`;
+          const stamp = formatJstStamp(new Date());
           ds.updatedAt = `${stamp} JST`;
           ds.historyLog.unshift({
             time: stamp,
@@ -943,12 +976,15 @@
             errors: 0,
           });
 
+          state.mobileTimers = [];
           state.mobileRunning = false;
           state.mobileCooldownUntil = Date.now() + 5 * 60 * 1000;
           mobileTriggerBtn.disabled = false;
           setMobileStatus('3/3 更新完了！スプレッドシートの価格・前回比・30日推移・更新履歴が反映されました（5分間の連打ガード有効）。', 'success');
           renderSpreadsheet();
         }, 1550);
+
+        state.mobileTimers.push(step2Timer, step3Timer);
       });
     }
 
@@ -1022,6 +1058,7 @@
           document.getElementById('optNotify').checked = true;
           document.getElementById('optSupport').checked = true;
         }
+        if (copyFeedback) copyFeedback.textContent = '';
         renderEstimator();
       });
     });

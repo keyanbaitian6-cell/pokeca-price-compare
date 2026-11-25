@@ -33,7 +33,7 @@
 | [`src/card_price_compare/cli.py`](../../src/card_price_compare/cli.py) | `--strict`（1サイト失敗時にシートを上書きしない保護）、JST固定タイムスタンプ、`utf-8-sig` CSV、`run_summary.json` |
 | [`src/card_price_compare/google_output.py`](../../src/card_price_compare/google_output.py) | `batch_update`一括書式整形、差率/差額の二重強調、30日横型`SPARKLINE`＋非表示アーカイブ2層分離、`INDEX/MATCH/MAX`連動サマリー、保護エリア不干渉 |
 | [`.github/workflows/manual-update.yml`](../../.github/workflows/manual-update.yml) | `TZ: Asia/Tokyo`、`concurrency`排他制御、`RUNNER_TEMP`への安全な一時認証ファイル書き出し、`workflow_dispatch`＋`schedule`併用 |
-| [`vercel/api/update.js`](../../vercel/api/update.js) | SHA-256＋`crypto.timingSafeEqual`照合、同一オリジン確認、5分間クールダウン制御、Fine-grained PAT連携（スマホ1タップ更新オプション時） |
+| [`vercel/api/update.js`](../../vercel/api/update.js) | SHA-256＋`crypto.timingSafeEqual`照合、同一オリジン確認、5分間クールダウン制御、Fine-grained PAT連携（※流用時は `GITHUB_OWNER`・`GITHUB_REPO`・`WORKFLOW_FILE`・`User-Agent` を必ず顧客リポジトリ用へ変更または環境変数化） |
 
 ---
 
@@ -69,14 +69,14 @@
 ### Phase 4：お客様環境デプロイ＆マニュアル自動生成（40〜60分）
 1. **Prompt #7** に「今回の案件仕様・ファイル構成・保守ポイント（セレクタ一覧）」を渡し、[`delivery/client-manual-template.md`](../delivery/client-manual-template.md) ベースのお客様専用マニュアルを5分で完成させる。
 2. お客様側の非公開GitHubリポジトリへコードを納品（またはZIP＋導入手順で共有）し、`GOOGLE_CREDENTIALS_JSON` シークレット設定後に GitHub Actions の **Run workflow** で初回疎通を実行。
-3. スマホ手動更新オプションがある場合は、Vercelプロジェクト設定（`GITHUB_TOKEN` と `UPDATE_PASSWORD_HASH`）を行い、正しい合言葉・誤った合言葉・5分連打ガードの3パターンを疎通確認。
+3. スマホ手動更新オプションがある場合は、`vercel/api/update.js` 内のリポジトリ指定定数（`GITHUB_OWNER` / `GITHUB_REPO` / `WORKFLOW_FILE` / `User-Agent`）が顧客リポジトリ用になっていることを確認したうえで Vercelプロジェクト設定（`GITHUB_TOKEN` と `UPDATE_PASSWORD_HASH`）を行い、正しい合言葉・誤った合言葉・5分連打ガードの3パターンを疎通確認。
 4. 納品完了連絡＋「検収5営業日のお願い＋将来のレイアウト変更時スポット保守のご案内」を送ってクローズ！
 
 ---
 
 ## 納品前・品質ゲートチェックリスト（10項目・全項目クリアで納品）
 
-- [ ] **1. 秘密情報ゼロ確認**：リポジトリ内に認証JSON・合言葉平文・トークン・他案件のシートIDが1文字も入っていない（`git status` / `git diff` 確認）。
+- [ ] **1. 秘密情報ゼロ確認**：リポジトリ内に認証JSON・合言葉平文・トークン・他案件のシートID・個人GitHubユーザー名や個人リポジトリ名が1文字も入っていない（`git status` / `git diff` 確認）。
 - [ ] **2. 既存テスト＆新規テスト全PASS**：`pytest`（＋Vercel使用時は `node --test`）がすべて成功する。
 - [ ] **3. 0件エラー保護確認**：サイト構造変更や通信失敗で0件になった時、終了コード1になり既存シートを上書きしない（`--strict`）。
 - [ ] **4. マナー配慮アクセス確認**：HTTPアクセス間隔が1秒以上、429/5xxリトライ付きになっている。

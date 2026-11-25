@@ -125,6 +125,7 @@
 | 名寄せ・状態判定 | `src/{{PACKAGE_NAME}}/normalize.py` | `_PRODUCT_NAME_NOISE_TOKENS`, `_PRODUCT_NAME_ALIASES` |
 | シート出力・色分け | `src/{{PACKAGE_NAME}}/google_output.py` | `COMPARISON_COLUMNS`, 強調閾値定数 |
 | 自動実行時刻 | `.github/workflows/{{WORKFLOW_FILE}}.yml` | `schedule.cron`（UTC指定：JSTから9時間引く） |
+| スマホ手動更新（※導入時） | `vercel/api/update.js` | `GITHUB_OWNER`, `GITHUB_REPO`, `WORKFLOW_FILE`（リポジトリ名変更時） |
 
 ---
 

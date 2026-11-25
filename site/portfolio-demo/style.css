@@ -1702,7 +1702,8 @@ input[type="range"] {
   .genres-grid,
   .process-grid,
   .sheet-kpi-grid,
-  .est-radio-row {
+  .est-radio-row,
+  .est-radio-row.is-two {
     grid-template-columns: 1fr;
   }
 
