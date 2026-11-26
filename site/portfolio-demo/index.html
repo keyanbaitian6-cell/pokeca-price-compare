@@ -31,8 +31,8 @@
       <button id="navToggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="メニューを開く">☰</button>
       <nav id="siteNav" class="site-nav" aria-label="ページ内ナビゲーション">
         <a class="nav-link" href="#compare">比較</a>
-        <a class="nav-link" href="#architecture">しくみ</a>
         <a class="nav-link" href="#live-demo">実物デモ</a>
+        <a class="nav-link" href="#diagnosis">15秒診断</a>
         <a class="nav-link" href="#genres">対応例</a>
         <a class="nav-link" href="#pricing">料金・納期</a>
         <a class="nav-link" href="#faq">よくある質問</a>
@@ -169,7 +169,7 @@
           <p class="section-kicker">COMPARISON / ほかの方法との違い</p>
           <h2 id="compareTitle">ほかの自動化方法と何が違うの？ 4つの方法を比較</h2>
           <p class="section-lead">
-            「スプレッドシートの関数がエラーで止まる」「GASの6分制限に引っかかる」「代行会社は月額が高すぎる」——よくあるお悩みを1年間の総額と使い勝手で比べました。
+            「スプレッドシートの関数がエラーで止まる」「GAS（標準プログラム）の6分制限に引っかかる」「代行会社は月額が高すぎる」——よくあるお悩みを1年間の総額と使い勝手で比べました。
           </p>
         </div>
 
@@ -244,7 +244,18 @@
             </tbody>
           </table>
         </div>
-        <p class="scroll-hint-mobile">← 表は横にスクロールして比較できます →</p>
+        <p class="scroll-hint-mobile">← 左の項目は固定のまま、横にスワイプして比較できます →</p>
+
+        <div class="compare-benchmark" aria-label="一般的な外注相場との違い">
+          <div class="benchmark-card">
+            <strong>「単発データ代行」との違い</strong>
+            <p>1回ごとに2〜5万円かかる単発データ納品は、毎月頼むと年間24〜60万円に膨らみます。当サービスは<strong>「毎日自動で動く仕組み」を買い切り納品</strong>するため、2ヶ月目以降ずっと月額サーバー代¥0です。</p>
+          </div>
+          <div class="benchmark-card">
+            <strong>「一般的な開発相場」より抑えられる理由</strong>
+            <p>定期収集ツールの外注相場は5〜10万円＋月額保守が一般的です。当サービスは<strong>実績のある共通設計と無料クラウド構成</strong>を活用することで、品質を落とさず¥15,000〜¥50,000を実現しています。</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -350,7 +361,13 @@
                   <div id="sheetUpdatedMeta" class="sheet-updated-meta num">最終更新: 2026-11-24 17:02 JST ｜ 取得エラー: 0件</div>
                 </div>
               </div>
-              <button id="resetDemoBtn" class="btn btn-secondary btn-sm" type="button">デモを初期状態に戻す</button>
+              <div class="sheet-topbar-actions">
+                <div class="view-mode-toggle" role="group" aria-label="表示形式の切り替え">
+                  <button type="button" class="view-mode-btn is-active" data-view-mode="table" aria-pressed="true">表（シート）</button>
+                  <button type="button" class="view-mode-btn" data-view-mode="cards" aria-pressed="false">カード表示</button>
+                </div>
+                <button id="resetDemoBtn" class="btn btn-secondary btn-sm" type="button">初期状態に戻す</button>
+              </div>
             </div>
 
             <div id="sheetControlsBar" class="sheet-controls">
@@ -375,7 +392,7 @@
             <div class="sheet-tabbar" role="tablist" aria-label="スプレッドシートのタブ">
               <button type="button" class="sheet-tab is-active" data-sheet-tab="compare" role="tab" aria-selected="true">比較（2サイト以上）</button>
               <button type="button" class="sheet-tab" data-sheet-tab="trend" role="tab" aria-selected="false">30日間の価格グラフ</button>
-              <button type="button" class="sheet-tab" data-sheet-tab="beforeAfter" role="tab" aria-selected="false">整形前 → 整形後（表記統一）</button>
+              <button type="button" class="sheet-tab" data-sheet-tab="beforeAfter" role="tab" aria-selected="false">整形前 → 整形後</button>
               <button type="button" class="sheet-tab" data-sheet-tab="summary" role="tab" aria-selected="false">サマリー＆更新履歴</button>
             </div>
 
@@ -427,16 +444,107 @@
         <!-- Mid-page CTA Banner -->
         <div class="mid-cta-banner">
           <div>
-            <strong>「自分のチェックしたいサイトでも、同じように自動化できる？」</strong>
-            <p>対象URLを教えていただければ、規約・取得できるかどうか・費用目安を24時間以内に無料でお調べします。</p>
+            <strong>「自分の毎日の作業や見たいサイトでも自動化できる？」</strong>
+            <p>まずは下の3問・15秒チェックで向き・不向きを確認できます。対象URLの無料調査も24時間以内にお返しします。</p>
           </div>
-          <a class="btn btn-primary" href="#estimator">30秒で概算見積＆相談メモを作る →</a>
+          <a class="btn btn-primary" href="#diagnosis">15秒でできるか診断する ↓</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15-Second Fit Check & Honest Transparency -->
+    <section id="diagnosis" aria-labelledby="diagnosisTitle">
+      <div class="container">
+        <div class="section-head">
+          <p class="section-kicker">QUICK CHECK &amp; HONESTY / 15秒診断・正直な注意点</p>
+          <h2 id="diagnosisTitle">あなたの作業、月額0円で自動化できる？ 3問・15秒チェック</h2>
+          <p class="section-lead">
+            「なんでもできます」ではなく、合う作業・合わない作業を事前に正直にお伝えします。3つ選ぶだけですぐに相性が分かります。
+          </p>
+        </div>
+
+        <div class="diagnosis-card">
+          <div class="diagnosis-questions">
+            <div class="diag-group">
+              <span class="diag-label">Q1. 今やっている確認・コピペ作業は？</span>
+              <div class="diag-options" role="group" aria-label="作業のパターン">
+                <button type="button" class="diag-btn is-active" data-diag-q="pattern" data-diag-v="repeat" aria-pressed="true">ほぼ同じ手順の繰り返し</button>
+                <button type="button" class="diag-btn" data-diag-q="pattern" data-diag-v="adhoc" aria-pressed="false">毎回やり方や判断が違う</button>
+              </div>
+            </div>
+
+            <div class="diag-group">
+              <span class="diag-label">Q2. 情報を集めたいWebページは？</span>
+              <div class="diag-options" role="group" aria-label="ログインの有無">
+                <button type="button" class="diag-btn is-active" data-diag-q="access" data-diag-v="public" aria-pressed="true">ログイン不要で見られる</button>
+                <button type="button" class="diag-btn" data-diag-q="access" data-diag-v="login" aria-pressed="false">ID・パスワードが必要</button>
+              </div>
+            </div>
+
+            <div class="diag-group">
+              <span class="diag-label">Q3. 更新タイミングのご希望は？</span>
+              <div class="diag-options" role="group" aria-label="更新頻度の希望">
+                <button type="button" class="diag-btn is-active" data-diag-q="cadence" data-diag-v="daily" aria-pressed="true">1日1〜数回＋手動ボタンで十分</button>
+                <button type="button" class="diag-btn" data-diag-q="cadence" data-diag-v="realtime" aria-pressed="false">1分おき等のリアルタイム監視</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="diagResultBox" class="diag-result is-ideal" aria-live="polite">
+            <span id="diagBadge" class="diag-badge">◎ 月額0円構成にぴったり！</span>
+            <h3 id="diagTitle">手作業をほぼゼロにできる最適なケースです</h3>
+            <p id="diagDesc">毎日決まった時刻の自動更新と見やすい色分けシートで、早ければ1〜2ヶ月で初期費用の元が取れます。対象URLをお送りいただければ24時間以内に無料で取得可否をお調べします。</p>
+            <div class="diag-result-actions">
+              <button id="diagApplyBtn" class="btn btn-primary" type="button">おすすめ条件を30秒見積に反映する →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="trust-dual-grid" aria-label="導入前の正直な注意点とやり取りの安心感">
+          <div class="trust-panel">
+            <span class="trust-panel-kicker">HONEST LIMITS / あと出しゼロのお約束</span>
+            <h3>正直にお伝えする「注意点と対策」</h3>
+            <ul class="honest-list">
+              <li>
+                <strong>定時更新は数分〜十数分前後することがあります</strong>
+                <span>無料クラウドの仕組み上、混雑時間帯は起動が少し遅れることがあります。対策として混雑しやすい「毎時00分」を避けた時刻設定と、急ぎの時のスマホ手動更新を併用します。</span>
+              </li>
+              <li>
+                <strong>相手サイトのデザイン変更時は調整が必要です</strong>
+                <span>サイト構造が変わって取れなくなっても、既存データを消さずに安全停止します。復旧が必要な時だけ単発修理（¥5,000〜¥10,000）で対応でき、毎月の保守契約は不要です。</span>
+              </li>
+              <li>
+                <strong>取れないサイトは契約前に正直にお伝えします</strong>
+                <span>ログイン必須・ロボット認証（私はロボットではありません等）・規約で禁止されたサイトは無料調査の段階でお断りし、公式CSVやAPIなど安全な別案があればご提案します。</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="trust-panel">
+            <span class="trust-panel-kicker">FIRST-TIME FRIENDLY / はじめてでも安心</span>
+            <h3>ITの専門用語は不要。こんな相談でOKです</h3>
+            <div class="chat-sample" aria-label="実際の相談メッセージ例">
+              <div class="chat-bubble is-client">
+                <span class="chat-role">お客様からの初回メッセージ例</span>
+                <p>「パソコンに詳しくないのですが、この2つのサイトの価格を毎朝スプレッドシートにまとめたいです。できるかどうかと費用を教えてもらえますか？」</p>
+              </div>
+              <div class="chat-bubble is-reply">
+                <span class="chat-role">当方の返信（通常24時間以内）</span>
+                <p>「ご相談ありがとうございます！いただいたURLの規約と取得方法を無料でお調べし、できる範囲と確定金額・納期を分かりやすくお返しします。」</p>
+              </div>
+            </div>
+            <ul class="privacy-mini-list">
+              <li><strong>機密データの保護：</strong>全データと認証情報はお客様専用の非公開アカウント内で完結し、当方に機密情報を残しません。</li>
+              <li><strong>引き継ぎも安心：</strong>どこを触れば修正できるかを説明書に残すため、特定の人に頼り切りになる心配がありません。</li>
+              <li><strong>追加請求なし：</strong>料金・出力する列・修正ルールをすべて文書で合意してから着手します。</li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Supported Genres & Legal Compliance -->
-    <section id="genres" aria-labelledby="genresTitle">
+    <section id="genres" class="section-alt" aria-labelledby="genresTitle">
       <div class="container">
         <div class="section-head">
           <p class="section-kicker">USE CASES &amp; SAFETY / よくあるご依頼例・安心基準</p>
@@ -518,7 +626,7 @@
     </section>
 
     <!-- Pricing & Quick Estimator -->
-    <section id="pricing" class="section-alt" aria-labelledby="pricingTitle">
+    <section id="pricing" aria-labelledby="pricingTitle">
       <div class="container">
         <div class="section-head">
           <p class="section-kicker">PRICING &amp; SCHEDULE / 料金プラン・納期目安</p>
@@ -632,7 +740,7 @@
                 </div>
               </div>
 
-              <div class="est-group" style="margin-bottom:0;">
+              <div class="est-group">
                 <span class="est-group-label">4. 追加したい便利機能（オプション）</span>
                 <div class="est-checkbox-list">
                   <label class="est-choice"><input id="optTrend" type="checkbox" checked> 30日間の価格推移表＋ミニ折れ線グラフ（+¥5,000）</label>
@@ -640,6 +748,17 @@
                   <label class="est-choice"><input id="optNotify" type="checkbox"> 条件達成アラート通知（メール / Slack / Discord）（+¥8,000）</label>
                   <label class="est-choice"><input id="optSupport" type="checkbox"> 納品後1ヶ月 軽微レイアウト修正保証（+¥5,000）</label>
                 </div>
+              </div>
+
+              <div class="est-group" style="margin-bottom:0;">
+                <label class="est-group-label" for="estPurpose">5. 主な利用目的（規約・安心チェック用）</label>
+                <select id="estPurpose" class="select-field">
+                  <option value="社内の価格チェック・値付けの参考" selected>社内の価格チェック・値付けの参考</option>
+                  <option value="仕入れ判断・在庫チェック">仕入れ判断・在庫チェック</option>
+                  <option value="新着リサーチ・営業リスト作成">新着リサーチ・営業リスト作成</option>
+                  <option value="ランキング・相場の定点観測">ランキング・相場の定点観測</option>
+                  <option value="その他（相談メッセージに記入）">その他（相談メッセージに記入）</option>
+                </select>
               </div>
             </div>
 
@@ -663,6 +782,13 @@
               <button id="copySummaryBtn" class="btn btn-primary btn-lg" type="button" style="width:100%;">相談用メモをコピーする</button>
               <p class="est-microcopy">コピーしたメモをココナラ・クラウドワークス・ランサーズ・Xの相談欄に貼るだけで、24時間以内に無料調査の結果をお返しします。</p>
               <div id="copyFeedback" class="copy-feedback" role="status" aria-live="polite"></div>
+              <div id="copyNextSteps" class="copy-next-steps" hidden>
+                <strong>コピー完了！次の2ステップだけでOKです</strong>
+                <ol>
+                  <li>貼り付けたメモの「対象URL（記入欄）」に、チェックしたいサイトのURLを1〜2行書き足す</li>
+                  <li>ココナラ・クラウドワークス・ランサーズ・Xのメッセージ欄へそのまま送信（24時間以内に無料で可否と確定見積をお返しします）</li>
+                </ol>
+              </div>
             </div>
           </div>
         </div>
@@ -670,7 +796,7 @@
     </section>
 
     <!-- Process & FAQ -->
-    <section id="faq" aria-labelledby="processTitle">
+    <section id="faq" class="section-alt" aria-labelledby="processTitle">
       <div class="container">
         <div class="section-head">
           <p class="section-kicker">FLOW &amp; FAQ / ご相談からの流れ・よくある質問</p>
@@ -708,6 +834,10 @@
           <details class="faq-item">
             <summary>パソコンやプログラミングの知識がなくても使えますか？</summary>
             <p>はい。普段の業務で見るのはいつものGoogleスプレッドシートだけなので、難しい画面を操作する必要はありません。最初の連携設定（スプレッドシートの共有など）も、図解付き手順書またはチャット案内で迷わず終わるようサポートします。</p>
+          </details>
+          <details class="faq-item">
+            <summary>自社の仕入れ先やデータ、アカウント情報が外に漏れる心配はありませんか？</summary>
+            <p>ご安心ください。自動化プログラム・出力スプレッドシート・連携用の認証情報はすべて<strong>お客様ご自身の非公開アカウント内</strong>で完結する形でお渡しします。当方のサーバーへデータを保存することはなく、納品後に第三者へ情報が漏れる仕組みは一切ありません。</p>
           </details>
           <details class="faq-item">
             <summary>相手サイトのデザインが変わって動かなくなったらどうなりますか？</summary>

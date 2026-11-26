@@ -102,6 +102,7 @@
     const siteText = sites === '1-2' ? '1〜2サイト' : sites === '3' ? '3サイト' : '4〜5サイト';
     const techText = tech === 'static' ? 'シンプルな価格表・一覧ページ' : '最新EC・動きのあるサイト・よく分からない';
     const compareText = compare === 'list' ? 'サイトごとに一覧化するだけ' : '複数サイトの商品を並べて比較する';
+    const purposeText = options.purpose || '社内の価格チェック・値付けの参考';
 
     const summaryText = [
       '【自動化システム 相談メモ（かんたん見積もり結果）】',
@@ -109,6 +110,7 @@
       `・対象サイトのタイプ：${techText}`,
       `・シートの作り方：${compareText}`,
       `・追加したい機能：${selectedOptions.length ? selectedOptions.join(' / ') : 'なし'}`,
+      `・主な利用目的：${purposeText}`,
       `・想定プラン：${planName}（概算 ¥${minPrice.toLocaleString('ja-JP')}〜¥${maxPrice.toLocaleString('ja-JP')} / 納期 ${schedule}）`,
       '・対象URL（記入欄）：',
       '・集めたい項目（記入欄）：商品名、価格、在庫状況 など',
@@ -120,6 +122,54 @@
       planName,
       schedule,
       summaryText,
+    };
+  }
+
+  function evaluateDiagnosis(answers) {
+    const pattern = (answers && answers.pattern) || 'repeat';
+    const access = (answers && answers.access) || 'public';
+    const cadence = (answers && answers.cadence) || 'daily';
+
+    if (access === 'login') {
+      return {
+        tone: 'decline',
+        badge: '対象外（正直にお伝えします）',
+        title: 'ログインが必要なページは安全・規約面のためお受けできません',
+        desc: 'IDやパスワードをお預かりして会員限定ページを自動巡回すると、アカウント停止や利用規約違反のリスクがあります。対象サービスに公式のCSV書き出しや公式APIがある場合は、そちらを使った安全な連携方法をご案内できます。',
+        applyPlan: null,
+        buttonText: '',
+      };
+    }
+
+    if (cadence === 'realtime') {
+      return {
+        tone: 'decline',
+        badge: '月額0円構成には不向き',
+        title: '1分おきのリアルタイム監視は無料クラウドの枠外です',
+        desc: '無料の自動実行クラウドは混雑時に数分前後することがあり、毎分チェックのような常時監視には向きません。「1日1〜数回の自動更新＋急ぎの時はスマホ1タップ手動更新」で運用できるなら、月額サーバー代0円で快適に使えます。',
+        applyPlan: null,
+        buttonText: '',
+      };
+    }
+
+    if (pattern === 'adhoc') {
+      return {
+        tone: 'caution',
+        badge: '△ 工夫すれば自動化できます',
+        title: '「毎回同じ部分」だけ自動化し、判断欄は手入力で残すのがおすすめ',
+        desc: 'すべてを一度に自動化しようとせず、まずは「サイトから最新価格や一覧を集める部分」だけを自動化し、メモや判断を書く列には触れない設計が人気です。小さく始めて使い勝手を確かめられます。',
+        applyPlan: 'light',
+        buttonText: 'まずは小さく試す（ライト相当）を見積に反映 →',
+      };
+    }
+
+    return {
+      tone: 'ideal',
+      badge: '◎ 月額0円構成にぴったり！',
+      title: '手作業をほぼゼロにできる最適なケースです',
+      desc: '毎日決まった時刻の自動更新と見やすい色分けシートで、早ければ1〜2ヶ月で初期費用の元が取れます。対象URLをお送りいただければ24時間以内に無料で取得可否をお調べします。',
+      applyPlan: 'standard',
+      buttonText: 'おすすめ条件を30秒見積に反映する →',
     };
   }
 
@@ -585,10 +635,12 @@
      ======================================================================== */
 
   function initBrowserApp() {
+    const initialViewMode = typeof window !== 'undefined' && window.innerWidth <= 640 ? 'cards' : 'table';
     const state = {
       datasets: createInitialDatasets(),
       genre: 'ec',
       sheetTab: 'compare',
+      viewMode: initialViewMode,
       filter: 'all',
       sort: 'rateDesc',
       archStep: 0,
@@ -597,6 +649,11 @@
       mobileCooldownUntil: 0,
       mobileTimers: [],
       freshItemIds: new Set(),
+      diagnosis: {
+        pattern: 'repeat',
+        access: 'public',
+        cadence: 'daily',
+      },
     };
 
     // --- Mobile Navigation Toggle ---
@@ -734,6 +791,26 @@
     const sheetUpdatedMeta = document.getElementById('sheetUpdatedMeta');
     const sheetSortSelect = document.getElementById('sheetSortSelect');
     const sheetLegend = document.getElementById('sheetLegend');
+    const viewModeBtns = Array.from(document.querySelectorAll('[data-view-mode]'));
+
+    function syncViewModeButtons() {
+      viewModeBtns.forEach((btn) => {
+        const active = btn.getAttribute('data-view-mode') === state.viewMode;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-pressed', String(active));
+      });
+    }
+
+    viewModeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const mode = btn.getAttribute('data-view-mode');
+        if (mode !== 'table' && mode !== 'cards') return;
+        state.viewMode = mode;
+        syncViewModeButtons();
+        renderSpreadsheet();
+      });
+    });
+    syncViewModeButtons();
 
     function renderSpreadsheet() {
       const ds = state.datasets[state.genre];
@@ -743,6 +820,12 @@
       sheetUpdatedMeta.textContent = `最終更新: ${ds.updatedAt} ｜ 取得エラー: 0件`;
       sheetControlsBar.hidden = state.sheetTab !== 'compare';
 
+      const isCards = state.viewMode === 'cards';
+      const scrollCue = (tableText) =>
+        isCards
+          ? '<span class="legend-scroll-cue">上の「表（シート）」を押すと実際のスプレッドシート形式で全列を見られます</span>'
+          : `<span class="legend-scroll-cue">${tableText}</span>`;
+
       if (sheetLegend) {
         if (state.sheetTab === 'compare') {
           sheetLegend.innerHTML =
@@ -750,18 +833,18 @@
             '<span class="legend-item"><span class="legend-swatch" style="background:#b42318;"></span>差率5%以上（赤太字）</span>' +
             '<span class="legend-item"><span class="legend-swatch" style="background:#a66900;"></span>差額¥3,000以上（金太字）</span>' +
             '<span class="legend-item"><span class="legend-swatch" style="background:#fff2cc;border:1px solid #e6c66a;"></span>状態推定などの注意</span>' +
-            '<span class="legend-scroll-cue">← 横スクロールで全列を表示 →</span>';
+            scrollCue('← 横スクロールで全列を表示 →');
         } else if (state.sheetTab === 'trend') {
           sheetLegend.innerHTML =
             '<span class="legend-item"><span class="legend-swatch" style="background:#137333;"></span>前回比・7日前比の上昇（緑）</span>' +
             '<span class="legend-item"><span class="legend-swatch" style="background:#175cd3;"></span>下落（青）</span>' +
             '<span class="legend-item">1商品1行で見やすく表示（過去全データは裏シートに自動保管）</span>' +
-            '<span class="legend-scroll-cue">← 横スクロールで過去日付列を表示 →</span>';
+            scrollCue('← 横スクロールで過去日付列を表示 →');
         } else if (state.sheetTab === 'beforeAfter') {
           sheetLegend.innerHTML =
             '<span class="legend-item"><span class="legend-swatch" style="background:#fffaf5;border:1px solid #e8cfa0;"></span>整形前：お店ごとのバラバラな表記</span>' +
             '<span class="legend-item"><span class="legend-swatch" style="background:#f2fbf7;border:1px solid #82c997;"></span>整形後：全角・半角＆状態まで自動整理</span>' +
-            '<span class="legend-scroll-cue">← 横スクロールで自動整理の理由を確認 →</span>';
+            scrollCue('← 横スクロールで自動整理の理由を確認 →');
         } else {
           sheetLegend.innerHTML =
             '<span class="legend-item"><span class="legend-swatch" style="background:#e8f5f0;border:1px solid #82c997;"></span>最新の実行履歴が常にいちばん上（最大365回分）</span>' +
@@ -789,6 +872,68 @@
           rows.sort((a, b) => b.metrics.spreadYen - a.metrics.spreadYen);
         } else if (state.sort === 'deltaDesc') {
           rows.sort((a, b) => Math.abs(b.metrics.deltaPrev) - Math.abs(a.metrics.deltaPrev));
+        }
+
+        if (isCards) {
+          const cardsHtml = rows.length
+            ? rows
+                .map(({ item, metrics }) => {
+                  const deltaClass =
+                    metrics.deltaPrev > 0
+                      ? 'is-up'
+                      : metrics.deltaPrev < 0
+                      ? 'is-down'
+                      : 'is-flat';
+                  const rateClass = metrics.spreadRate >= 0.05 ? 'is-rate-high' : '';
+                  const yenClass = metrics.spreadYen >= 3000 ? 'is-yen-high' : '';
+                  const freshClass = state.freshItemIds.has(item.id) ? 'is-fresh-card' : '';
+                  const noteBadge = item.note
+                    ? `<span class="${item.note === '在庫復活' ? 'cell-status-ok' : 'cell-warn-badge'}">${escapeHtml(item.note)}</span>`
+                    : '';
+
+                  return `
+                    <article class="sheet-card ${freshClass}">
+                      <div class="sheet-card-head">
+                        <div class="sheet-card-title">${escapeHtml(item.name)}</div>
+                        <div class="sheet-card-tags">
+                          <span class="sheet-card-cond">${escapeHtml(item.condition)}</span>
+                          ${noteBadge}
+                        </div>
+                      </div>
+                      <div class="sheet-card-summary">
+                        <div>
+                          <span class="sheet-card-k">${escapeHtml(ds.bestColLabel)}（${escapeHtml(metrics.bestShopText)}）</span>
+                          <div class="sheet-card-best num">${formatYen(metrics.bestPrice)}</div>
+                        </div>
+                        <div class="sheet-card-metrics">
+                          <span class="sheet-card-delta num ${deltaClass}">前回比 ${formatSignedYen(metrics.deltaPrev)}</span>
+                          <div class="sheet-card-spreads num">
+                            <span class="spread-pill ${rateClass}">差率 ${formatRate(metrics.spreadRate)}</span>
+                            <span class="spread-pill ${yenClass}">差額 ${formatYen(metrics.spreadYen)}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="sheet-card-shops">
+                        ${item.prices
+                          .map((p, idx) => {
+                            const isBest = p === metrics.bestPrice;
+                            return `
+                              <div class="shop-price-box ${isBest ? 'is-best' : ''}">
+                                <span>${escapeHtml(ds.shops[idx])}</span>
+                                <strong class="num">${formatYen(p)}</strong>
+                              </div>
+                            `;
+                          })
+                          .join('')}
+                      </div>
+                    </article>
+                  `;
+                })
+                .join('')
+            : '<div class="sheet-empty-state">条件に一致する行はありません。絞り込みを「すべて表示」に戻してください。</div>';
+
+          sheetViewport.innerHTML = `<div class="sheet-cards-grid">${cardsHtml}</div>`;
+          return;
         }
 
         const headerHtml = `
@@ -850,6 +995,62 @@
           .map((item) => ({ item, metrics: computeItemMetrics(item, ds) }))
           .sort((a, b) => Math.abs(b.metrics.deltaPrev) - Math.abs(a.metrics.deltaPrev));
 
+        if (isCards) {
+          const cardsHtml = rows
+            .map(({ item, metrics }) => {
+              const dPrevClass =
+                metrics.deltaPrev > 0 ? 'is-up' : metrics.deltaPrev < 0 ? 'is-down' : 'is-flat';
+              const d7Class =
+                metrics.delta7d > 0 ? 'is-up' : metrics.delta7d < 0 ? 'is-down' : 'is-flat';
+              const h = item.history;
+              const recentCols =
+                h.length >= 6
+                  ? [h[h.length - 1], h[h.length - 2], h[h.length - 4], h[0]]
+                  : h.slice(-4).reverse();
+              const shortLabels = ['最新', '1日前', '3日前', '7日前'];
+              const freshClass = state.freshItemIds.has(item.id) ? 'is-fresh-card' : '';
+
+              return `
+                <article class="sheet-card ${freshClass}">
+                  <div class="sheet-card-head">
+                    <div class="sheet-card-title">${escapeHtml(item.name)}</div>
+                    <span class="sheet-card-cond">${escapeHtml(metrics.bestShopText)}</span>
+                  </div>
+                  <div class="trend-card-mid">
+                    <div>
+                      <span class="sheet-card-k">最新${escapeHtml(ds.bestColLabel)}</span>
+                      <div class="sheet-card-best num">${formatYen(metrics.bestPrice)}</div>
+                      <div class="trend-card-deltas num">
+                        <span class="sheet-card-delta ${dPrevClass}">前回比 ${formatSignedYen(metrics.deltaPrev)}</span>
+                        <span class="sheet-card-delta ${d7Class}">7日前比 ${formatSignedYen(metrics.delta7d)}</span>
+                      </div>
+                    </div>
+                    <div class="trend-card-spark">
+                      <span class="sheet-card-k">30日グラフ</span>
+                      ${buildSparklineSvg(item.history)}
+                    </div>
+                  </div>
+                  <div class="trend-card-dates">
+                    ${recentCols
+                      .map(
+                        (p, idx) => `
+                          <div class="trend-date-box">
+                            <span>${shortLabels[idx] || ''}</span>
+                            <strong class="num">${formatYen(p)}</strong>
+                          </div>
+                        `
+                      )
+                      .join('')}
+                  </div>
+                </article>
+              `;
+            })
+            .join('');
+
+          sheetViewport.innerHTML = `<div class="sheet-cards-grid">${cardsHtml}</div>`;
+          return;
+        }
+
         const headerHtml = `
           <tr>
             <th>商品名</th>
@@ -890,6 +1091,42 @@
         sheetViewport.innerHTML = `<div class="sheet-table-scroll"><table class="sheet-table"><thead>${headerHtml}</thead><tbody>${bodyHtml}</tbody></table></div>`;
       } else if (state.sheetTab === 'beforeAfter') {
         const samples = Array.isArray(ds.rawSamples) ? ds.rawSamples : [];
+        if (isCards) {
+          const cardsHtml = samples
+            .map(
+              (row) => `
+                <article class="ba-card">
+                  <div class="ba-card-shop">
+                    <strong>${escapeHtml(row.shop)}</strong>
+                    <span class="mono">${escapeHtml(row.rawPrice)}</span>
+                  </div>
+                  <div class="ba-stage is-before">
+                    <span class="ba-stage-label">整形前（サイト上の元の商品名）</span>
+                    <p>${escapeHtml(row.rawName)}</p>
+                  </div>
+                  <div class="ba-arrow" aria-hidden="true">↓ 自動整理</div>
+                  <div class="ba-stage is-after">
+                    <span class="ba-stage-label">整形後（シートへの統一出力）</span>
+                    <div class="ba-after-row">
+                      <strong>${escapeHtml(row.normalizedName)}</strong>
+                      <span class="cell-status-ok">${escapeHtml(row.condition)}</span>
+                    </div>
+                  </div>
+                  <div class="ba-rule-note">ポイント：${escapeHtml(row.ruleNote)}</div>
+                </article>
+              `
+            )
+            .join('');
+          sheetViewport.innerHTML = `
+            <div class="sheet-ba-intro">
+              <strong>なぜ「集めるだけ」のツールと違うの？</strong>
+              <span>お店ごとにバラバラな全角・型番・販促文字・状態の書き方を自動で揃え、同じ商品だけを正確に横並び比較します。</span>
+            </div>
+            <div class="ba-cards-stack">${cardsHtml}</div>
+          `;
+          return;
+        }
+
         const beforeAfterHtml = `
           <div class="sheet-ba-intro">
             <strong>なぜ「集めるだけ」のツールと違うの？</strong>
@@ -929,14 +1166,28 @@
         sheetViewport.innerHTML = beforeAfterHtml;
       } else {
         const latest = ds.historyLog[0];
-        const summaryHtml = `
-          <div class="sheet-summary-wrap">
-            <div class="sheet-kpi-grid">
-              <div class="sheet-kpi-box"><span>取得した全件数</span><strong class="num">${latest.total} 件</strong></div>
-              <div class="sheet-kpi-box"><span>比較できた商品（2店以上）</span><strong class="num">${latest.matched} 件</strong></div>
-              <div class="sheet-kpi-box"><span>1店のみ掲載（別タブ整理）</span><strong class="num">${latest.single} 件</strong></div>
-              <div class="sheet-kpi-box"><span>取得エラー</span><strong class="num" style="color:var(--brand);">${latest.errors} 件</strong></div>
+        const historySection = isCards
+          ? `
+            <div class="history-cards-stack">
+              ${ds.historyLog
+                .map(
+                  (row, idx) => `
+                    <div class="history-card ${idx === 0 && state.freshItemIds.size > 0 ? 'is-fresh-card' : ''}">
+                      <div class="history-card-top">
+                        <strong class="mono">${escapeHtml(row.time)}</strong>
+                        <span class="cell-status-ok">エラー ${row.errors} 件</span>
+                      </div>
+                      <div class="history-card-meta">
+                        <span>きっかけ：${escapeHtml(row.trigger)}</span>
+                        <span class="num">全取得 ${row.total}件 ／ 比較 ${row.matched}件 ／ 1店のみ ${row.single}件</span>
+                      </div>
+                    </div>
+                  `
+                )
+                .join('')}
             </div>
+          `
+          : `
             <div class="sheet-table-scroll">
               <table class="sheet-table">
                 <thead>
@@ -967,6 +1218,17 @@
                 </tbody>
               </table>
             </div>
+          `;
+
+        const summaryHtml = `
+          <div class="sheet-summary-wrap">
+            <div class="sheet-kpi-grid">
+              <div class="sheet-kpi-box"><span>取得した全件数</span><strong class="num">${latest.total} 件</strong></div>
+              <div class="sheet-kpi-box"><span>比較できた商品（2店以上）</span><strong class="num">${latest.matched} 件</strong></div>
+              <div class="sheet-kpi-box"><span>1店のみ掲載（別タブ整理）</span><strong class="num">${latest.single} 件</strong></div>
+              <div class="sheet-kpi-box"><span>取得エラー</span><strong class="num" style="color:var(--brand);">${latest.errors} 件</strong></div>
+            </div>
+            ${historySection}
           </div>
         `;
         sheetViewport.innerHTML = summaryHtml;
@@ -1147,15 +1409,24 @@
     const estSummaryText = document.getElementById('estSummaryText');
     const copySummaryBtn = document.getElementById('copySummaryBtn');
     const copyFeedback = document.getElementById('copyFeedback');
+    const copyNextSteps = document.getElementById('copyNextSteps');
+    const estPurpose = document.getElementById('estPurpose');
+
+    function resetCopyUi() {
+      if (copyFeedback) copyFeedback.textContent = '';
+      if (copyNextSteps) copyNextSteps.hidden = true;
+    }
 
     function readEstimatorOptions() {
       const sites = document.querySelector('input[name="estSites"]:checked')?.value || '3';
       const tech = document.querySelector('input[name="estTech"]:checked')?.value || 'spa';
       const compare = document.querySelector('input[name="estCompare"]:checked')?.value || 'match';
+      const purpose = estPurpose?.value || '社内の価格チェック・値付けの参考';
       return {
         sites,
         tech,
         compare,
+        purpose,
         optTrend: Boolean(document.getElementById('optTrend')?.checked),
         optMobile: Boolean(document.getElementById('optMobile')?.checked),
         optNotify: Boolean(document.getElementById('optNotify')?.checked),
@@ -1171,9 +1442,43 @@
       if (estSummaryText) estSummaryText.value = est.summaryText;
     }
 
-    document.querySelectorAll('#estimator input').forEach((input) => {
+    function applyEstimatorPlan(plan) {
+      const setRadio = (name, value) => {
+        const el = document.querySelector(`input[name="${name}"][value="${value}"]`);
+        if (el) el.checked = true;
+      };
+      if (plan === 'light') {
+        setRadio('estSites', '1-2');
+        setRadio('estTech', 'static');
+        setRadio('estCompare', 'list');
+        document.getElementById('optTrend').checked = false;
+        document.getElementById('optMobile').checked = false;
+        document.getElementById('optNotify').checked = false;
+        document.getElementById('optSupport').checked = false;
+      } else if (plan === 'standard') {
+        setRadio('estSites', '3');
+        setRadio('estTech', 'spa');
+        setRadio('estCompare', 'match');
+        document.getElementById('optTrend').checked = true;
+        document.getElementById('optMobile').checked = false;
+        document.getElementById('optNotify').checked = false;
+        document.getElementById('optSupport').checked = false;
+      } else {
+        setRadio('estSites', '4-5');
+        setRadio('estTech', 'spa');
+        setRadio('estCompare', 'match');
+        document.getElementById('optTrend').checked = true;
+        document.getElementById('optMobile').checked = true;
+        document.getElementById('optNotify').checked = true;
+        document.getElementById('optSupport').checked = true;
+      }
+      resetCopyUi();
+      renderEstimator();
+    }
+
+    document.querySelectorAll('#estimator input, #estimator select').forEach((input) => {
       input.addEventListener('change', () => {
-        if (copyFeedback) copyFeedback.textContent = '';
+        resetCopyUi();
         renderEstimator();
       });
     });
@@ -1181,40 +1486,66 @@
     // Plan shortcut buttons
     document.querySelectorAll('[data-select-plan]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        const plan = btn.getAttribute('data-select-plan');
-        const setRadio = (name, value) => {
-          const el = document.querySelector(`input[name="${name}"][value="${value}"]`);
-          if (el) el.checked = true;
-        };
-        if (plan === 'light') {
-          setRadio('estSites', '1-2');
-          setRadio('estTech', 'static');
-          setRadio('estCompare', 'list');
-          document.getElementById('optTrend').checked = false;
-          document.getElementById('optMobile').checked = false;
-          document.getElementById('optNotify').checked = false;
-          document.getElementById('optSupport').checked = false;
-        } else if (plan === 'standard') {
-          setRadio('estSites', '3');
-          setRadio('estTech', 'spa');
-          setRadio('estCompare', 'match');
-          document.getElementById('optTrend').checked = true;
-          document.getElementById('optMobile').checked = false;
-          document.getElementById('optNotify').checked = false;
-          document.getElementById('optSupport').checked = false;
-        } else {
-          setRadio('estSites', '4-5');
-          setRadio('estTech', 'spa');
-          setRadio('estCompare', 'match');
-          document.getElementById('optTrend').checked = true;
-          document.getElementById('optMobile').checked = true;
-          document.getElementById('optNotify').checked = true;
-          document.getElementById('optSupport').checked = true;
-        }
-        if (copyFeedback) copyFeedback.textContent = '';
-        renderEstimator();
+        applyEstimatorPlan(btn.getAttribute('data-select-plan'));
       });
     });
+
+    // --- 15-Second Fit Diagnosis ---
+    const diagResultBox = document.getElementById('diagResultBox');
+    const diagBadge = document.getElementById('diagBadge');
+    const diagTitle = document.getElementById('diagTitle');
+    const diagDesc = document.getElementById('diagDesc');
+    const diagApplyBtn = document.getElementById('diagApplyBtn');
+    const diagBtns = Array.from(document.querySelectorAll('[data-diag-q]'));
+    let activeDiagPlan = 'standard';
+
+    function renderDiagnosis() {
+      const verdict = evaluateDiagnosis(state.diagnosis);
+      activeDiagPlan = verdict.applyPlan;
+      if (diagResultBox) {
+        diagResultBox.className = `diag-result is-${verdict.tone}`;
+      }
+      if (diagBadge) diagBadge.textContent = verdict.badge;
+      if (diagTitle) diagTitle.textContent = verdict.title;
+      if (diagDesc) diagDesc.textContent = verdict.desc;
+      if (diagApplyBtn) {
+        if (verdict.applyPlan) {
+          diagApplyBtn.hidden = false;
+          diagApplyBtn.textContent = verdict.buttonText;
+        } else {
+          diagApplyBtn.hidden = true;
+        }
+      }
+    }
+
+    diagBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const q = btn.getAttribute('data-diag-q');
+        const v = btn.getAttribute('data-diag-v');
+        if (!q || !v) return;
+        state.diagnosis[q] = v;
+        diagBtns
+          .filter((b) => b.getAttribute('data-diag-q') === q)
+          .forEach((b) => {
+            const active = b === btn;
+            b.classList.toggle('is-active', active);
+            b.setAttribute('aria-pressed', String(active));
+          });
+        renderDiagnosis();
+      });
+    });
+
+    if (diagApplyBtn) {
+      diagApplyBtn.addEventListener('click', () => {
+        if (!activeDiagPlan) return;
+        applyEstimatorPlan(activeDiagPlan);
+        const estEl = document.getElementById('estimator');
+        if (estEl && typeof estEl.scrollIntoView === 'function') {
+          estEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+    renderDiagnosis();
 
     if (copySummaryBtn && estSummaryText) {
       copySummaryBtn.addEventListener('click', async () => {
@@ -1225,10 +1556,12 @@
             estSummaryText.select();
             document.execCommand('copy');
           }
-          copyFeedback.textContent = 'コピーしました！ココナラ・クラウドワークス・XのDMにそのまま貼り付けできます。';
+          copyFeedback.textContent = 'コピーしました！そのまま相談欄へ貼り付けできます。';
+          if (copyNextSteps) copyNextSteps.hidden = false;
         } catch (_err) {
           estSummaryText.select();
           copyFeedback.textContent = 'テキストを選択しました。Ctrl+C / Cmd+C でコピーしてください。';
+          if (copyNextSteps) copyNextSteps.hidden = false;
         }
       });
     }
@@ -1270,6 +1603,7 @@
     computeItemMetrics,
     createInitialDatasets,
     buildSparklineSvg,
+    evaluateDiagnosis,
     initBrowserApp,
   };
 });

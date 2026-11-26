@@ -148,6 +148,7 @@ const customEst = demoApp.calculateEstimate({
   sites: '4-5',
   tech: 'spa',
   compare: 'match',
+  purpose: '仕入れ判断・在庫チェック',
   optTrend: true,
   optMobile: true,
   optNotify: false,
@@ -156,9 +157,28 @@ const customEst = demoApp.calculateEstimate({
 assert.equal(customEst.minPrice, 50000);
 assert.match(customEst.planName, /カスタム/);
 assert.ok(customEst.summaryText.includes('スマホ1タップ手動更新ページ'));
-console.log('PASS: Quick estimator tier & monotonicity assertions');
+assert.ok(customEst.summaryText.includes('仕入れ判断・在庫チェック'));
+console.log('PASS: Quick estimator tier, purpose & monotonicity assertions');
 
-// 6. Verify anonymized datasets, Before/After rawSamples, metrics calculation, and SVG sparklines
+// 6. Verify 15-second self-diagnosis logic
+const diagIdeal = demoApp.evaluateDiagnosis({ pattern: 'repeat', access: 'public', cadence: 'daily' });
+assert.equal(diagIdeal.tone, 'ideal');
+assert.equal(diagIdeal.applyPlan, 'standard');
+
+const diagCaution = demoApp.evaluateDiagnosis({ pattern: 'adhoc', access: 'public', cadence: 'daily' });
+assert.equal(diagCaution.tone, 'caution');
+assert.equal(diagCaution.applyPlan, 'light');
+
+const diagLogin = demoApp.evaluateDiagnosis({ pattern: 'repeat', access: 'login', cadence: 'daily' });
+assert.equal(diagLogin.tone, 'decline');
+assert.equal(diagLogin.applyPlan, null);
+
+const diagRealtime = demoApp.evaluateDiagnosis({ pattern: 'repeat', access: 'public', cadence: 'realtime' });
+assert.equal(diagRealtime.tone, 'decline');
+assert.equal(diagRealtime.applyPlan, null);
+console.log('PASS: 15-second fit diagnosis assertions (all 4 branches)');
+
+// 7. Verify anonymized datasets, Before/After rawSamples, metrics calculation, and SVG sparklines
 const datasets = demoApp.createInitialDatasets();
 for (const [key, ds] of Object.entries(datasets)) {
   assert.ok(ds.items.length >= 5, `Dataset ${key} should have at least 5 items`);
