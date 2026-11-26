@@ -59,6 +59,14 @@ class AlertConfig:
 
 
 @dataclass(slots=True)
+class NotificationConfig:
+    enabled: bool = True
+    notify_on_target_hit: bool = True
+    notify_on_error: bool = True
+    always_notify_summary: bool = False
+
+
+@dataclass(slots=True)
 class SourceConfig:
     id: str
     label: str
@@ -86,6 +94,7 @@ class AppConfig:
     alerts: AlertConfig
     sources: list[SourceConfig]
     config_dir: Path
+    notifications: NotificationConfig = field(default_factory=NotificationConfig)
 
     @property
     def enabled_sources(self) -> list[SourceConfig]:
@@ -318,6 +327,23 @@ def load_config(path: str | Path) -> AppConfig:
     if not any(source.enabled for source in sources):
         raise ConfigError("有効（enabled: true）な取得元サイトが1件もありません。")
 
+    notif_raw = raw_data.get("notifications", {}) or {}
+    if not isinstance(notif_raw, dict):
+        raise ConfigError("notifications はJSONオブジェクト（{ ... }）で指定してください。")
+    forbidden_secret_keys = {"webhook_url", "discord_webhook_url", "slack_webhook_url", "ntfy_topic_url", "token"}
+    leaked_keys = sorted(forbidden_secret_keys.intersection({str(k).lower() for k in notif_raw}))
+    if leaked_keys:
+        raise ConfigError(
+            f"安全運用ガード: 通知URLやトークン（{', '.join(leaked_keys)}）は config.json に書かず、"
+            "GitHub Secrets（DISCORD_WEBHOOK_URL / SLACK_WEBHOOK_URL / NTFY_TOPIC_URL）へ登録してください。"
+        )
+    notifications = NotificationConfig(
+        enabled=bool(notif_raw.get("enabled", True)),
+        notify_on_target_hit=bool(notif_raw.get("notify_on_target_hit", True)),
+        notify_on_error=bool(notif_raw.get("notify_on_error", True)),
+        always_notify_summary=bool(notif_raw.get("always_notify_summary", False)),
+    )
+
     return AppConfig(
         project=project,
         safety=safety,
@@ -325,4 +351,5 @@ def load_config(path: str | Path) -> AppConfig:
         alerts=alerts,
         sources=sources,
         config_dir=config_dir,
+        notifications=notifications,
     )

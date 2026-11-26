@@ -2,10 +2,21 @@ name: 価格比較スプレッドシートを自動更新
 
 on:
   workflow_dispatch:
+    inputs:
+      run_mode:
+        description: "実行モード（スマホのGitHubアプリからも選択可能）"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - production   # 通常更新（Googleシート更新＋目標達成時プッシュ通知）
+          - demo         # クラウド上でお試し実行（Googleシート未設定でもOK・結果を表で表示）
+          - check_config # config.json の書式と安全ガードだけ検証
+          - test_notify  # Discord / Slack / ntfy.sh 通知のテスト送信
   schedule:
-    # 毎日 17:00 JST (08:00 UTC) に1回だけ自動実行（対象サイトへ負荷をかけない低頻度設定）
-    # 時刻を変えたい場合は docs/SETUP_GUIDE.md の「JST→UTC早見表」を参照してください
-    - cron: "0 8 * * *"
+    # 毎日 17:17 JST (08:17 UTC) に1回だけ自動実行（毎時00分の混雑を避けつつ低負荷運用）
+    # 時刻を変えたい場合は tools/config_builder.html の cron 計算機または SETUP_GUIDE.md を参照
+    - cron: "17 8 * * *"
 
 permissions:
   contents: read
@@ -21,6 +32,7 @@ jobs:
     timeout-minutes: 15
     env:
       TZ: Asia/Tokyo
+      RUN_MODE: ${{ inputs.run_mode || 'production' }}
 
     steps:
       - name: ソースコードを取得
@@ -43,15 +55,39 @@ jobs:
           PYTHONPATH: src
         run: python -m price_monitor --config config.json --check-config
 
-      - name: 価格を取得してGoogleスプレッドシートを更新
+      - name: 通知テスト送信（test_notify モード時のみ）
+        if: env.RUN_MODE == 'test_notify'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          NTFY_TOPIC_URL: ${{ secrets.NTFY_TOPIC_URL }}
+          PYTHONPATH: src
+        run: python -m price_monitor --config config.json --test-notify
+
+      - name: クラウドお試し実行（demo モード時のみ・Googleシート不要）
+        if: env.RUN_MODE == 'demo'
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m price_monitor \
+            --config config.json \
+            --strict \
+            --output-dir "$RUNNER_TEMP/price-monitor-demo"
+
+      - name: 価格を取得してGoogleスプレッドシートを更新＆無料プッシュ通知（production モード）
+        if: env.RUN_MODE == 'production'
         env:
           GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
           OUTPUT_SPREADSHEET_ID: ${{ secrets.OUTPUT_SPREADSHEET_ID }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          NTFY_TOPIC_URL: ${{ secrets.NTFY_TOPIC_URL }}
           PYTHONPATH: src
         shell: bash
         run: |
           if [ -z "$GOOGLE_CREDENTIALS_JSON" ] || [ -z "$OUTPUT_SPREADSHEET_ID" ]; then
             echo "エラー: GitHub Secrets に GOOGLE_CREDENTIALS_JSON と OUTPUT_SPREADSHEET_ID を登録してください。" >&2
+            echo "まずは Run workflow → run_mode=demo を選ぶと、Googleシート未設定のまま動作確認できます。" >&2
             exit 1
           fi
           credentials_path="$RUNNER_TEMP/google-credentials.json"

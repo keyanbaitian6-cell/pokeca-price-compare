@@ -20,7 +20,7 @@ from pathlib import Path
 KIT_ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = KIT_ROOT / "template"
 DEFAULT_DIST_DIR = KIT_ROOT / "dist"
-DEFAULT_VERSION = "1.0.0"
+DEFAULT_VERSION = "2.0.0"
 
 EXCLUDED_DIR_NAMES = frozenset(
     {
@@ -68,11 +68,15 @@ REQUIRED_RELATIVE_PATHS = (
     "src/price_monitor/http_client.py",
     "src/price_monitor/parsers.py",
     "src/price_monitor/compare.py",
+    "src/price_monitor/notifier.py",
     "src/price_monitor/sheets_output.py",
     "custom_collectors/example_custom.py",
     "mobile_updater/index.html",
     "mobile_updater/api/update.js",
+    "mobile_updater/cloudflare_worker.js",
+    "mobile_updater/wrangler.toml",
     "mobile_updater/vercel.json",
+    "tools/config_builder.html",
     "scripts/run_demo.py",
     "scripts/make_passphrase_hash.py",
     "docs/SETUP_GUIDE.md",
@@ -87,6 +91,8 @@ SECRET_AND_LEAK_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("GoogleサービスアカウントJSON本体", re.compile(r'"type"\s*:\s*"service_account"[\s\S]{0,400}"private_key"\s*:')),
     ("GitHub Classic トークン", re.compile(r"\bgh[pousr]_[A-Za-z0-9]{20,}\b")),
     ("GitHub Fine-grained トークン", re.compile(r"\bgithub_pat_[A-Za-z0-9_]{20,}\b")),
+    ("Discord 実Webhook URL", re.compile(r"https://(?:discord|discordapp)\.com/api/webhooks/\d{10,}/[A-Za-z0-9_-]{20,}")),
+    ("Slack 実Webhook URL", re.compile(r"https://hooks\.slack\.com/services/T[A-Z0-9]{8,}/B[A-Z0-9]{8,}/[A-Za-z0-9]{16,}")),
     ("OpenAI / Anthropic APIキー", re.compile(r"\bsk-(?:proj-|ant-)?[A-Za-z0-9_-]{20,}\b")),
     ("Google APIキー", re.compile(r"\bAIzaSy[A-Za-z0-9_-]{20,}\b")),
     ("既存ポケカ運用リポジトリ名/ユーザー名", re.compile(r"keyanbaitian6-cell", re.IGNORECASE)),

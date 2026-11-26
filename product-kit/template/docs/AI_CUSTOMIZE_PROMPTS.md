@@ -203,27 +203,25 @@ AIにサイト構造を教えるとき、URLだけ渡すよりも **「商品1�
 
 ---
 
-## プロンプト 6：無料の「Discord / Slack 値下げ・高騰アラート通知」を追加する
+## プロンプト 6：標準搭載の無料通知（ntfy.sh / Discord / Slack）を「自分好みの条件」に強化する
 
-**こんなときに使う**: 「スプレッドシートを毎日開くのすら忘れそう。**目標価格を達成した日だけスマホにプッシュ通知が来てほしい！**」というとき。
+**こんなときに使う**: v2.0 標準搭載の「目標価格達成時通知（`src/price_monitor/notifier.py`）」をさらに拡張して、**「前日より 10% 以上急落した商品も通知したい」「売り切れ→在庫復活した瞬間だけ通知したい」** といった独自条件を追加したいとき。
 
-> Discord や Slack の **Incoming Webhook** は完全無料＆API課金ゼロで使えます（LINE Notify は2025年3月に終了したため、個人利用では Discord Webhook が最も手軽でおすすめです）。
+> 基本の目標価格通知は標準内蔵済み（GitHub Secrets に `NTFY_TOPIC_URL` / `DISCORD_WEBHOOK_URL` / `SLACK_WEBHOOK_URL` を貼るだけで動きます）。このプロンプトは「さらに凝った通知条件」を足したいとき用です。
 
 ```text
-私の価格監視キットに「目標価格を達成した商品（alerts で achieved=True の行）がある日だけ、Discord Webhook（または Slack Webhook）へ無料通知を送る」機能を追加したいです。
+私の価格監視キットには、無料のスマホプッシュ通知モジュール `src/price_monitor/notifier.py`（ntfy.sh / Discord / Slack 対応）が標準搭載されています。
+この `notifier.py` の `should_send_notification` と `build_notification_message` を拡張して、次の条件を追加してください。
 
-【仕様・条件】
-- 依存ライブラリは既存の `requests` のみ使用すること（有料API禁止）
-- Webhook URL は絶対にコードや config.json に直書きせず、環境変数 `DISCORD_WEBHOOK_URL`（GitHub Secrets に登録）から読み込むこと
-- 環境変数が未設定のときはエラーにせず静かにスキップすること
-- 目標達成した商品が 0 件の日は通知を送らないこと（うるさくしない）
-- 通知メッセージはスマホで見やすく、商品名・現在価格・目標価格・店舗名・URLを箇条書きにすること
+【追加したい通知条件】
+（例1：差率 15% 以上の掘り出し物が見つかったときも通知する）
+（例2：前回の `data/raw_prices.csv` と比べて「在庫切れ → 在庫あり」に復活した商品があれば最優先で通知する）
+（例3：毎週日曜日の実行時だけは目標未達でも週間サマリーを送る）
 
-【出力してほしいもの】
-1. 追加する `src/price_monitor/notifier.py` の完全なコード
-2. `src/price_monitor/cli.py` に追加する数行の呼び出しコード（Before/After）
-3. `.github/workflows/update-prices.yml` に `DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}` を足す箇所
-4. Discord で Webhook URL を取得して GitHub Secrets に貼るまでの3ステップ手順
+【厳守ルール】
+- 既存の `requests` と Python 標準ライブラリのみ使用（有料API・LINE Notify 禁止）
+- Webhook URL やトピック URL は引き続き環境変数のみから読み込み、コードや config.json には書かないこと
+- どの関数をどう変更するかを Before / After とテストコード案つきで提示すること
 ```
 
 ---

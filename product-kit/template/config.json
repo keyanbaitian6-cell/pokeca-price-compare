@@ -13,6 +13,12 @@
     "respect_robots_txt": true,
     "user_agent": "PersonalPriceMonitorKit/1.0 (+personal-low-frequency-use)"
   },
+  "notifications": {
+    "enabled": true,
+    "notify_on_target_hit": true,
+    "notify_on_error": true,
+    "always_notify_summary": false
+  },
   "normalization": {
     "strip_phrases": [
       "【新品・送料無料】",
