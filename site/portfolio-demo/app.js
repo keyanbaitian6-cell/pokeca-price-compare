@@ -35,6 +35,9 @@
       monthlySavings,
       annualSavings,
       paybackMonths: Math.round(paybackMonths * 10) / 10,
+      firstYearSelf: planCost,
+      firstYearOtherMin: 110000,
+      firstYearOtherMax: 360000,
     };
   }
 
@@ -92,7 +95,7 @@
 
     const selectedOptions = [];
     if (optTrend) selectedOptions.push('30日価格推移マトリクス＋SPARKLINE');
-    if (optMobile) selectedOptions.push('スマホ1タップ手動更新ページ（合言葉認証）');
+    if (optMobile) selectedOptions.push('スマホ1タップ手動更新ページ（合言葉認証・Cloudflare無料枠）');
     if (optNotify) selectedOptions.push('条件アラート通知（メール/Slack/Discord）');
     if (optSupport) selectedOptions.push('納品後1ヶ月 軽微レイアウト修正保証');
 
@@ -127,13 +130,13 @@
   const ARCH_STEPS = [
     {
       title: 'STEP 01｜定時スケジュール＆スマホ1タップ起動',
-      badge: 'GitHub Actions + Vercel無料枠',
-      desc: '毎日決まった時間（例：朝8:00や夕方17:00）にクラウド上のLinux環境が自動起動します。さらにオプションのスマホ用更新ページを使えば、外出先から合言葉1つで即座に手動実行できます。',
+      badge: 'GitHub Actions + Cloudflare無料枠',
+      desc: '毎日決まった時間（例：朝8:00や夕方17:00）にクラウド上のLinux環境が自動起動します。さらに商用利用OKのCloudflare Pages / Workers無料枠を使ったスマホ専用ページで、外出先から合言葉1つで即座に手動実行できます。',
       metas: [
-        { label: '月額0円の根拠', text: 'GitHub Actions無料枠は月2,000分。1回2〜3分の毎日実行なら月約70〜90分（5%未満）で収まります。' },
+        { label: '月額0円・商用OKの根拠', text: 'GitHub Actions非公開リポジトリ月2,000 Linux分無料（1日1回2〜3分で月約70〜90分＝5%未満）。スマホ手動更新もCloudflare無料枠（商用OK・1日10万req）で¥0です。' },
         { label: '安全・連打対策', text: '合言葉はSHA-256ハッシュで照合し、5分間クールダウンと同時実行キュー制御で誤連打を防止します。' },
-        { label: 'PC不要・警告ゼロ', text: '自分のPCをつけっぱなしにする必要なし。GAS特有の「未確認アプリ警告」も出ません。' },
-        { label: '最小権限設計', text: 'GitHubトークンは対象リポジトリのActions起動権限のみに限定して安全に分離管理します。' },
+        { label: 'PC不要・警告ゼロ', text: '自分のPCをつけっぱなしにする必要なし。GAS特有の「未確認アプリ警告」や6分制限もありません。' },
+        { label: '最小権限・非公開運用', text: 'GitHubトークンはActions起動権限のみに限定。非公開リポジトリ運用で公開リポの60日停止リスクも抑えます。' },
       ],
       logLine: '[17:00:01 JST] Trigger accepted (schedule: 0 8 * * * UTC / ubuntu-latest)',
     },
@@ -169,7 +172,7 @@
         { label: '一発で分かる強調', text: '最有利セルを緑、差率5%以上を赤太字、差額¥3,000以上を金太字にし、見落としをゼロにします。' },
         { label: '肥大化しない推移設計', text: '全履歴は非表示アーカイブに蓄積し、表示タブは1商品1行の30日横型マトリクス＋SPARKLINEで軽快に保ちます。' },
         { label: '手入力エリアの保護', text: 'サマリーの決まったセル範囲だけを更新し、お客様が書き込んだメモ欄を消さない設計が可能です。' },
-        { label: '低APIコール数', text: 'batch_update集約により1実行約20コール程度に抑え、Google無料API枠内で安定稼働します。' },
+        { label: 'Google無料API枠に余裕', text: 'Google Sheets APIは無料（300req/分・日次上限なし）。batch_update集約により1実行約20コールで完結します。' },
       ],
       logLine: '[17:01:12 JST] Google Sheets batch_update complete (6 tabs formatted, 19 API calls)',
     },
@@ -269,6 +272,32 @@
           { time: '2026-11-22 19:18', trigger: 'スマホ手動', total: 146, matched: 71, single: 17, errors: 0 },
           { time: '2026-11-22 17:02', trigger: '定期 17:00', total: 145, matched: 70, single: 18, errors: 0 },
         ],
+        rawSamples: [
+          {
+            shop: 'ストアA',
+            rawName: '【国内正規品・送料無料】ノイズキャンセリングイヤホン　Ｐｒｏ　Ｘ２（新品）',
+            rawPrice: '24,800円(税込)',
+            normalizedName: 'ノイズキャンセリングイヤホン Pro X2',
+            condition: '国内正規品・新品',
+            ruleNote: 'NFKC全角→半角・販促括弧除去',
+          },
+          {
+            shop: 'ストアB',
+            rawName: '★即日発送★ ノイズキャンセリングイヤホン ProX2 国内正規 新品',
+            rawPrice: '¥27,400',
+            normalizedName: 'ノイズキャンセリングイヤホン Pro X2',
+            condition: '国内正規品・新品',
+            ruleNote: 'スペース揺れ・別名辞書で自動突合',
+          },
+          {
+            shop: 'ストアC',
+            rawName: 'メカニカルキーボード 75％ 静音赤軸（記載省略）',
+            rawPrice: '14,900円',
+            normalizedName: 'メカニカルキーボード 75% 静音赤軸',
+            condition: '日本語配列（状態推定）',
+            ruleNote: '片側記載省略→「状態推定」フラグ付与',
+          },
+        ],
       },
 
       hobby: {
@@ -346,6 +375,32 @@
           { time: '2026-11-23 17:02', trigger: '定期 17:00', total: 190, matched: 67, single: 25, errors: 0 },
           { time: '2026-11-22 17:02', trigger: '定期 17:00', total: 189, matched: 67, single: 24, errors: 0 },
         ],
+        rawSamples: [
+          {
+            shop: 'ショップα',
+            rawName: '【着払い対象外】シリーズA 拡張パック「蒼穹レジェンド」(S99a) シュリンク付きBOX',
+            rawPrice: '18,500円',
+            normalizedName: '蒼穹レジェンド 拡張BOX',
+            condition: 'シュリンク有',
+            ruleNote: '注記・品番(S99a)・括弧を安全除去',
+          },
+          {
+            shop: 'ショップβ',
+            rawName: '蒼穹レジェンド ＢＯＸ　シュリンク有り',
+            rawPrice: '¥16,200',
+            normalizedName: '蒼穹レジェンド 拡張BOX',
+            condition: 'シュリンク有',
+            ruleNote: 'NFKC正規化＋状態語抽出で同一キー化',
+          },
+          {
+            shop: 'ショップγ',
+            rawName: '蒼穹レジェンド BOX（シュリンク無し・ぺりぺり付）',
+            rawPrice: '12,800円',
+            normalizedName: '蒼穹レジェンド 拡張BOX',
+            condition: 'シュリンク無',
+            ruleNote: '「シュリンク有」と誤統合せず別行分離',
+          },
+        ],
       },
 
       stock: {
@@ -412,6 +467,32 @@
           { time: '2026-11-24 17:02', trigger: '定期 17:00', total: 84, matched: 41, single: 9, errors: 0 },
           { time: '2026-11-23 17:02', trigger: '定期 17:00', total: 84, matched: 40, single: 10, errors: 0 },
           { time: '2026-11-22 17:02', trigger: '定期 17:00', total: 83, matched: 40, single: 10, errors: 0 },
+        ],
+        rawSamples: [
+          {
+            shop: 'ショップX',
+            rawName: '【再入荷】軽量ソロテント ＵＬ−１８０／カラー：サンド [在庫あり]',
+            rawPrice: '¥36,800',
+            normalizedName: '軽量ソロテント UL-180（サンド）',
+            condition: '在庫復活',
+            ruleNote: '前回「欠品」→今回「在庫あり」を差分検知',
+          },
+          {
+            shop: 'ショップY',
+            rawName: '軽量ソロテント UL180 (Sand) ※ポイント5倍対象',
+            rawPrice: '41,200円',
+            normalizedName: '軽量ソロテント UL-180（サンド）',
+            condition: '在庫あり',
+            ruleNote: 'ハイフン・英日カラー表記を別名辞書で統一',
+          },
+          {
+            shop: 'ショップZ',
+            rawName: 'ダウンシュラフ 600FP 厳冬期モデル（残り2点）',
+            rawPrice: '49,800円',
+            normalizedName: 'ダウンシュラフ 600FP 厳冬期モデル',
+            condition: '残りわずか',
+            ruleNote: '残数テキストからステータスを自動分類',
+          },
         ],
       },
     };
@@ -556,6 +637,12 @@
         result.paybackMonths <= 0.5
           ? '約 2週間以内で元が取れます'
           : `約 ${result.paybackMonths.toFixed(1)} ヶ月で元が取れます`;
+      const firstYearSelfEl = document.getElementById('roiFirstYearSelf');
+      const firstYearOtherEl = document.getElementById('roiFirstYearOther');
+      if (firstYearSelfEl) firstYearSelfEl.textContent = formatYen(result.firstYearSelf);
+      if (firstYearOtherEl) {
+        firstYearOtherEl.textContent = `${formatYen(result.firstYearOtherMin)}〜${formatYen(result.firstYearOtherMax)}`;
+      }
     }
 
     [roiMinutes, roiDays, roiHourly, roiPlanCost].forEach((el) => {
@@ -646,6 +733,7 @@
     const sheetDocTitle = document.getElementById('sheetDocTitle');
     const sheetUpdatedMeta = document.getElementById('sheetUpdatedMeta');
     const sheetSortSelect = document.getElementById('sheetSortSelect');
+    const sheetLegend = document.getElementById('sheetLegend');
 
     function renderSpreadsheet() {
       const ds = state.datasets[state.genre];
@@ -654,6 +742,32 @@
       sheetDocTitle.textContent = ds.docTitle;
       sheetUpdatedMeta.textContent = `最終更新: ${ds.updatedAt} ｜ 取得エラー: 0件`;
       sheetControlsBar.hidden = state.sheetTab !== 'compare';
+
+      if (sheetLegend) {
+        if (state.sheetTab === 'compare') {
+          sheetLegend.innerHTML =
+            '<span class="legend-item"><span class="legend-swatch" style="background:#c6efce;border:1px solid #82c997;"></span>最有利価格（緑）</span>' +
+            '<span class="legend-item"><span class="legend-swatch" style="background:#b42318;"></span>差率5%以上（赤太字）</span>' +
+            '<span class="legend-item"><span class="legend-swatch" style="background:#a66900;"></span>差額¥3,000以上（金太字）</span>' +
+            '<span class="legend-item"><span class="legend-swatch" style="background:#fff2cc;border:1px solid #e6c66a;"></span>状態推定などの注意</span>' +
+            '<span class="legend-scroll-cue">← 横スクロールで全列を表示 →</span>';
+        } else if (state.sheetTab === 'trend') {
+          sheetLegend.innerHTML =
+            '<span class="legend-item"><span class="legend-swatch" style="background:#137333;"></span>前回比・7日前比の上昇（緑）</span>' +
+            '<span class="legend-item"><span class="legend-swatch" style="background:#175cd3;"></span>下落（青）</span>' +
+            '<span class="legend-item">1商品1行の横型マトリクス＋非表示アーカイブ自動蓄積</span>' +
+            '<span class="legend-scroll-cue">← 横スクロールで過去日付列を表示 →</span>';
+        } else if (state.sheetTab === 'beforeAfter') {
+          sheetLegend.innerHTML =
+            '<span class="legend-item"><span class="legend-swatch" style="background:#fffaf5;border:1px solid #e8cfa0;"></span>Before：取得元の生テキスト</span>' +
+            '<span class="legend-item"><span class="legend-swatch" style="background:#f2fbf7;border:1px solid #82c997;"></span>After：NFKC正規化＋状態分離後</span>' +
+            '<span class="legend-scroll-cue">← 横スクロールで処理ルールを確認 →</span>';
+        } else {
+          sheetLegend.innerHTML =
+            '<span class="legend-item"><span class="legend-swatch" style="background:#e8f5f0;border:1px solid #82c997;"></span>最新実行が常に最上段（最大365回分保持）</span>' +
+            '<span class="legend-item">取得エラー時は既存データを保護して通知</span>';
+        }
+      }
 
       if (state.sheetTab === 'compare') {
         let rows = ds.items.map((item) => ({
@@ -774,6 +888,45 @@
           .join('');
 
         sheetViewport.innerHTML = `<div class="sheet-table-scroll"><table class="sheet-table"><thead>${headerHtml}</thead><tbody>${bodyHtml}</tbody></table></div>`;
+      } else if (state.sheetTab === 'beforeAfter') {
+        const samples = Array.isArray(ds.rawSamples) ? ds.rawSamples : [];
+        const beforeAfterHtml = `
+          <div class="sheet-ba-intro">
+            <strong>なぜ「取るだけ」の格安ツールと違うのか？</strong>
+            <span>店舗ごとにバラバラな全角・型番・販促文・状態表記を自動名寄せし、同一商品だけを正確に横並び比較します。</span>
+          </div>
+          <div class="sheet-table-scroll">
+            <table class="sheet-table">
+              <thead>
+                <tr>
+                  <th>取得元</th>
+                  <th>Before：サイト上の生商品名（表記揺れあり）</th>
+                  <th class="is-num">生価格表記</th>
+                  <th>After：統一商品名（名寄せ後）</th>
+                  <th>抽出状態</th>
+                  <th>自動処理ルール</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${samples
+                  .map(
+                    (row) => `
+                      <tr>
+                        <td><strong>${escapeHtml(row.shop)}</strong></td>
+                        <td class="cell-raw-text">${escapeHtml(row.rawName)}</td>
+                        <td class="is-num mono">${escapeHtml(row.rawPrice)}</td>
+                        <td class="cell-after-name">${escapeHtml(row.normalizedName)}</td>
+                        <td><span class="cell-status-ok">${escapeHtml(row.condition)}</span></td>
+                        <td class="cell-rule-note">${escapeHtml(row.ruleNote)}</td>
+                      </tr>
+                    `
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+        sheetViewport.innerHTML = beforeAfterHtml;
       } else {
         const latest = ds.historyLog[0];
         const summaryHtml = `
@@ -1081,6 +1234,33 @@
     }
 
     renderEstimator();
+
+    // --- Mobile Sticky Bottom CTA Bar ---
+    const mobileStickyCta = document.getElementById('mobileStickyCta');
+    const heroSection = document.getElementById('hero');
+    const estimatorSection = document.getElementById('estimator');
+    if (mobileStickyCta && heroSection && estimatorSection && 'IntersectionObserver' in window) {
+      let heroVisible = true;
+      let estimatorVisible = false;
+
+      function syncStickyCta() {
+        mobileStickyCta.hidden = heroVisible || estimatorVisible;
+      }
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.target === heroSection) heroVisible = entry.isIntersecting;
+            if (entry.target === estimatorSection) estimatorVisible = entry.isIntersecting;
+          });
+          syncStickyCta();
+        },
+        { threshold: 0.12 }
+      );
+      observer.observe(heroSection);
+      observer.observe(estimatorSection);
+      syncStickyCta();
+    }
   }
 
   return {

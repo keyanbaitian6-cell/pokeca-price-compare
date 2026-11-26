@@ -69,7 +69,7 @@
 ### Phase 4：お客様環境デプロイ＆マニュアル自動生成（40〜60分）
 1. **Prompt #7** に「今回の案件仕様・ファイル構成・保守ポイント（セレクタ一覧）」を渡し、[`delivery/client-manual-template.md`](../delivery/client-manual-template.md) ベースのお客様専用マニュアルを5分で完成させる。
 2. お客様側の非公開GitHubリポジトリへコードを納品（またはZIP＋導入手順で共有）し、`GOOGLE_CREDENTIALS_JSON` シークレット設定後に GitHub Actions の **Run workflow** で初回疎通を実行。
-3. スマホ手動更新オプションがある場合は、`vercel/api/update.js` 内のリポジトリ指定定数（`GITHUB_OWNER` / `GITHUB_REPO` / `WORKFLOW_FILE` / `User-Agent`）が顧客リポジトリ用になっていることを確認したうえで Vercelプロジェクト設定（`GITHUB_TOKEN` と `UPDATE_PASSWORD_HASH`）を行い、正しい合言葉・誤った合言葉・5分連打ガードの3パターンを疎通確認。
+3. スマホ手動更新オプションがある場合は、商用案件では **Cloudflare Pages Functions / Workers 無料枠（商用利用OK）** を標準採用し（※Vercel Hobbyは利用規約上「個人・非商用限定」）、更新API内のリポジトリ指定定数（`GITHUB_OWNER` / `GITHUB_REPO` / `WORKFLOW_FILE` / `User-Agent`）が顧客リポジトリ用になっていることを確認したうえで環境変数（`GITHUB_TOKEN` と `UPDATE_PASSWORD_HASH`）を設定し、正しい合言葉・誤った合言葉・5分連打ガードの3パターンを疎通確認。
 4. 納品完了連絡＋「検収5営業日のお願い＋将来のレイアウト変更時スポット保守のご案内」を送ってクローズ！
 
 ---

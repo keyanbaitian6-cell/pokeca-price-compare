@@ -105,6 +105,8 @@ assert.equal(roi.monthlyHours, 11.0);
 assert.equal(roi.monthlySavings, 16500);
 assert.equal(roi.annualSavings, 198000);
 assert.equal(roi.paybackMonths, 1.8);
+assert.equal(roi.firstYearSelf, 30000);
+assert.ok(roi.firstYearOtherMin > roi.firstYearSelf, '12-month competitor floor must exceed self cost');
 console.log('PASS: ROI calculator unit assertions');
 
 // 5. Verify Quick Estimator tier matching & strict monotonicity
@@ -156,10 +158,14 @@ assert.match(customEst.planName, /カスタム/);
 assert.ok(customEst.summaryText.includes('スマホ1タップ手動更新ページ'));
 console.log('PASS: Quick estimator tier & monotonicity assertions');
 
-// 6. Verify anonymized datasets, metrics calculation, and SVG sparklines
+// 6. Verify anonymized datasets, Before/After rawSamples, metrics calculation, and SVG sparklines
 const datasets = demoApp.createInitialDatasets();
 for (const [key, ds] of Object.entries(datasets)) {
   assert.ok(ds.items.length >= 5, `Dataset ${key} should have at least 5 items`);
+  assert.ok(Array.isArray(ds.rawSamples) && ds.rawSamples.length >= 3, `Dataset ${key} must include Before/After rawSamples`);
+  for (const sample of ds.rawSamples) {
+    assert.ok(sample.rawName && sample.normalizedName && sample.ruleNote, `Invalid rawSample in ${key}`);
+  }
   for (const item of ds.items) {
     const metrics = demoApp.computeItemMetrics(item, ds);
     assert.ok(metrics.bestPrice > 0, `${item.id} bestPrice must be positive`);
@@ -168,5 +174,6 @@ for (const [key, ds] of Object.entries(datasets)) {
     assert.ok(svg.startsWith('<svg') && svg.includes('<polyline'), `${item.id} sparkline SVG invalid`);
   }
 }
-console.log('PASS: Anonymized datasets & SVG sparkline assertions');
+assert.ok(indexHtml.includes('Cloudflare'), 'Portfolio demo should reflect Cloudflare commercial-use free tier');
+console.log('PASS: Anonymized datasets, Before/After samples & SVG sparkline assertions');
 console.log('ALL VERIFICATIONS PASSED');

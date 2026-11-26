@@ -4,7 +4,7 @@
 
 > **設計ポリシー（厳守事項）**
 > - **課金する外部AI APIキーは不使用**：案件開発・提案・テスト・マニュアル作成は、普段使いのWeb版／IDE版生成AIへのプロンプト貼り付けで超高速化します。
-> - **クライアント月額サーバー費0円**：GitHub Actions無料枠（月2,000分）＋Google Sheets API無料枠（＋必要時Vercel無料枠）を提案し、VPS保守・SaaS月額費が不要な圧倒的価格優位性で勝つ戦略です。
+> - **クライアント月額サーバー費0円（商用利用規約準拠）**：GitHub Actions無料枠（非公開リポジトリ月2,000 Linux分）＋Google Sheets API無料枠（300req/分・日次上限なし）＋必要時 **Cloudflare Pages / Workers 無料枠（商用利用OK・1日10万req）** を提案し、VPS保守・SaaS月額費が不要な圧倒的価格優位性で勝つ戦略です（※Vercel Hobbyは利用規約上「個人・非商用限定」のため、商用クライアント案件ではCloudflare無料枠を標準提案します）。
 > - **秘密情報の徹底保護**：個人のスプレッドシートID、実運用URL、合言葉、認証JSON、個別店舗名などの実運用情報は営業資料・デモから完全排除しています。
 
 ---
@@ -30,15 +30,15 @@
 クラウドソーシング上の安価なスクレイピング案件（5,000〜1万円）の大半は「ローカルPCで動くCSV吐き出しスクリプトを納品して終わり」です。本キットでは以下の**実運用済みエンジニアリング品質**を前面に出すことで、**3〜5万円帯でも「むしろ安い」と感じさせるポジショニング**を取ります。
 
 1. **月額サーバー代0円・PCつけっぱなし不要**
-   - GitHub Actions（非公開リポジトリでも月2,000分無料）で毎日定時実行。1回2〜3分なら月約70〜90分（無料枠の5%未満）。
-2. **GAS（Google Apps Script）の弱点を完全解消**
-   - GASの「6分タイムアウト制限」「JavaScript描画サイトが取れない」「未確認アプリ警告が出る」問題を、Python＋Playwright＋Service Account構成で回避。
+   - GitHub Actions（非公開リポジトリでも月2,000 Linux分無料）で毎日定時実行。1回2〜3分なら月約70〜90分（無料枠の5%未満）。
+2. **GAS（Google Apps Script）やIMPORTXMLの弱点を完全解消**
+   - `IMPORTXML` の `#N/A` 頻発や GASの「6分タイムアウト制限」「JavaScript描画サイトが取れない」「未確認アプリ警告が出る」問題を、Python＋Playwright＋Service Account構成で回避。
 3. **「取るだけ」で終わらない意思決定シート自動整形**
    - 複数サイトの表記揺れを日本語NFKC正規化で名寄せし、差率5%以上（赤太字）・差額3,000円以上（金太字）・最有利価格（緑）・30日横型SPARKLINE推移・非表示アーカイブ分離まで自動構築。
 4. **0件時データ保護（strictガード）＆丁寧なアクセス制御**
    - サイト構造変化で0件になった際に既存シートを空データで上書きしない保護、1秒間隔レート制限、429/5xx指数バックオフ再試行を標準設計。
-5. **スマホ1タップ手動更新（合言葉認証・5分連打ガード）**
-   - 定時更新だけでなく「今すぐ最新を見たい」要望を、Vercel無料枠＋SHA-256ハッシュ照合の専用スマホページで安全に解決。
+5. **スマホ1タップ手動更新（合言葉認証・5分連打ガード・商用OK）**
+   - 定時更新だけでなく「今すぐ最新を見たい」要望を、Cloudflare Pages / Workers 無料枠（商用利用OK）＋SHA-256ハッシュ照合の専用スマホページで安全に解決。
 
 ---
 
@@ -51,11 +51,10 @@
 - URL形式：`https://<あなたのGitHubユーザー名>.github.io/<リポジトリ名>/portfolio-demo/`
 - ※URLに個人リポジトリ名を出したくない場合は、下の**方法B**を強く推奨します。
 
-### 方法B：Vercel無料枠で専用の中立URLを発行（おすすめ・完全匿名化）
-1. Vercelダッシュボードで **Add New → Project** を選び、このリポジトリをインポート（既存の手動更新プロジェクトとは**別プロジェクト**として作成）。
-2. **Root Directory** に `site/portfolio-demo` を指定。
-3. **Framework Preset** は `Other` のまま **Deploy**。
-4. プロジェクト名を `zerorun-automation-demo` 等に設定すると、個人用途の文字列が一切入らないクリーンな営業用URL（`https://zerorun-automation-demo.vercel.app`）を月額0円で持てます。
+### 方法B：Cloudflare Pages 無料枠で専用の中立URLを発行（おすすめ・商用利用OK・完全匿名化）
+1. Cloudflareダッシュボードで **Workers & Pages → Create → Pages → Connect to Git** を選び、このリポジトリを接続。
+2. **Root directory（または Build output directory）** に `site/portfolio-demo` を指定（Build command は空欄のまま）。
+3. プロジェクト名を `zerorun-automation-demo` 等に設定してデプロイすると、個人用途の文字列が一切入らない商用利用OKの営業用URL（`https://zerorun-automation-demo.pages.dev`）を月額0円で持てます。
 
 ---
 
