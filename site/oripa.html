@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>オリパ還元率・期待値・爆死確率シミュレーター（運試しガチャ付）｜トレカ損益ラボ</title>
-  <meta name="description" content="ポケカ・オンラインオリパの1口価格・総口数・当たり本数から、販売相場ベースと現金化ベースの実質還元率、アド確率、全外れ（爆死）確率を超幾何分布で厳密計算。10連運試しシミュレーター付き。">
+  <meta name="description" content="オリパの1口価格・総口数・当たり本数から、販売相場ベースとリアル現金化ベースの還元率、アド確率、爆死確率を超幾何分布で厳密計算。10連運試しシミュレーター付き。">
   <link rel="canonical" href="https://keyanbaitian6-cell.github.io/pokeca-price-compare/oripa.html">
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
-  <meta name="theme-color" content="#0F6E56">
+  <meta name="theme-color" content="#0C6B53">
 
   <meta property="og:site_name" content="トレカ損益ラボ">
   <meta property="og:title" content="オリパ還元率・期待値・爆死確率シミュレーター｜トレカ損益ラボ">
-  <meta property="og:description" content="そのオリパ本当にアドが取れる？総口数と当たり本数から実質還元率・爆死確率を厳密計算＆10連運試し！">
+  <meta property="og:description" content="引く前にそのオリパの「実質還元率」と「爆死率」を厳密計算。10連運試しガチャでブレを体感！">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://keyanbaitian6-cell.github.io/pokeca-price-compare/oripa.html">
   <meta property="og:image" content="https://keyanbaitian6-cell.github.io/pokeca-price-compare/assets/ogp.jpg">
@@ -21,197 +21,155 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/style.css">
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "オリパ還元率・期待値・爆死確率シミュレーター",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "All",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" }
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "オリパの還元率と現金化ベースの還元率は何が違いますか？",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "販売相場ベースはショップの販売価格をもとにした理論還元率です。一方、当たったカードを実際に買取やフリマで売却すると手数料や買取掛け率で70〜85%程度になるため、手元資金ベースでは現金化還元率を見るのが現実的です。"
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "この計算機の確率は正確ですか？",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "はい。引いた口が元に戻らない「非復元抽出（超幾何分布）」で厳密に計算しているため、総口数が少ないオリパでも正確なアド確率・全外れ確率を算出します。"
-        }
-      }
-    ]
-  }
-  </script>
 </head>
 <body>
   <div id="prDisclosureBar" class="pr-bar" hidden>
     <div class="container pr-bar-inner">
       <span class="pr-tag">PR</span>
-      <span>当サイトはアフィリエイト広告（プロモーション）を含みます。計算ロジックは中立に算出しています。</span>
+      <span>当サイトはアフィリエイト広告を含みます。計算ロジックは中立に算出しています。</span>
     </div>
   </div>
 
   <header class="site-header">
-    <div class="container header-inner">
+    <div class="container header-top">
       <a class="brand-link" href="./index.html">
-        <img class="brand-mark" src="./assets/favicon.svg" alt="" width="34" height="34">
-        <span class="brand-text">
-          <span class="brand-name">トレカ損益ラボ</span>
-          <span class="brand-sub">TCG Profit Lab</span>
-        </span>
+        <img class="brand-mark" src="./assets/favicon.svg" alt="" width="28" height="28">
+        <span class="brand-name">トレカ損益ラボ</span>
       </a>
-      <button id="navToggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="メニューを開く">☰</button>
-      <nav id="siteNav" class="site-nav" aria-label="メインナビゲーション">
-        <a class="nav-link" data-page="home" href="./index.html">トップ</a>
-        <a class="nav-link" data-page="sell-compare" href="./sell-compare.html">フリマ vs 買取</a>
-        <a class="nav-link" data-page="psa" href="./psa.html">PSA鑑定 損益</a>
-        <a class="nav-link" data-page="oripa" href="./oripa.html">オリパ期待値</a>
-        <a class="nav-link" data-page="portfolio" href="./portfolio.html">BOX資産管理</a>
+      <span class="verified-pill">超幾何分布（非復元）</span>
+    </div>
+    <div class="tool-tabs-wrap">
+      <nav class="container tool-tabs" aria-label="計算ツール切替">
+        <a class="tool-tab-link" data-page="home" href="./index.html">売却比較</a>
+        <a class="tool-tab-link" data-page="psa" href="./psa.html">PSA鑑定</a>
+        <a class="tool-tab-link" data-page="oripa" href="./oripa.html">オリパ</a>
+        <a class="tool-tab-link" data-page="portfolio" href="./portfolio.html">BOX管理</a>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    <nav class="breadcrumb" aria-label="パンくずリスト">
-      <a href="./index.html">トップ</a>
-      <span>/</span>
-      <span>オリパ還元率・期待値シミュレーター</span>
-    </nav>
+    <div class="tool-header">
+      <div>
+        <h1>オリパ還元率・期待値・爆死確率シミュレーター</h1>
+        <p class="tool-lead">1口価格と総口数を入れるだけ。リアル現金化ベースの実質還元率と爆死確率を厳密計算。</p>
+      </div>
+    </div>
 
-    <header class="page-hero">
-      <p class="hero-eyebrow">TOOL 03 / ORIPA PROBABILITY</p>
-      <h1>オリパ 還元率・期待値・爆死確率シミュレーター</h1>
-      <p class="lead">
-        引く前に「本当に期待値が高いオリパか」を数字でチェック。販売相場ベースとリアル現金化ベースの両方の還元率、
-        さらに購入口数ごとのアド確率・全外れ（爆死）確率を厳密な超幾何分布で計算します。
-      </p>
-    </header>
-
-    <div class="calc-layout">
-      <section class="panel" aria-label="オリパ設定フォーム">
-        <h2 class="panel-title">オリパの仕様を入力</h2>
-
-        <div class="preset-row" role="group" aria-label="オリパプリセット">
-          <button type="button" class="preset-btn is-active" data-oripa-preset="mild">王道マイルド</button>
-          <button type="button" class="preset-btn" data-oripa-preset="nibuichi">ニブイチ系</button>
-          <button type="button" class="preset-btn" data-oripa-preset="highrisk">高額ハイリスク</button>
+    <div class="calc-grid">
+      <section class="card" aria-label="オリパ入力">
+        <div class="segment-row segment-row-3" role="group" aria-label="オリパプリセット">
+          <button type="button" class="segment-btn is-active" data-oripa-preset="mild">王道マイルド</button>
+          <button type="button" class="segment-btn" data-oripa-preset="nibuichi">ニブイチ系</button>
+          <button type="button" class="segment-btn" data-oripa-preset="highrisk">高額ハイリスク</button>
         </div>
 
-        <div class="field-row-3">
-          <div class="field-group">
+        <div class="primary-inputs-3">
+          <div>
             <label class="field-label" for="oripaUnitPrice">1口価格</label>
-            <div class="input-wrap">
-              <input id="oripaUnitPrice" class="input-control has-suffix num" type="number" min="1" step="100" value="1000">
+            <div class="input-box">
+              <input id="oripaUnitPrice" class="input-lg" type="number" inputmode="numeric" min="1" step="100" value="1000">
               <span class="input-suffix">円</span>
             </div>
           </div>
-          <div class="field-group">
+          <div>
             <label class="field-label" for="oripaTotalPacks">総口数</label>
-            <div class="input-wrap">
-              <input id="oripaTotalPacks" class="input-control has-suffix num" type="number" min="1" max="1000000" step="10" value="100">
+            <div class="input-box">
+              <input id="oripaTotalPacks" class="input-lg" type="number" inputmode="numeric" min="1" max="1000000" step="10" value="100">
               <span class="input-suffix">口</span>
             </div>
           </div>
-          <div class="field-group">
-            <label class="field-label" for="oripaDrawCount">購入予定</label>
-            <div class="input-wrap">
-              <input id="oripaDrawCount" class="input-control has-suffix num" type="number" min="1" step="1" value="5">
+          <div>
+            <label class="field-label" for="oripaDrawCount">購入口数</label>
+            <div class="input-box">
+              <input id="oripaDrawCount" class="input-lg" type="number" inputmode="numeric" min="1" step="1" value="5">
               <span class="input-suffix">口</span>
             </div>
           </div>
         </div>
 
-        <div class="field-group">
-          <label class="field-label" for="oripaMissValue">ハズレ枠の最低保証額 <span class="field-hint">残りの口数に自動適用</span></label>
-          <div class="input-wrap">
-            <input id="oripaMissValue" class="input-control has-suffix num" type="number" min="0" step="50" value="300">
-            <span class="input-suffix">円</span>
+        <details class="settings-accordion">
+          <summary>
+            <span id="oripaSettingsSummary" class="settings-summary-text">当たり16口・最低保証300円・現金化80%</span>
+            <span class="settings-toggle-label">当たり枠を編集</span>
+          </summary>
+          <div class="settings-body">
+            <div class="field">
+              <label class="field-label" for="oripaMissValue">ハズレ枠の最低保証額</label>
+              <div class="input-box">
+                <input id="oripaMissValue" class="input-control has-suffix num" type="number" inputmode="numeric" min="0" step="50" value="300">
+                <span class="input-suffix">円</span>
+              </div>
+              <div id="oripaMissCountNote" class="kpi-meta" style="margin-top:5px;"></div>
+            </div>
+
+            <div class="field">
+              <div class="range-header">
+                <label class="field-label" for="oripaCashoutRate" style="margin:0;">売却時の現金化掛け率</label>
+                <span id="oripaCashoutRateLabel" class="range-value">80%</span>
+              </div>
+              <input id="oripaCashoutRate" class="range-control" type="range" min="50" max="100" step="5" value="80">
+            </div>
+
+            <div class="card-head" style="margin-top:14px;margin-bottom:8px;">
+              <span style="font-size:0.84rem;font-weight:700;">当たり枠（賞名 / 評価額 / 本数）</span>
+              <button id="addPrizeBtn" class="btn btn-secondary btn-sm" type="button">＋ 枠を追加</button>
+            </div>
+            <div id="oripaPrizeList"></div>
           </div>
-          <div id="oripaMissCountNote" class="kpi-meta" style="margin-top:6px;"></div>
-        </div>
-
-        <div class="field-group">
-          <div class="range-header">
-            <label class="field-label" for="oripaCashoutRate" style="margin:0;">売却時の現金化掛け率（買取/フリマ目安）</label>
-            <span id="oripaCashoutRateLabel" class="range-value">80%</span>
-          </div>
-          <input id="oripaCashoutRate" class="range-control" type="range" min="50" max="100" step="5" value="80">
-        </div>
-
-        <hr class="panel-divider">
-
-        <div class="panel-title" style="margin-bottom:10px;">
-          <span>当たり枠の内訳（賞名 / 評価額 / 本数）</span>
-          <button id="addPrizeBtn" class="btn btn-secondary btn-sm" type="button">＋ 枠を追加</button>
-        </div>
-        <div id="oripaPrizeList"></div>
+        </details>
       </section>
 
-      <section class="panel panel-sticky" aria-label="オリパ計算結果">
-        <div id="oripaVerdictBox" class="verdict-box">
-          <p id="oripaVerdictKicker" class="verdict-kicker">計算結果</p>
+      <section class="card card-sticky" aria-label="オリパ結果">
+        <div id="oripaVerdictBox" class="verdict-card">
+          <div class="verdict-top">
+            <span id="oripaVerdictKicker" class="verdict-kicker">計算結果</span>
+          </div>
           <h2 id="oripaVerdictHeadline" class="verdict-headline">—</h2>
           <p id="oripaVerdictSub" class="verdict-sub"></p>
         </div>
 
-        <div class="kpi-grid">
-          <div class="kpi-card">
+        <div class="kpi-row">
+          <div class="kpi-box">
             <div class="kpi-label">販売相場ベース還元率</div>
             <div id="oripaReturnRate" class="kpi-value num">—</div>
             <div id="oripaEvMeta" class="kpi-meta">—</div>
           </div>
-          <div class="kpi-card">
+          <div class="kpi-box">
             <div class="kpi-label">現金化ベース実質還元率</div>
             <div id="oripaCashoutReturn" class="kpi-value num is-gold">—</div>
-            <div class="kpi-meta">買取・フリマ売却後のリアル水準</div>
+            <div class="kpi-meta">買取・フリマ売却後の水準</div>
           </div>
         </div>
 
-        <div class="kpi-grid-3">
-          <div class="kpi-card">
-            <div class="kpi-label">1回以上アド確率</div>
+        <div class="kpi-row-3">
+          <div class="kpi-box">
+            <div class="kpi-label">1回以上アド率</div>
             <div id="oripaProbAd" class="kpi-value num is-positive">—</div>
-            <div class="kpi-meta">1口価格以上の枠</div>
           </div>
-          <div class="kpi-card">
+          <div class="kpi-box">
             <div class="kpi-label">全外れ（爆死）率</div>
             <div id="oripaProbAllMiss" class="kpi-value num">—</div>
-            <div class="kpi-meta">当たり枠が0回</div>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">トップ賞 獲得率</div>
+          <div class="kpi-box">
+            <div class="kpi-label">トップ賞確率</div>
             <div id="oripaProbTop" class="kpi-value num is-gold">—</div>
-            <div class="kpi-meta">最高額枠を1回以上</div>
           </div>
         </div>
 
-        <div class="breakeven-box">
-          <h3 class="breakeven-title">運試しミニガチャ（設定確率で非復元シミュレーション）</h3>
+        <div class="breakeven-strip">
+          <strong>運試しミニガチャ（設定確率で非復元テスト）</strong>
           <div class="action-row" style="margin-top:8px;">
             <button id="gachaDraw1Btn" class="btn btn-primary btn-sm" type="button">1回引く</button>
             <button id="gachaDraw5Btn" class="btn btn-secondary btn-sm" type="button">5連を引く</button>
             <button id="gachaDraw10Btn" class="btn btn-gold btn-sm" type="button">10連を引く</button>
           </div>
-          <p id="gachaSummary" class="kpi-meta" style="margin:10px 0 0;"></p>
+          <p id="gachaSummary" class="kpi-meta" style="margin:8px 0 0;"></p>
           <div id="gachaResults" class="gacha-results"></div>
         </div>
 
         <div class="action-row">
-          <a id="oripaShareBtn" class="btn btn-secondary btn-sm" href="#" target="_blank" rel="noopener noreferrer">Xで結果をシェア</a>
+          <a id="oripaShareBtn" class="btn btn-secondary btn-sm" href="#" target="_blank" rel="noopener noreferrer">Xでシェア</a>
           <button id="oripaCopyBtn" class="btn btn-secondary btn-sm" type="button">結果をコピー</button>
           <span id="oripaCopyToast" class="copy-toast" role="status" aria-live="polite"></span>
         </div>
@@ -220,8 +178,10 @@
       </section>
     </div>
 
-    <section style="margin-top:28px;" aria-labelledby="oripaDrawTableTitle">
-      <h2 id="oripaDrawTableTitle" style="margin:0 0 12px;font-size:1.15rem;">購入口数別 確率＆期待値シミュレーション</h2>
+    <section class="section-block" aria-labelledby="oripaDrawTableTitle">
+      <div class="section-heading">
+        <h2 id="oripaDrawTableTitle">購入口数別 確率＆期待値シミュレーション</h2>
+      </div>
       <div class="table-wrap">
         <table class="data-table">
           <thead>
@@ -229,9 +189,9 @@
               <th>購入口数</th>
               <th class="num-cell">必要資金</th>
               <th class="num-cell">期待獲得額</th>
-              <th class="num-cell">1回以上アド確率</th>
-              <th class="num-cell">全外れ（爆死）率</th>
-              <th class="num-cell">トップ賞確率</th>
+              <th class="num-cell">1回以上アド</th>
+              <th class="num-cell">全外れ(爆死)</th>
+              <th class="num-cell">トップ賞</th>
             </tr>
           </thead>
           <tbody id="oripaDrawTableBody"></tbody>
@@ -242,30 +202,34 @@
     <div class="ad-slot" data-ad-slot="midContent" hidden></div>
 
     <article class="content-section">
-      <h2>オリパの「還元率」に騙されないための見方</h2>
-      <p>
-        「総還元率98%！」と書かれたオリパでも、当たり枠の大部分が1口しかない超超高額カード（例：30万円×1本）に偏っている場合、
-        残りの99%の購入者は大幅なマイナスになります。これが<strong>「期待値は高いのに爆死率が極端に高いオリパ」</strong>の正体です。
-      </p>
-      <p>
-        当ツールでは、総還元率だけでなく<strong>「1回以上アド（1口価格以上）を引ける確率」「全外れ（爆死）確率」「売却時の現金化ベース還元率」</strong>を同時に表示しています。
-        運試しミニガチャで10連を数回回してみると、実際の収支のブレ（分散）を肌感覚で掴めます。
-      </p>
+      <h2>オリパの「還元率98%」に潜む2つの落とし穴</h2>
+      <ul>
+        <li><strong>販売価格と現金化価格のギャップ</strong>：ショップの販売表記ベースで還元率98%でも、買取やフリマで現金化すると実質75〜80%前後になるのが一般的です。</li>
+        <li><strong>超高額1点偏重による高い爆死率</strong>：トップ賞1口に予算の大部分が集中しているオリパは、期待値が高く見えても購入者の大半が大幅なマイナスになります。まずは上の10連ガチャで収支のブレを体感してから予算を決めましょう。</li>
+      </ul>
     </article>
   </main>
+
+  <div id="oripaStickyBar" class="sticky-verdict-bar" role="status" aria-live="polite">
+    <div>
+      <div id="oripaStickyTitle" class="sticky-verdict-text">—</div>
+      <span id="oripaStickySub" class="sticky-verdict-sub"></span>
+    </div>
+    <button type="button" class="sticky-jump-btn" data-sticky-jump>結果へ ↑</button>
+  </div>
 
   <footer class="site-footer">
     <div class="container">
       <div class="footer-grid">
         <div>
           <p class="footer-title">トレカ損益ラボ（TCG Profit Lab）</p>
-          <p style="margin:0;">ポケモンカード・トレカの売却手取り、PSA鑑定、オリパ期待値、BOX資産管理を無料で計算できるWebツール集です。</p>
+          <p style="margin:0;">ポケカ・トレカの売却手取り、PSA鑑定、オリパ期待値、BOX資産管理を無料で計算できるWebツール集です。</p>
         </div>
         <div>
-          <p class="footer-title">無料計算ツール</p>
+          <p class="footer-title">計算ツール</p>
           <ul class="footer-links">
             <li><a href="./sell-compare.html">フリマ vs 買取店 手取り比較</a></li>
-            <li><a href="./psa.html">PSA鑑定 損益分岐点シミュレーター</a></li>
+            <li><a href="./psa.html">PSA鑑定 損益シミュレーター</a></li>
             <li><a href="./oripa.html">オリパ還元率・爆死確率計算機</a></li>
             <li><a href="./portfolio.html">未開封BOX・カード資産管理</a></li>
           </ul>
@@ -280,7 +244,7 @@
       </div>
       <div class="footer-bottom">
         <span>© <span data-site-operator>トレカ損益ラボ運営</span></span>
-        <span>最終更新: <span data-site-updated>2026-11-24</span></span>
+        <span>最終更新: <span data-site-updated>2026-11-26</span></span>
       </div>
     </div>
   </footer>

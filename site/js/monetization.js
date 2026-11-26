@@ -19,7 +19,7 @@ export const SITE_CONFIG = {
   operatorName: 'トレカ損益ラボ運営',
   xHandle: '', // 例: '@your_x_handle'（設定するとフッターとシェア文に反映）
   contactUrl: '', // 例: 'https://forms.gle/xxxxx'（GoogleフォームやXプロフィールURL）
-  lastUpdated: '2026-11-24',
+  lastUpdated: '2026-11-26',
 };
 
 export const ADSENSE_CONFIG = {

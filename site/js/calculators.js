@@ -1,87 +1,178 @@
 /**
  * トレカ損益ラボ — 純粋計算エンジン（ES Module）
- * ブラウザ・Node.js（テスト）両対応。外部依存ゼロ・APIキー不要。
+ * 2026年11月 公式手数料・送料・PSA日本支社料金準拠。外部依存ゼロ・APIキー不要。
  */
 
+export const DATA_VERIFIED_LABEL = '2026年11月 公式確認';
+
 export const PLATFORM_PRESETS = [
-  { id: 'mercari', name: 'メルカリ', feeRate: 0.10, note: '販売手数料 10%（出品数・売れやすさ最大）' },
-  { id: 'yahoo_flea', name: 'Yahoo!フリマ', feeRate: 0.05, note: '販売手数料 5%（手取りが残りやすい）' },
-  { id: 'magi', name: 'magi', feeRate: 0.07, note: '販売手数料 7%（トレカ特化・あんしん取引）' },
-  { id: 'snkrdunk', name: 'スニダン', feeRate: 0.085, note: '販売手数料 目安8.5%（鑑定付き取引）' },
-  { id: 'rakuma', name: '楽天ラクマ', feeRate: 0.10, note: '販売手数料 4.5%〜10%（取引実績で変動）' },
+  {
+    id: 'mercari',
+    name: 'メルカリ',
+    feeRate: 0.10,
+    withdrawalFee: 200,
+    note: '販売手数料10%・振込200円（売れやすさ最大）',
+  },
+  {
+    id: 'yahoo_flea',
+    name: 'Yahoo!フリマ',
+    feeRate: 0.05,
+    withdrawalFee: 0,
+    note: '販売手数料5%・PayPay/PayPay銀行振込0円（他行100円）',
+  },
+  {
+    id: 'magi',
+    name: 'magi',
+    feeRate: 0.07,
+    withdrawalFee: 200,
+    note: '販売手数料7%・振込200円（トレカ専門・あんしん取引）',
+  },
+  {
+    id: 'snkrdunk',
+    name: 'スニダン',
+    feeRate: 0.095,
+    withdrawalFee: 200,
+    note: '販売手数料9.5%〜7.0%・振込200円（真贋鑑定付き）',
+  },
+  {
+    id: 'yahoo_auction',
+    name: 'Yahoo!オークション',
+    feeRate: 0.10,
+    withdrawalFee: 100,
+    note: '落札手数料10%・振込100円（高額品・希少品向き）',
+  },
+  {
+    id: 'rakuma',
+    name: '楽天ラクマ',
+    feeRate: 0.10,
+    withdrawalFee: 210,
+    note: '販売手数料10%〜4.5%（実績変動）・楽天銀行1万円以上無料',
+  },
 ];
 
 export const ITEM_TYPE_PRESETS = {
-  single: {
-    label: 'シングルカード',
-    shippingCost: 180,
-    packingCost: 50,
-    shippingPreset: 'yupacket_mini',
-    defaultFleaPrice: 5000,
-    defaultBuybackPrice: 3800,
-  },
   box: {
-    label: '未開封BOX（1箱）',
+    label: '未開封BOX',
     shippingCost: 520,
     packingCost: 120,
     shippingPreset: 'takkyubin_compact',
-    defaultFleaPrice: 12500,
+    // 12,000円出品は手数料1,200+送料520+梱包120=手取り10,160円 → 買取10,500円の逆転が一目で分かる定番例
+    defaultFleaPrice: 12000,
     defaultBuybackPrice: 10500,
+    exampleHint: '例：人気BOX（メルカリ12,000円 vs 買取10,500円）',
+  },
+  single: {
+    label: 'シングル',
+    shippingCost: 180,
+    packingCost: 50,
+    shippingPreset: 'yupacket_mini',
+    defaultFleaPrice: 6000,
+    defaultBuybackPrice: 4500,
+    exampleHint: '例：SR/SARシングル（メルカリ6,000円 vs 買取4,500円）',
   },
   psa: {
     label: 'PSA鑑定品',
     shippingCost: 210,
     packingCost: 100,
     shippingPreset: 'nekopos',
-    defaultFleaPrice: 25000,
-    defaultBuybackPrice: 20500,
+    defaultFleaPrice: 28000,
+    defaultBuybackPrice: 23000,
+    exampleHint: '例：PSA10カード（メルカリ28,000円 vs 買取23,000円）',
   },
   bulk: {
-    label: '複数BOX・まとめ',
+    label: '複数BOX',
     shippingCost: 750,
     packingCost: 200,
     shippingPreset: 'takkyubin_60',
-    defaultFleaPrice: 38000,
-    defaultBuybackPrice: 33000,
+    defaultFleaPrice: 36000,
+    defaultBuybackPrice: 32000,
+    exampleHint: '例：未開封BOX×3箱（メルカリ36,000円 vs 買取32,000円）',
   },
 };
 
 export const SHIPPING_PRESETS = [
-  { id: 'yupacket_mini', label: 'ゆうパケットポストmini（封筒込 180円）', cost: 180 },
-  { id: 'nekopos', label: 'ネコポス（210円）', cost: 210 },
-  { id: 'yupacket_post', label: 'ゆうパケットポスト（シール込 220円）', cost: 220 },
-  { id: 'takkyubin_compact', label: '宅急便コンパクト（専用BOX込 520円）', cost: 520 },
-  { id: 'yupacket_plus', label: 'ゆうパケットプラス（専用箱込 520円）', cost: 520 },
-  { id: 'takkyubin_60', label: '宅急便 60サイズ（750円）', cost: 750 },
-  { id: 'takkyubin_80', label: '宅急便 80サイズ（850円）', cost: 850 },
-  { id: 'custom', label: 'カスタム入力', cost: null },
+  { id: 'yupacket_mini', label: 'ゆうパケットポストmini（160円＋封筒20円＝180円）', shortLabel: 'ポストmini 180円', cost: 180 },
+  { id: 'nekopos', label: 'ネコポス（210円・厚さ3cm以内）', shortLabel: 'ネコポス 210円', cost: 210 },
+  { id: 'yupacket_post', label: 'ゆうパケットポスト（215円＋シール5円＝220円）', shortLabel: 'ポスト 220円', cost: 220 },
+  { id: 'yupacket', label: 'ゆうパケット（230円・A4/厚さ3cm）', shortLabel: 'ゆうパケット 230円', cost: 230 },
+  { id: 'takkyubin_compact', label: '宅急便コンパクト（450円＋専用BOX70円＝520円）', shortLabel: 'コンパクト 520円', cost: 520 },
+  { id: 'yupacket_plus', label: 'ゆうパケットプラス（455円＋専用箱65円＝520円）', shortLabel: 'プラス 520円', cost: 520 },
+  { id: 'takkyubin_60', label: '宅急便 60サイズ（750円）', shortLabel: '宅急便60 750円', cost: 750 },
+  { id: 'takkyubin_80', label: '宅急便 80サイズ（850円）', shortLabel: '宅急便80 850円', cost: 850 },
+  { id: 'custom', label: 'カスタム送料（直接入力）', shortLabel: 'カスタム送料', cost: null },
 ];
 
+/**
+ * 2026年11月 PSA日本支社 公式サービスレベル基準
+ */
 export const PSA_PLAN_PRESETS = [
-  { id: 'jp_bulk', label: 'PSA日本支社 バリューバルク（目安 3,300円）', fee: 3300 },
-  { id: 'jp_value', label: 'PSA日本支社 バリュー（目安 4,400円）', fee: 4400 },
-  { id: 'jp_value_plus', label: 'PSA日本支社 バリュープラス（目安 6,600円）', fee: 6600 },
-  { id: 'us_proxy', label: '米国本社 代行プラン（目安 3,800円）', fee: 3800 },
-  { id: 'custom', label: 'カスタム鑑定料', fee: null },
+  {
+    id: 'jp_value',
+    label: 'PSA日本支社 バリュー（5,980円｜申告8万円以下・目安24週）',
+    shortLabel: 'バリュー 5,980円',
+    fee: 5980,
+    maxValue: 80000,
+    eta: '約120営業日（約24週間）',
+  },
+  {
+    id: 'jp_standard',
+    label: 'PSA日本支社 スタンダード（9,980円｜申告15万円以下・目安20週）',
+    shortLabel: 'スタンダード 9,980円',
+    fee: 9980,
+    maxValue: 150000,
+    eta: '約100営業日（約20週間）',
+  },
+  {
+    id: 'jp_priority',
+    label: 'PSA日本支社 プライオリティ（11,980円｜申告25万円以下・目安16週）',
+    shortLabel: 'プライオリティ 11,980円',
+    fee: 11980,
+    maxValue: 250000,
+    eta: '約80営業日（約16週間）',
+  },
+  {
+    id: 'jp_express',
+    label: 'PSA日本支社 エクスプレス（29,980円｜申告40万円以下・目安5週）',
+    shortLabel: 'エクスプレス 29,980円',
+    fee: 29980,
+    maxValue: 400000,
+    eta: '約25営業日（約5週間）',
+  },
+  {
+    id: 'proxy_est',
+    label: '鑑定代行プラン目安（4,000円｜業者・為替で変動）',
+    shortLabel: '代行目安 4,000円',
+    fee: 4000,
+    maxValue: 80000,
+    eta: '業者により変動',
+  },
+  {
+    id: 'custom',
+    label: 'カスタム鑑定料（直接入力）',
+    shortLabel: 'カスタム',
+    fee: null,
+    maxValue: null,
+    eta: '—',
+  },
 ];
 
 export const POPULAR_POKECA_BOXES = [
   'ポケモンカード151',
   'テラスタルフェスex',
+  'バトルパートナーズ',
+  '熱風のアリーナ',
+  'ロケット団の栄光',
+  'ブラックボルト',
+  'ホワイトフレア',
   'クレイバースト',
   'VSTARユニバース',
   'イーブイヒーローズ',
   'シャイニートレジャーex',
-  'バトルパートナーズ',
   '超電ブレイカー',
   '楽園ドラゴーナ',
   'ロストアビス',
   '蒼空ストリーム',
   '25th ANNIVERSARY COLLECTION',
-  '熱風のアリーナ',
-  'ロケット団の栄光',
-  'ブラックボルト',
-  'ホワイトフレア',
 ];
 
 function clampNumber(value, min = 0, max = Number.POSITIVE_INFINITY) {
@@ -100,7 +191,6 @@ export function solveBreakEvenSellingPrice(targetNet, feeRate, fixedCosts = 0) {
   if (required <= 0) return 0;
 
   let price = Math.ceil(required / (1 - rate));
-  // 切り捨てによる1〜2円の誤差を厳密に補正
   while (price > 0 && (price - 1) - Math.floor((price - 1) * rate) - fixedCosts >= targetNet) {
     price -= 1;
   }
@@ -111,24 +201,29 @@ export function solveBreakEvenSellingPrice(targetNet, feeRate, fixedCosts = 0) {
 }
 
 /**
- * ツール1: フリマ vs 買取店 手取り・損益分岐点計算
+ * ツール1: フリマ vs 買取店 手取り・損益分岐点・値下げ交渉シミュレーター計算
  */
 export function calculateSellComparison(input) {
   const fleaPrice = Math.round(clampNumber(input.fleaPrice, 0));
   const platformFeeRate = clampNumber(input.platformFeeRate, 0, 0.95);
   const shippingCost = Math.round(clampNumber(input.shippingCost, 0));
   const packingCost = Math.round(clampNumber(input.packingCost, 0));
+  const includeWithdrawalFee = Boolean(input.includeWithdrawalFee);
+  const withdrawalFee = includeWithdrawalFee
+    ? Math.round(clampNumber(input.withdrawalFee ?? 200, 0))
+    : 0;
   const buybackPrice = Math.round(clampNumber(input.buybackPrice, 0));
   const buybackCost = Math.round(clampNumber(input.buybackCost, 0));
   const purchaseCost = Math.round(clampNumber(input.purchaseCost, 0));
   const effortCost = Math.round(clampNumber(input.effortCost, 0));
 
   const platformFee = Math.floor(fleaPrice * platformFeeRate);
-  const fleaTotalCost = platformFee + shippingCost + packingCost;
+  const fixedFleaCosts = shippingCost + packingCost + withdrawalFee;
+  const fleaTotalCost = platformFee + fixedFleaCosts;
   const fleaNet = fleaPrice - fleaTotalCost;
   const buybackNet = buybackPrice - buybackCost;
 
-  const rawDiff = fleaNet - buybackNet; // 正: フリマ優位 / 負: 買取優位
+  const rawDiff = fleaNet - buybackNet;
   const effectiveFleaNet = fleaNet - effortCost;
   const effectiveDiff = effectiveFleaNet - buybackNet;
 
@@ -139,19 +234,18 @@ export function calculateSellComparison(input) {
     winner = 'buyback';
   }
 
-  // フリマと買取が拮抗（差額300円以内）しているかの実用判定
   const isCloseCall = Math.abs(rawDiff) <= 300 && buybackPrice > 0 && fleaPrice > 0;
 
   // 損益分岐点（逆算）
   const breakEvenFleaPriceRaw = solveBreakEvenSellingPrice(
     buybackNet,
     platformFeeRate,
-    shippingCost + packingCost
+    fixedFleaCosts
   );
   const breakEvenFleaPriceWithEffort = solveBreakEvenSellingPrice(
     buybackNet + effortCost,
     platformFeeRate,
-    shippingCost + packingCost
+    fixedFleaCosts
   );
   const breakEvenBuybackPrice = Math.max(0, fleaNet + buybackCost);
 
@@ -162,17 +256,48 @@ export function calculateSellComparison(input) {
   const fleaRoi = hasPurchaseCost ? (fleaProfit / purchaseCost) * 100 : null;
   const buybackRoi = hasPurchaseCost ? (buybackProfit / purchaseCost) * 100 : null;
 
-  // 全フリマ・買取店 横断比較リスト
+  // 値下げ交渉シミュレーション（現在出品額から段階値下げしたとき買取店に勝てるか）
+  const dropSteps = fleaPrice >= 20000
+    ? [0, 500, 1000, 2000, 3000]
+    : fleaPrice >= 5000
+      ? [0, 300, 500, 1000, 1500]
+      : [0, 100, 200, 300, 500];
+
+  const priceDropTable = dropSteps
+    .map((drop) => Math.max(0, fleaPrice - drop))
+    .filter((p, idx, arr) => idx === 0 || (p > 0 && p !== arr[idx - 1]))
+    .map((price) => {
+      const drop = fleaPrice - price;
+      const fee = Math.floor(price * platformFeeRate);
+      const net = price - fee - fixedFleaCosts;
+      const diffVsBuyback = net - buybackNet;
+      return {
+        drop,
+        price,
+        fee,
+        net,
+        diffVsBuyback,
+        beatsBuyback: diffVsBuyback > 0,
+      };
+    });
+
+  // 全6フリマ・買取店 横断比較リスト
   const platformComparisons = PLATFORM_PRESETS.map((p) => {
     const fee = Math.floor(fleaPrice * p.feeRate);
-    const net = fleaPrice - fee - shippingCost - packingCost;
+    const wFee = includeWithdrawalFee ? p.withdrawalFee : 0;
+    const net = fleaPrice - fee - shippingCost - packingCost - wFee;
     const diffVsBuyback = net - buybackNet;
-    const breakEven = solveBreakEvenSellingPrice(buybackNet, p.feeRate, shippingCost + packingCost);
+    const breakEven = solveBreakEvenSellingPrice(
+      buybackNet,
+      p.feeRate,
+      shippingCost + packingCost + wFee
+    );
     return {
       id: p.id,
       name: p.name,
       feeRate: p.feeRate,
       fee,
+      withdrawalFee: wFee,
       net,
       diffVsBuyback,
       breakEven,
@@ -186,6 +311,7 @@ export function calculateSellComparison(input) {
     name: '買取店（店頭・宅配）',
     feeRate: 0,
     fee: buybackCost,
+    withdrawalFee: 0,
     net: buybackNet,
     diffVsBuyback: 0,
     breakEven: breakEvenBuybackPrice,
@@ -201,6 +327,8 @@ export function calculateSellComparison(input) {
     platformFee,
     shippingCost,
     packingCost,
+    includeWithdrawalFee,
+    withdrawalFee,
     fleaTotalCost,
     fleaNet,
     buybackPrice,
@@ -221,6 +349,7 @@ export function calculateSellComparison(input) {
     buybackProfit,
     fleaRoi,
     buybackRoi,
+    priceDropTable,
     platformComparisons,
   };
 }
@@ -242,7 +371,6 @@ export function calculatePsaSimulation(input) {
 
   const probPsa10 = clampNumber(input.probPsa10, 0, 100);
   const remaining = Math.max(0, 100 - probPsa10);
-  // PSA9比率が明示されていない場合は残りの85%をPSA9、15%をPSA8以下に按分
   const rawProb9 = input.probPsa9 !== undefined ? clampNumber(input.probPsa9, 0, remaining) : Math.round(remaining * 0.85);
   const probPsa9 = Math.min(rawProb9, remaining);
   const probPsa8OrLower = Math.max(0, 100 - probPsa10 - probPsa9);
@@ -273,24 +401,20 @@ export function calculatePsaSimulation(input) {
   const expectedTotalProfit = expectedProfitPerCard * cardCount;
   const expectedRoi = totalCostPerCard > 0 ? (expectedProfitPerCard / totalCostPerCard) * 100 : 0;
 
-  // 素体のまま売却した場合の手取り利益（比較基準：素体価格=現在相場と仮定）
   const rawSaleNet = netFromSale(rawCardCost);
-  const rawSaleProfit = rawSaleNet - rawCardCost; // 素体購入直後に売る想定の手数料・送料損
   const advantageOverRawSale = expectedNetPerCard - gradingFeePerCard - shippingPerCard - rawSaleNet;
 
-  // PSA10でトントンになる最低販売価格
   const breakEvenPsa10Price = solveBreakEvenSellingPrice(
     totalCostPerCard,
     sellFeeRate,
     sellShippingPerCard
   );
 
-  // 期待値プラスに必要なPSA10最低取得率（非10時はPSA9:85%, PSA8以下:15%の比率と仮定）
   const non10Share9 = remaining > 0 ? probPsa9 / remaining : 0.85;
   const non10Share8 = remaining > 0 ? probPsa8OrLower / remaining : 0.15;
   const non10ExpectedProfit = non10Share9 * profit9 + non10Share8 * profit8;
 
-  let requiredPsa10Rate = null; // null = 100%でも赤字
+  let requiredPsa10Rate = null;
   if (non10ExpectedProfit >= 0 && profit10 >= 0) {
     requiredPsa10Rate = 0;
   } else if (profit10 > non10ExpectedProfit && profit10 > 0) {
@@ -298,7 +422,6 @@ export function calculatePsaSimulation(input) {
     requiredPsa10Rate = Math.min(100, Math.max(0, ratio * 100));
   }
 
-  // 勝率別シミュレーション表
   const sensitivityRates = [40, 50, 60, 70, 80, 90];
   const sensitivityTable = sensitivityRates.map((rate) => {
     const r10 = rate / 100;
@@ -458,30 +581,25 @@ export function calculateOripaSimulation(input) {
   const cashoutReturnRate = returnRate * cashoutRate;
   const cashoutExpectedProfitPerPack = cashoutEvPerPack - unitPrice;
 
-  // アド枠（評価額 >= 1口価格）の本数
   const adPrizeCount = sanitizedPrizes
     .filter((p) => p.value >= unitPrice)
     .reduce((acc, p) => acc + p.count, 0) + (missValue >= unitPrice ? missCount : 0);
 
-  // 現金化ベースでアドになる本数
   const cashoutAdCount = sanitizedPrizes
     .filter((p) => p.value * cashoutRate >= unitPrice)
     .reduce((acc, p) => acc + p.count, 0) + (missValue * cashoutRate >= unitPrice ? missCount : 0);
 
-  // 最高額（トップ賞）の本数
   const activePrizes = sanitizedPrizes.filter((p) => p.count > 0);
   const maxPrizeValue = activePrizes.length > 0 ? Math.max(...activePrizes.map((p) => p.value)) : 0;
   const topPrizeCount = activePrizes
     .filter((p) => p.value === maxPrizeValue && maxPrizeValue > missValue)
     .reduce((acc, p) => acc + p.count, 0);
 
-  // 確率計算（厳密な非復元・超幾何分布）
   const probAtLeastOneAd = (1 - hypergeometricZeroProbability(totalPacks, adPrizeCount, drawCount)) * 100;
   const probAtLeastOneCashoutAd = (1 - hypergeometricZeroProbability(totalPacks, cashoutAdCount, drawCount)) * 100;
   const probAllMiss = hypergeometricZeroProbability(totalPacks, totalPrizeCount, drawCount) * 100;
   const probTopPrize = (1 - hypergeometricZeroProbability(totalPacks, topPrizeCount, drawCount)) * 100;
 
-  // 口数別の比較テーブル
   const candidateDraws = Array.from(
     new Set([1, 3, 5, 10, 20, drawCount].filter((n) => n >= 1 && n <= totalPacks))
   ).sort((a, b) => a - b);
@@ -497,7 +615,6 @@ export function calculateOripaSimulation(input) {
     isCurrent: n === drawCount,
   }));
 
-  // 評価ランク
   let grade = 'C';
   let gradeLabel = 'ハイリスク・趣味向け';
   if (returnRate >= 98) {
@@ -553,7 +670,6 @@ export function simulateOripaDraws(simResult, count, rng = Math.random) {
   if (!simResult.isValid) return [];
   const draws = Math.min(count, simResult.totalPacks);
 
-  // 残数カウンターを使って総口数が大きくても高速に非復元抽出
   const buckets = [
     ...simResult.prizes
       .filter((p) => p.count > 0)
@@ -631,7 +747,6 @@ export function calculatePortfolioSummary(items) {
     const pnl = marketValue - costBasis;
     const roi = costBasis > 0 ? (pnl / costBasis) * 100 : 0;
 
-    // メルカリ10%＋カテゴリ別標準送料での手取り目安
     const shippingPerUnit = PORTFOLIO_CATEGORIES[category].defaultShipping;
     const estimatedFleaNet = Math.max(
       0,

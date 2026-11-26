@@ -1,5 +1,5 @@
 /**
- * トレカ損益ラボ — 共通UI・収益化レンダラー・フォーマットユーティリティ
+ * トレカ損益ラボ — 共通UI・スティッキー結果バー・収益化レンダラー
  */
 import {
   SITE_CONFIG,
@@ -34,44 +34,26 @@ export function escapeHtml(text) {
     .replace(/'/g, '&#39;');
 }
 
-const NAV_ITEMS = [
-  { id: 'home', href: './index.html', label: 'トップ' },
-  { id: 'sell-compare', href: './sell-compare.html', label: 'フリマ vs 買取' },
-  { id: 'psa', href: './psa.html', label: 'PSA鑑定 損益' },
-  { id: 'oripa', href: './oripa.html', label: 'オリパ期待値' },
-  { id: 'portfolio', href: './portfolio.html', label: 'BOX資産管理' },
-];
-
 /**
- * 共通ヘッダー・フッター・ステマ規制PR表記・AdSense制御を初期化
+ * 共通ヘッダー・常設4ツールタブバー・PR表記・フッター・AdSense制御を初期化
  */
 export function initCommonChrome(activePageId) {
-  // 1. PR表記（アフィリエイトURLが1件以上設定されている場合のみ自動表示）
   const prBar = document.getElementById('prDisclosureBar');
   if (prBar) {
     prBar.hidden = !hasActiveAffiliateLinks();
   }
 
-  // 2. ナビゲーションの現在地設定とモバイルメニュー開閉
-  document.querySelectorAll('.site-nav .nav-link').forEach((link) => {
-    if (link.dataset.page === activePageId) {
+  document.querySelectorAll('.tool-tab-link, .site-nav .nav-link').forEach((link) => {
+    const isMatch =
+      link.dataset.page === activePageId ||
+      (activePageId === 'sell-compare' && link.dataset.page === 'home');
+    if (isMatch) {
       link.setAttribute('aria-current', 'page');
     } else {
       link.removeAttribute('aria-current');
     }
   });
 
-  const navToggle = document.getElementById('navToggle');
-  const siteNav = document.getElementById('siteNav');
-  if (navToggle && siteNav) {
-    navToggle.addEventListener('click', () => {
-      const expanded = navToggle.getAttribute('aria-expanded') === 'true';
-      navToggle.setAttribute('aria-expanded', String(!expanded));
-      siteNav.classList.toggle('is-open', !expanded);
-    });
-  }
-
-  // 3. フッターの運営名・Xリンク・更新日を同期
   document.querySelectorAll('[data-site-operator]').forEach((el) => {
     el.textContent = SITE_CONFIG.operatorName;
   });
@@ -89,8 +71,33 @@ export function initCommonChrome(activePageId) {
     }
   });
 
-  // 4. Google AdSense（審査通過後に monetization.js で enabled: true にした時だけ読み込む）
   initAdSenseSlots();
+}
+
+/**
+ * モバイル用スティッキーボトム結果バー（判定カードが画面外にスクロールされた時だけ自動出現）
+ */
+export function bindStickyMobileBar({ targetEl, barEl, scrollToSelector }) {
+  if (!targetEl || !barEl || typeof IntersectionObserver === 'undefined') return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+      barEl.classList.toggle('is-visible', !entry.isIntersecting);
+    },
+    { threshold: 0.15 }
+  );
+  observer.observe(targetEl);
+
+  const jumpBtn = barEl.querySelector('[data-sticky-jump]');
+  if (jumpBtn) {
+    jumpBtn.addEventListener('click', () => {
+      const dest = scrollToSelector ? document.querySelector(scrollToSelector) : targetEl;
+      if (dest) {
+        dest.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
 }
 
 function initAdSenseSlots() {
@@ -102,7 +109,6 @@ function initAdSenseSlots() {
     return;
   }
 
-  // スクリプトを1回だけ挿入
   if (!document.querySelector('script[data-adsense-loader]')) {
     const script = document.createElement('script');
     script.async = true;
@@ -138,7 +144,7 @@ function initAdSenseSlots() {
 }
 
 /**
- * 計算結果に応じた文脈連動おすすめ枠（ASPリンク設定済みならPRカード、未設定なら実用アドバイスを表示）
+ * 計算結果に応じた文脈連動おすすめ枠
  */
 export function renderContextualRecommendation(container, { category, title, fallbackTip }) {
   if (!container) return;
@@ -178,9 +184,6 @@ export function renderContextualRecommendation(container, { category, title, fal
   }
 }
 
-/**
- * X（旧Twitter）シェアURL生成
- */
 export function buildXShareUrl(text, pagePath = '') {
   const url = pagePath
     ? `${SITE_CONFIG.siteUrl.replace(/\/$/, '')}/${pagePath.replace(/^\//, '')}`
@@ -192,9 +195,6 @@ export function buildXShareUrl(text, pagePath = '') {
   return `https://twitter.com/intent/tweet?${params.toString()}`;
 }
 
-/**
- * クリップボードコピー（フィードバック表示付き）
- */
 export async function copyTextWithToast(text, toastEl) {
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -210,7 +210,7 @@ export async function copyTextWithToast(text, toastEl) {
       ta.remove();
     }
     if (toastEl) {
-      toastEl.textContent = '結果をコピーしました';
+      toastEl.textContent = 'コピーしました';
       clearTimeout(toastEl._timer);
       toastEl._timer = setTimeout(() => {
         toastEl.textContent = '';
@@ -225,4 +225,19 @@ export async function copyTextWithToast(text, toastEl) {
   }
 }
 
-export { NAV_ITEMS };
+export function saveJsonState(key, value) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // ignore storage errors
+  }
+}
+
+export function loadJsonState(key) {
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}

@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PSA鑑定 損益分岐点＆期待値シミュレーター｜PSA10はいくらから黒字？｜トレカ損益ラボ</title>
-  <meta name="description" content="ポケモンカード等のPSA鑑定に出して元が取れるか無料計算。素体価格・鑑定料・往復送料の枚数按分・売却手数料から、PSA10最低黒字価格と期待値プラスに必要なPSA10取得率を自動算出。">
+  <title>PSA鑑定 損益分岐点＆期待値シミュレーター【2026年最新料金】｜トレカ損益ラボ</title>
+  <meta name="description" content="2026年11月最新PSA日本支社料金（バリュー5,980円〜）対応。素体価格・PSA10相場・提出枚数から、黒字に必要なPSA10最低取得率と期待利益を10秒計算。">
   <link rel="canonical" href="https://keyanbaitian6-cell.github.io/pokeca-price-compare/psa.html">
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
-  <meta name="theme-color" content="#0F6E56">
+  <meta name="theme-color" content="#0C6B53">
 
   <meta property="og:site_name" content="トレカ損益ラボ">
-  <meta property="og:title" content="PSA鑑定 損益分岐点＆期待値シミュレーター｜トレカ損益ラボ">
-  <meta property="og:description" content="素体価格・鑑定料・提出枚数から、PSA10の黒字ラインと必要取得率（勝率）を瞬時にシミュレーション。">
+  <meta property="og:title" content="PSA鑑定 損益分岐点＆期待値シミュレーター【2026年最新料金】">
+  <meta property="og:description" content="PSA日本支社バリュー5,980円対応。素体売却とPSA提出どっちが得か、必要PSA10率を瞬時に計算。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://keyanbaitian6-cell.github.io/pokeca-price-compare/psa.html">
   <meta property="og:image" content="https://keyanbaitian6-cell.github.io/pokeca-price-compare/assets/ogp.jpg">
@@ -32,217 +32,188 @@
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" }
   }
   </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "PSA鑑定は1枚だけ提出すると損をしやすいですか？",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "はい。往復送料や梱包・保険代（約2,000円前後）が1枚に丸ごとかかるため原価が跳ね上がります。5〜10枚まとめてバリューバルク等で提出すると1枚あたりの送料按分を大きく圧縮できます。"
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "PSA9になった場合の赤字リスクはどう計算すればよいですか？",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "当シミュレーターではPSA10・PSA9・PSA8以下の想定売却額とPSA10取得率から期待利益（EV）を自動計算し、期待値がプラスになる最低PSA10取得率も逆算できます。"
-        }
-      }
-    ]
-  }
-  </script>
 </head>
 <body>
   <div id="prDisclosureBar" class="pr-bar" hidden>
     <div class="container pr-bar-inner">
       <span class="pr-tag">PR</span>
-      <span>当サイトはアフィリエイト広告（プロモーション）を含みます。計算ロジックは中立に算出しています。</span>
+      <span>当サイトはアフィリエイト広告を含みます。計算ロジックは中立に算出しています。</span>
     </div>
   </div>
 
   <header class="site-header">
-    <div class="container header-inner">
+    <div class="container header-top">
       <a class="brand-link" href="./index.html">
-        <img class="brand-mark" src="./assets/favicon.svg" alt="" width="34" height="34">
-        <span class="brand-text">
-          <span class="brand-name">トレカ損益ラボ</span>
-          <span class="brand-sub">TCG Profit Lab</span>
-        </span>
+        <img class="brand-mark" src="./assets/favicon.svg" alt="" width="28" height="28">
+        <span class="brand-name">トレカ損益ラボ</span>
       </a>
-      <button id="navToggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="メニューを開く">☰</button>
-      <nav id="siteNav" class="site-nav" aria-label="メインナビゲーション">
-        <a class="nav-link" data-page="home" href="./index.html">トップ</a>
-        <a class="nav-link" data-page="sell-compare" href="./sell-compare.html">フリマ vs 買取</a>
-        <a class="nav-link" data-page="psa" href="./psa.html">PSA鑑定 損益</a>
-        <a class="nav-link" data-page="oripa" href="./oripa.html">オリパ期待値</a>
-        <a class="nav-link" data-page="portfolio" href="./portfolio.html">BOX資産管理</a>
+      <span class="verified-pill">2026年11月 公式料金</span>
+    </div>
+    <div class="tool-tabs-wrap">
+      <nav class="container tool-tabs" aria-label="計算ツール切替">
+        <a class="tool-tab-link" data-page="home" href="./index.html">売却比較</a>
+        <a class="tool-tab-link" data-page="psa" href="./psa.html">PSA鑑定</a>
+        <a class="tool-tab-link" data-page="oripa" href="./oripa.html">オリパ</a>
+        <a class="tool-tab-link" data-page="portfolio" href="./portfolio.html">BOX管理</a>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    <nav class="breadcrumb" aria-label="パンくずリスト">
-      <a href="./index.html">トップ</a>
-      <span>/</span>
-      <span>PSA鑑定 損益分岐点シミュレーター</span>
-    </nav>
+    <div class="tool-header">
+      <div>
+        <h1>PSA鑑定 損益分岐点＆期待値シミュレーター</h1>
+        <p class="tool-lead">素体価格とPSA10相場を入れるだけ。PSA日本支社2026年最新料金で「出すべきか」を即判定。</p>
+      </div>
+    </div>
 
-    <header class="page-hero">
-      <p class="hero-eyebrow">TOOL 02 / PSA GRADING EV</p>
-      <h1>PSA鑑定 損益分岐点＆期待値シミュレーター</h1>
-      <p class="lead">
-        素体カードの購入価格・鑑定プラン・提出枚数（往復送料按分）・予想PSA10取得率から、
-        「PSA提出すべきか、素体のまま売るべきか」と「黒字に必要な最低PSA10率」を瞬時に算出します。
-      </p>
-    </header>
+    <div class="calc-grid">
+      <section class="card" aria-label="PSA入力">
+        <div class="primary-inputs">
+          <div>
+            <label class="field-label" for="rawCardCost">素体カード価格</label>
+            <div class="input-box">
+              <input id="rawCardCost" class="input-lg" type="number" inputmode="numeric" min="0" step="500" value="12000">
+              <span class="input-suffix">円</span>
+            </div>
+          </div>
+          <div>
+            <label class="field-label" for="pricePsa10">PSA10 売却予想</label>
+            <div class="input-box">
+              <input id="pricePsa10" class="input-lg" type="number" inputmode="numeric" min="0" step="500" value="34000">
+              <span class="input-suffix">円</span>
+            </div>
+          </div>
+        </div>
 
-    <div class="calc-layout">
-      <section class="panel" aria-label="PSA鑑定入力フォーム">
-        <h2 class="panel-title">鑑定条件・想定相場を入力</h2>
-
-        <div class="field-group">
-          <label class="field-label" for="psaPlanSelect">提出プラン（鑑定料プリセット）</label>
+        <div class="field">
+          <label class="field-label" for="psaPlanSelect">提出プラン <span id="psaPlanEtaNote" class="field-hint"></span></label>
           <select id="psaPlanSelect" class="select-control"></select>
         </div>
 
-        <div class="field-row">
-          <div class="field-group">
-            <label class="field-label" for="rawCardCost">素体カード価格 <span class="field-hint">1枚あたり</span></label>
-            <div class="input-wrap">
-              <input id="rawCardCost" class="input-control has-suffix num" type="number" min="0" step="500" value="10000">
-              <span class="input-suffix">円</span>
+        <details class="settings-accordion">
+          <summary>
+            <span id="psaSettingsSummary" class="settings-summary-text">5枚提出・送料按分500円・PSA10率70%</span>
+            <span class="settings-toggle-label">詳細設定</span>
+          </summary>
+          <div class="settings-body">
+            <div class="field-row-3">
+              <div class="field">
+                <label class="field-label" for="gradingFee">鑑定料/枚</label>
+                <div class="input-box">
+                  <input id="gradingFee" class="input-control has-suffix num" type="number" inputmode="numeric" min="0" step="100" value="5980">
+                  <span class="input-suffix">円</span>
+                </div>
+              </div>
+              <div class="field">
+                <label class="field-label" for="cardCount">提出枚数</label>
+                <div class="input-box">
+                  <input id="cardCount" class="input-control has-suffix num" type="number" inputmode="numeric" min="1" max="500" value="5">
+                  <span class="input-suffix">枚</span>
+                </div>
+              </div>
+              <div class="field">
+                <label class="field-label" for="totalShippingCost">往復送料計</label>
+                <div class="input-box">
+                  <input id="totalShippingCost" class="input-control has-suffix num" type="number" inputmode="numeric" min="0" step="100" value="2500">
+                  <span class="input-suffix">円</span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="field-group">
-            <label class="field-label" for="gradingFee">鑑定料 <span class="field-hint">1枚あたり</span></label>
-            <div class="input-wrap">
-              <input id="gradingFee" class="input-control has-suffix num" type="number" min="0" step="100" value="3300">
-              <span class="input-suffix">円</span>
-            </div>
-          </div>
-        </div>
 
-        <div class="field-row">
-          <div class="field-group">
-            <label class="field-label" for="cardCount">同時提出枚数 <span class="field-hint">送料を按分</span></label>
-            <div class="input-wrap">
-              <input id="cardCount" class="input-control has-suffix num" type="number" min="1" max="500" step="1" value="5">
-              <span class="input-suffix">枚</span>
+            <div class="field-row-2">
+              <div class="field">
+                <label class="field-label" for="pricePsa9">PSA9 売却予想</label>
+                <div class="input-box">
+                  <input id="pricePsa9" class="input-control has-suffix num" type="number" inputmode="numeric" min="0" step="500" value="13000">
+                  <span class="input-suffix">円</span>
+                </div>
+              </div>
+              <div class="field">
+                <label class="field-label" for="pricePsa8">PSA8以下 予想</label>
+                <div class="input-box">
+                  <input id="pricePsa8" class="input-control has-suffix num" type="number" inputmode="numeric" min="0" step="500" value="8000">
+                  <span class="input-suffix">円</span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="field-group">
-            <label class="field-label" for="totalShippingCost">往復送料・資材合計</label>
-            <div class="input-wrap">
-              <input id="totalShippingCost" class="input-control has-suffix num" type="number" min="0" step="100" value="2000">
-              <span class="input-suffix">円</span>
-            </div>
-          </div>
-        </div>
 
-        <hr class="panel-divider">
+            <div class="field-row-2">
+              <div class="field">
+                <label class="field-label" for="psaSellFeeRate">売却手数料 <span class="field-hint">買取は0%</span></label>
+                <div class="input-box">
+                  <input id="psaSellFeeRate" class="input-control has-suffix num" type="number" inputmode="decimal" min="0" max="50" step="0.5" value="10">
+                  <span class="input-suffix">%</span>
+                </div>
+              </div>
+              <div class="field">
+                <label class="field-label" for="psaSellShipping">売却送料/枚</label>
+                <div class="input-box">
+                  <input id="psaSellShipping" class="input-control has-suffix num" type="number" inputmode="numeric" min="0" step="10" value="210">
+                  <span class="input-suffix">円</span>
+                </div>
+              </div>
+            </div>
 
-        <div class="field-row-3">
-          <div class="field-group">
-            <label class="field-label" for="pricePsa10">PSA10 相場</label>
-            <div class="input-wrap">
-              <input id="pricePsa10" class="input-control has-suffix num" type="number" min="0" step="500" value="26000">
-              <span class="input-suffix">円</span>
+            <div class="field">
+              <div class="range-header">
+                <label class="field-label" for="probPsa10" style="margin:0;">想定PSA10取得率（勝率）</label>
+                <span id="probPsa10Label" class="range-value">70%</span>
+              </div>
+              <input id="probPsa10" class="range-control" type="range" min="10" max="100" step="5" value="70">
+              <div id="probBreakdownLabel" class="kpi-meta"></div>
             </div>
           </div>
-          <div class="field-group">
-            <label class="field-label" for="pricePsa9">PSA9 相場</label>
-            <div class="input-wrap">
-              <input id="pricePsa9" class="input-control has-suffix num" type="number" min="0" step="500" value="11000">
-              <span class="input-suffix">円</span>
-            </div>
-          </div>
-          <div class="field-group">
-            <label class="field-label" for="pricePsa8">PSA8以下</label>
-            <div class="input-wrap">
-              <input id="pricePsa8" class="input-control has-suffix num" type="number" min="0" step="500" value="7000">
-              <span class="input-suffix">円</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="field-row">
-          <div class="field-group">
-            <label class="field-label" for="psaSellFeeRate">売却時手数料率 <span class="field-hint">買取なら0%</span></label>
-            <div class="input-wrap">
-              <input id="psaSellFeeRate" class="input-control has-suffix num" type="number" min="0" max="50" step="0.5" value="10">
-              <span class="input-suffix">%</span>
-            </div>
-          </div>
-          <div class="field-group">
-            <label class="field-label" for="psaSellShipping">売却時送料 <span class="field-hint">1枚あたり</span></label>
-            <div class="input-wrap">
-              <input id="psaSellShipping" class="input-control has-suffix num" type="number" min="0" step="10" value="210">
-              <span class="input-suffix">円</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <div class="range-header">
-            <label class="field-label" for="probPsa10" style="margin:0;">想定PSA10取得率（勝率）</label>
-            <span id="probPsa10Label" class="range-value">70%</span>
-          </div>
-          <input id="probPsa10" class="range-control" type="range" min="10" max="100" step="5" value="70">
-          <div id="probBreakdownLabel" class="kpi-meta"></div>
-        </div>
+        </details>
       </section>
 
-      <section class="panel panel-sticky" aria-label="PSA計算結果">
-        <div id="psaVerdictBox" class="verdict-box">
-          <p id="psaVerdictKicker" class="verdict-kicker">計算結果</p>
+      <section class="card card-sticky" aria-label="PSA計算結果">
+        <div id="psaVerdictBox" class="verdict-card">
+          <div class="verdict-top">
+            <span id="psaVerdictKicker" class="verdict-kicker">計算結果</span>
+          </div>
           <h2 id="psaVerdictHeadline" class="verdict-headline">—</h2>
           <p id="psaVerdictSub" class="verdict-sub"></p>
         </div>
 
-        <div class="kpi-grid">
-          <div class="kpi-card">
+        <div class="kpi-row">
+          <div class="kpi-box">
             <div class="kpi-label">1枚あたり総原価</div>
             <div id="psaTotalCost" class="kpi-value num">—</div>
             <div id="psaTotalCostMeta" class="kpi-meta">—</div>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">PSA10 損益分岐売却額</div>
+          <div class="kpi-box">
+            <div class="kpi-label">PSA10 損益分岐額</div>
             <div id="psaBreakEven10" class="kpi-value num is-gold">—</div>
-            <div class="kpi-meta">この価格以上で売ればPSA10で黒字</div>
+            <div class="kpi-meta">この価格以上でPSA10黒字</div>
           </div>
         </div>
 
-        <div class="kpi-grid">
-          <div class="kpi-card">
+        <div class="kpi-row">
+          <div class="kpi-box">
             <div class="kpi-label">黒字に必要なPSA10率</div>
             <div id="psaRequiredRate" class="kpi-value num">—</div>
-            <div class="kpi-meta">期待値プラスの最低勝率ライン</div>
+            <div class="kpi-meta">期待値プラスの最低勝率</div>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">同時提出の期待合計損益</div>
+          <div class="kpi-box">
+            <div class="kpi-label">同時提出 期待合計損益</div>
             <div id="psaExpectedTotalProfit" class="kpi-value num">—</div>
             <div class="kpi-meta">提出枚数ベースの期待収支</div>
           </div>
         </div>
 
-        <h3 style="margin:0 0 10px;font-size:0.95rem;">鑑定結果別の実質純利益（1枚あたり）</h3>
-        <div class="kpi-grid-3">
-          <div class="kpi-card">
-            <div class="kpi-label">PSA10 取得時</div>
+        <div class="kpi-row-3">
+          <div class="kpi-box">
+            <div class="kpi-label">PSA10時</div>
             <div id="grade10Profit" class="kpi-value num">—</div>
             <div id="grade10Meta" class="kpi-meta">—</div>
           </div>
-          <div class="kpi-card">
-            <div class="kpi-label">PSA9 取得時</div>
+          <div class="kpi-box">
+            <div class="kpi-label">PSA9時</div>
             <div id="grade9Profit" class="kpi-value num">—</div>
             <div id="grade9Meta" class="kpi-meta">—</div>
           </div>
-          <div class="kpi-card">
+          <div class="kpi-box">
             <div class="kpi-label">PSA8以下</div>
             <div id="grade8Profit" class="kpi-value num">—</div>
             <div id="grade8Meta" class="kpi-meta">—</div>
@@ -250,7 +221,7 @@
         </div>
 
         <div class="action-row">
-          <a id="psaShareBtn" class="btn btn-secondary btn-sm" href="#" target="_blank" rel="noopener noreferrer">Xで結果をシェア</a>
+          <a id="psaShareBtn" class="btn btn-secondary btn-sm" href="#" target="_blank" rel="noopener noreferrer">Xでシェア</a>
           <button id="psaCopyBtn" class="btn btn-secondary btn-sm" type="button">結果をコピー</button>
           <span id="psaCopyToast" class="copy-toast" role="status" aria-live="polite"></span>
         </div>
@@ -259,16 +230,18 @@
       </section>
     </div>
 
-    <section style="margin-top:28px;" aria-labelledby="psaMatrixTitle">
-      <h2 id="psaMatrixTitle" style="margin:0 0 12px;font-size:1.15rem;">PSA10取得率（勝率）別 期待利益マトリクス</h2>
+    <section class="section-block" aria-labelledby="psaMatrixTitle">
+      <div class="section-heading">
+        <h2 id="psaMatrixTitle">PSA10取得率（勝率）別 期待利益マトリクス</h2>
+      </div>
       <div class="table-wrap">
         <table class="data-table">
           <thead>
             <tr>
-              <th>想定PSA10取得率</th>
-              <th class="num-cell">1枚あたり期待利益</th>
-              <th class="num-cell">提出合計の期待利益</th>
-              <th class="num-cell">期待ROI（利回り）</th>
+              <th>想定PSA10率</th>
+              <th class="num-cell">1枚期待利益</th>
+              <th class="num-cell">合計期待利益</th>
+              <th class="num-cell">期待ROI</th>
             </tr>
           </thead>
           <tbody id="psaSensitivityBody"></tbody>
@@ -279,39 +252,49 @@
     <div class="ad-slot" data-ad-slot="midContent" hidden></div>
 
     <article class="content-section">
-      <h2>PSA鑑定で失敗しないための実戦チェックリスト</h2>
-      <ul>
-        <li><strong>PSA10倍率（PSA10相場 ÷ 素体相場）が2.0倍以上か確認する</strong>：倍率が1.5倍前後のカードは鑑定料と手数料でほとんど利益が残りません。</li>
-        <li><strong>まとめ出しで1枚あたりの送料を圧縮する</strong>：1枚提出だと往復送料2,000円が丸々乗りますが、10枚まとめ出しなら1枚あたり200円まで下がります。</li>
-        <li><strong>返却までの相場変動リスクを見込む</strong>：提出から返却までは通常1〜3ヶ月かかります。直近で急騰している新弾SARは返却時に落ち着くケースが多いため、保守的な想定価格で計算するのが安全です。</li>
-      </ul>
-
-      <h3>よくある質問（FAQ）</h3>
-      <div class="faq-list">
-        <details class="faq-item">
-          <summary>PSA10の取得率はどのくらいで見積もるべきですか？</summary>
-          <p>近年の日本版ポケモンカードは品質が高いため、白欠け・線傷・センタリング（表裏の枠バランス）を厳しく検品した個体であれば70〜85%程度を目安にするコレクターが多いです。旧弾や海外版は50%以下で見積もるのが無難です。</p>
-        </details>
-        <details class="faq-item">
-          <summary>店舗買取で売る想定の場合はどう入力すればいいですか？</summary>
-          <p>「売却時手数料率」を 0%、「売却時送料」を 0円 に設定し、PSA10/9の相場欄にカードショップの買取査定額を入力してください。</p>
-        </details>
+      <h2>PSA日本支社 公式サービスレベル料金目安（2026年11月確認）</h2>
+      <div class="table-wrap" style="margin:12px 0 16px;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>サービスレベル</th>
+              <th class="num-cell">鑑定料（税込）</th>
+              <th class="num-cell">申告価格上限</th>
+              <th>予定納期目安</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>バリュー</strong></td><td class="num-cell">5,980円</td><td class="num-cell">80,000円以下</td><td>120営業日（約24週）</td></tr>
+            <tr><td><strong>スタンダード</strong></td><td class="num-cell">9,980円</td><td class="num-cell">150,000円以下</td><td>100営業日（約20週）</td></tr>
+            <tr><td><strong>プライオリティ</strong></td><td class="num-cell">11,980円</td><td class="num-cell">250,000円以下</td><td>80営業日（約16週）</td></tr>
+            <tr><td><strong>エクスプレス</strong></td><td class="num-cell">29,980円</td><td class="num-cell">400,000円以下</td><td>25営業日（約5週）</td></tr>
+          </tbody>
+        </table>
       </div>
+      <p>※ 上記に加えて枚数・申告価格に応じた保険料・返送料が別途かかります。最新条件は提出前にPSA日本支社公式サイトをご確認ください。</p>
     </article>
   </main>
+
+  <div id="psaStickyBar" class="sticky-verdict-bar" role="status" aria-live="polite">
+    <div>
+      <div id="psaStickyTitle" class="sticky-verdict-text">—</div>
+      <span id="psaStickySub" class="sticky-verdict-sub"></span>
+    </div>
+    <button type="button" class="sticky-jump-btn" data-sticky-jump>結果へ ↑</button>
+  </div>
 
   <footer class="site-footer">
     <div class="container">
       <div class="footer-grid">
         <div>
           <p class="footer-title">トレカ損益ラボ（TCG Profit Lab）</p>
-          <p style="margin:0;">ポケモンカード・トレカの売却手取り、PSA鑑定、オリパ期待値、BOX資産管理を無料で計算できるWebツール集です。</p>
+          <p style="margin:0;">ポケカ・トレカの売却手取り、PSA鑑定、オリパ期待値、BOX資産管理を無料で計算できるWebツール集です。</p>
         </div>
         <div>
-          <p class="footer-title">無料計算ツール</p>
+          <p class="footer-title">計算ツール</p>
           <ul class="footer-links">
             <li><a href="./sell-compare.html">フリマ vs 買取店 手取り比較</a></li>
-            <li><a href="./psa.html">PSA鑑定 損益分岐点シミュレーター</a></li>
+            <li><a href="./psa.html">PSA鑑定 損益シミュレーター</a></li>
             <li><a href="./oripa.html">オリパ還元率・爆死確率計算機</a></li>
             <li><a href="./portfolio.html">未開封BOX・カード資産管理</a></li>
           </ul>
@@ -326,7 +309,7 @@
       </div>
       <div class="footer-bottom">
         <span>© <span data-site-operator>トレカ損益ラボ運営</span></span>
-        <span>最終更新: <span data-site-updated>2026-11-24</span></span>
+        <span>最終更新: <span data-site-updated>2026-11-26</span></span>
       </div>
     </div>
   </footer>

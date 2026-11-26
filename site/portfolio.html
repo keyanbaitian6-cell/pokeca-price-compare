@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ポケカ未開封BOX・カード 資産管理＆利回りポートフォリオ（無料・登録不要）｜トレカ損益ラボ</title>
-  <meta name="description" content="保有しているポケモンカード未開封BOX・PSA鑑定品・シングルカードの取得原価、現在相場、含み損益、利回り、メルカリ売却後の手取り目安を一括管理。完全ブラウザ保存・登録不要・CSV出力対応。">
+  <meta name="description" content="保有しているポケカ未開封BOX・PSA鑑定品・シングルカードの含み損益、利回り、メルカリ売却後の実質手取りを一括管理。完全ブラウザ保存・CSV入出力・売却比較連携対応。">
   <link rel="canonical" href="https://keyanbaitian6-cell.github.io/pokeca-price-compare/portfolio.html">
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
-  <meta name="theme-color" content="#0F6E56">
+  <meta name="theme-color" content="#0C6B53">
 
   <meta property="og:site_name" content="トレカ損益ラボ">
-  <meta property="og:title" content="ポケカ未開封BOX・カード 資産管理＆利回りポートフォリオ｜トレカ損益ラボ">
-  <meta property="og:description" content="保有BOXやPSA鑑定品の含み損益・利回り・売却手取り目安をブラウザ内に自動保存。CSVバックアップ対応。">
+  <meta property="og:title" content="ポケカ未開封BOX・カード 資産管理ポートフォリオ｜トレカ損益ラボ">
+  <meta property="og:description" content="保有BOX・PSA品の含み損益と売却手取り目安をブラウザに自動保存。ワンクリックで売却比較へ連携。">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://keyanbaitian6-cell.github.io/pokeca-price-compare/portfolio.html">
   <meta property="og:image" content="https://keyanbaitian6-cell.github.io/pokeca-price-compare/assets/ogp.jpg">
@@ -21,98 +21,82 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/style.css">
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "ポケカ未開封BOX・カード 資産管理ポートフォリオ",
-    "applicationCategory": "FinanceApplication",
-    "operatingSystem": "All",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" }
-  }
-  </script>
 </head>
 <body>
   <div id="prDisclosureBar" class="pr-bar" hidden>
     <div class="container pr-bar-inner">
       <span class="pr-tag">PR</span>
-      <span>当サイトはアフィリエイト広告（プロモーション）を含みます。計算ロジックは中立に算出しています。</span>
+      <span>当サイトはアフィリエイト広告を含みます。計算ロジックは中立に算出しています。</span>
     </div>
   </div>
 
   <header class="site-header">
-    <div class="container header-inner">
+    <div class="container header-top">
       <a class="brand-link" href="./index.html">
-        <img class="brand-mark" src="./assets/favicon.svg" alt="" width="34" height="34">
-        <span class="brand-text">
-          <span class="brand-name">トレカ損益ラボ</span>
-          <span class="brand-sub">TCG Profit Lab</span>
-        </span>
+        <img class="brand-mark" src="./assets/favicon.svg" alt="" width="28" height="28">
+        <span class="brand-name">トレカ損益ラボ</span>
       </a>
-      <button id="navToggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="メニューを開く">☰</button>
-      <nav id="siteNav" class="site-nav" aria-label="メインナビゲーション">
-        <a class="nav-link" data-page="home" href="./index.html">トップ</a>
-        <a class="nav-link" data-page="sell-compare" href="./sell-compare.html">フリマ vs 買取</a>
-        <a class="nav-link" data-page="psa" href="./psa.html">PSA鑑定 損益</a>
-        <a class="nav-link" data-page="oripa" href="./oripa.html">オリパ期待値</a>
-        <a class="nav-link" data-page="portfolio" href="./portfolio.html">BOX資産管理</a>
+      <span class="verified-pill">ブラウザ保存・CSV対応</span>
+    </div>
+    <div class="tool-tabs-wrap">
+      <nav class="container tool-tabs" aria-label="計算ツール切替">
+        <a class="tool-tab-link" data-page="home" href="./index.html">売却比較</a>
+        <a class="tool-tab-link" data-page="psa" href="./psa.html">PSA鑑定</a>
+        <a class="tool-tab-link" data-page="oripa" href="./oripa.html">オリパ</a>
+        <a class="tool-tab-link" data-page="portfolio" href="./portfolio.html">BOX管理</a>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    <nav class="breadcrumb" aria-label="パンくずリスト">
-      <a href="./index.html">トップ</a>
-      <span>/</span>
-      <span>未開封BOX・カード 資産ポートフォリオ</span>
-    </nav>
+    <div class="tool-header">
+      <div>
+        <h1>ポケカBOX・カード 資産ポートフォリオ</h1>
+        <p class="tool-lead">保有資産の含み損益・利回り・実質手取りを自動集計。データはお使いの端末内だけに保存されます。</p>
+      </div>
+      <button id="pfToggleFormBtn" class="btn btn-primary btn-sm" type="button">＋ アイテムを追加</button>
+    </div>
 
-    <header class="page-hero">
-      <p class="hero-eyebrow">TOOL 04 / COLLECTION PORTFOLIO</p>
-      <h1>ポケカ未開封BOX・カード 資産管理＆利回りポートフォリオ</h1>
-      <p class="lead">
-        保有BOX・PSA鑑定品・シングルカードの取得単価と現在相場を記録し、総評価額・含み損益・メルカリ売却後の実質手取りを自動集計。
-        データは外部サーバーへ一切送信せず、お使いのブラウザ（localStorage）に安全保存。Excel/スプレッドシート互換のCSV入出力にも対応しています。
-      </p>
-    </header>
-
-    <section class="kpi-grid-3" aria-label="資産サマリー">
-      <div class="kpi-card" style="background:var(--bg-surface);">
+    <!-- 1. ファーストビューに資産サマリー -->
+    <section class="kpi-row-3" aria-label="資産サマリー">
+      <div class="kpi-box" style="background:var(--bg-surface);">
         <div class="kpi-label">ポートフォリオ総評価額</div>
         <div id="pfTotalMarket" class="kpi-value num">0円</div>
-        <div id="pfTotalCost" class="kpi-meta">総取得原価 0円</div>
+        <div id="pfTotalCost" class="kpi-meta">取得原価 0円</div>
       </div>
-      <div class="kpi-card" style="background:var(--bg-surface);">
+      <div class="kpi-box" style="background:var(--bg-surface);">
         <div class="kpi-label">含み損益（相場ベース）</div>
         <div id="pfTotalPnl" class="kpi-value num">0円</div>
         <div id="pfTotalPnlMeta" class="kpi-meta">利回り 0.0%</div>
       </div>
-      <div class="kpi-card" style="background:var(--bg-surface);">
+      <div class="kpi-box" style="background:var(--bg-surface);">
         <div class="kpi-label">売却時 実質手取り目安</div>
         <div id="pfFleaNet" class="kpi-value num is-gold">0円</div>
         <div id="pfFleaNetMeta" class="kpi-meta">メルカリ10%＋送料控除後</div>
       </div>
     </section>
 
-    <div class="panel" style="margin-bottom:24px;padding:18px 22px;">
-      <div style="font-size:0.86rem;font-weight:700;">カテゴリ別 資産構成</div>
+    <div class="card" style="margin-bottom:16px;padding:14px 16px;">
+      <div style="font-size:0.8rem;font-weight:700;">カテゴリ別 資産構成</div>
       <div id="pfCategoryBar" class="category-bar" aria-label="カテゴリ構成バー"></div>
       <div id="pfCategoryLegend" class="bar-legend"></div>
     </div>
 
-    <section class="panel" style="margin-bottom:24px;" aria-label="保有アイテム登録フォーム">
-      <h2 class="panel-title">アイテムを追加 / 編集</h2>
+    <!-- 2. 開閉式アイテム追加・編集パネル（普段は隠して保有リストを優先表示） -->
+    <section id="pfFormPanel" class="card" style="margin-bottom:16px;" aria-label="保有アイテム登録フォーム" hidden>
+      <div class="card-head">
+        <h2 id="pfFormTitle" class="card-title">新しいアイテムを追加</h2>
+      </div>
       <form id="portfolioForm">
         <input id="pfEditId" type="hidden">
 
         <div class="field-row-3">
-          <div class="field-group">
+          <div class="field">
             <label class="field-label" for="pfName">商品名 <span class="field-hint">人気BOX候補あり</span></label>
             <input id="pfName" class="input-control" type="text" list="popularBoxList" required placeholder="例: ポケモンカード151">
             <datalist id="popularBoxList"></datalist>
           </div>
-          <div class="field-group">
+          <div class="field">
             <label class="field-label" for="pfCategory">カテゴリ</label>
             <select id="pfCategory" class="select-control">
               <option value="box">未開封BOX</option>
@@ -121,58 +105,59 @@
               <option value="other">その他グッズ</option>
             </select>
           </div>
-          <div class="field-group">
+          <div class="field">
             <label class="field-label" for="pfCondition">状態</label>
             <input id="pfCondition" class="input-control" type="text" value="シュリンク有" placeholder="シュリンク有 / PSA10等">
           </div>
         </div>
 
-        <div class="field-row-3">
-          <div class="field-group">
+        <div class="field-row-3" style="margin-top:10px;">
+          <div class="field">
             <label class="field-label" for="pfQuantity">数量</label>
-            <div class="input-wrap">
-              <input id="pfQuantity" class="input-control has-suffix num" type="number" min="1" max="9999" value="1" required>
+            <div class="input-box">
+              <input id="pfQuantity" class="input-control has-suffix num" type="number" inputmode="numeric" min="1" max="9999" value="1" required>
               <span class="input-suffix">点</span>
             </div>
           </div>
-          <div class="field-group">
+          <div class="field">
             <label class="field-label" for="pfBuyPrice">取得単価</label>
-            <div class="input-wrap">
-              <input id="pfBuyPrice" class="input-control has-suffix num" type="number" min="0" step="100" value="5400" required>
+            <div class="input-box">
+              <input id="pfBuyPrice" class="input-control has-suffix num" type="number" inputmode="numeric" min="0" step="100" value="5400" required>
               <span class="input-suffix">円</span>
             </div>
           </div>
-          <div class="field-group">
+          <div class="field">
             <label class="field-label" for="pfCurrentPrice">現在相場</label>
-            <div class="input-wrap">
-              <input id="pfCurrentPrice" class="input-control has-suffix num" type="number" min="0" step="100" value="12000" required>
+            <div class="input-box">
+              <input id="pfCurrentPrice" class="input-control has-suffix num" type="number" inputmode="numeric" min="0" step="100" value="12000" required>
               <span class="input-suffix">円</span>
             </div>
           </div>
         </div>
 
-        <div class="field-row" style="align-items:end;">
-          <div class="field-group" style="margin-bottom:0;">
-            <label class="field-label" for="pfNote">メモ <span class="field-hint">購入店・当選日など（任意）</span></label>
+        <div class="field-row-2" style="margin-top:10px;align-items:end;">
+          <div class="field" style="margin-bottom:0;">
+            <label class="field-label" for="pfNote">メモ <span class="field-hint">任意</span></label>
             <input id="pfNote" class="input-control" type="text" placeholder="例: ポケセンオンライン産">
           </div>
           <div class="action-row" style="margin-top:0;">
             <button id="pfSubmitBtn" class="btn btn-primary" type="submit">保有リストに追加</button>
-            <button id="pfCancelEditBtn" class="btn btn-secondary" type="button" hidden>編集キャンセル</button>
+            <button id="pfCancelEditBtn" class="btn btn-secondary" type="button" hidden>キャンセル</button>
           </div>
         </div>
       </form>
     </section>
 
-    <section class="panel" aria-label="保有アイテム一覧">
+    <!-- 3. 保有リスト（スマホでも見やすいカードリスト） -->
+    <section class="card" aria-label="保有アイテム一覧">
       <div class="portfolio-toolbar">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-          <h2 style="margin:0;font-size:1.06rem;">保有リスト</h2>
-          <select id="pfSortSelect" class="select-control" style="width:auto;min-height:36px;padding:4px 10px;font-size:0.84rem;" aria-label="並び替え">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <h2 class="card-title">保有リスト</h2>
+          <select id="pfSortSelect" class="select-control" style="width:auto;min-height:36px;padding:4px 10px;font-size:0.82rem;" aria-label="並び替え">
             <option value="recent">登録順</option>
             <option value="pnl_desc">含み益が大きい順</option>
             <option value="value_desc">評価額が大きい順</option>
-            <option value="roi_desc">利回り（%）が高い順</option>
+            <option value="roi_desc">利回り（%）順</option>
           </select>
         </div>
 
@@ -190,7 +175,7 @@
       <div id="pfTableContainer"></div>
 
       <div class="action-row">
-        <a id="pfShareBtn" class="btn btn-secondary btn-sm" href="#" target="_blank" rel="noopener noreferrer">Xで集計をシェア</a>
+        <a id="pfShareBtn" class="btn btn-secondary btn-sm" href="#" target="_blank" rel="noopener noreferrer">Xでシェア</a>
         <button id="pfCopyBtn" class="btn btn-secondary btn-sm" type="button">集計をコピー</button>
         <span id="pfCopyToast" class="copy-toast" role="status" aria-live="polite"></span>
       </div>
@@ -201,11 +186,10 @@
     <div class="ad-slot" data-ad-slot="bottomBanner" hidden></div>
 
     <article class="content-section">
-      <h2>データの保存場所とバックアップについて</h2>
+      <h2>データの保存先とCSVバックアップ</h2>
       <p>
-        登録した保有リストはお使いのスマートフォン・PCのブラウザ（localStorage）内にのみ保存され、運営サーバーには一切送信されません。
-        機種変更やブラウザ履歴の削除に備えて、定期的に「CSV出力」ボタンからバックアップを保存しておくことをおすすめします。
-        出力されるCSVはUTF-8（BOM付き）のため、Microsoft Excel や Googleスプレッドシートでも文字化けせずそのまま開けます。
+        登録したアイテムはお使いのブラウザ（localStorage）に自動保存され、運営サーバーには送信されません。
+        機種変更や履歴削除に備えて、定期的に「CSV出力」でバックアップを保存しておくと安心です（Excel文字化け対策済みUTF-8 BOM出力）。
       </p>
     </article>
   </main>
@@ -215,13 +199,13 @@
       <div class="footer-grid">
         <div>
           <p class="footer-title">トレカ損益ラボ（TCG Profit Lab）</p>
-          <p style="margin:0;">ポケモンカード・トレカの売却手取り、PSA鑑定、オリパ期待値、BOX資産管理を無料で計算できるWebツール集です。</p>
+          <p style="margin:0;">ポケカ・トレカの売却手取り、PSA鑑定、オリパ期待値、BOX資産管理を無料で計算できるWebツール集です。</p>
         </div>
         <div>
-          <p class="footer-title">無料計算ツール</p>
+          <p class="footer-title">計算ツール</p>
           <ul class="footer-links">
             <li><a href="./sell-compare.html">フリマ vs 買取店 手取り比較</a></li>
-            <li><a href="./psa.html">PSA鑑定 損益分岐点シミュレーター</a></li>
+            <li><a href="./psa.html">PSA鑑定 損益シミュレーター</a></li>
             <li><a href="./oripa.html">オリパ還元率・爆死確率計算機</a></li>
             <li><a href="./portfolio.html">未開封BOX・カード資産管理</a></li>
           </ul>
@@ -236,7 +220,7 @@
       </div>
       <div class="footer-bottom">
         <span>© <span data-site-operator>トレカ損益ラボ運営</span></span>
-        <span>最終更新: <span data-site-updated>2026-11-24</span></span>
+        <span>最終更新: <span data-site-updated>2026-11-26</span></span>
       </div>
     </div>
   </footer>

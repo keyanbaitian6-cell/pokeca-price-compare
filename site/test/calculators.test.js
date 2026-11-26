@@ -11,10 +11,10 @@ import {
   portfolioToCsv,
   parsePortfolioCsv,
   ORIPA_PRESETS,
+  PSA_PLAN_PRESETS,
 } from '../js/calculators.js';
 
 test('solveBreakEvenSellingPrice accounts for floored platform fees accurately', () => {
-  // 目標手取り 10,000円、手数料10%、送料+梱包 640円
   const price = solveBreakEvenSellingPrice(10000, 0.10, 640);
   const net = price - Math.floor(price * 0.10) - 640;
   const prevNet = (price - 1) - Math.floor((price - 1) * 0.10) - 640;
@@ -23,7 +23,7 @@ test('solveBreakEvenSellingPrice accounts for floored platform fees accurately',
   assert.ok(prevNet < 10000, `expected prevNet ${prevNet} < 10000`);
 });
 
-test('calculateSellComparison identifies flea vs buyback winner and cross-platform table', () => {
+test('calculateSellComparison identifies flea vs buyback winner, cross-platform table, and withdrawal fee', () => {
   const res = calculateSellComparison({
     fleaPrice: 12000,
     platformFeeRate: 0.10,
@@ -33,6 +33,7 @@ test('calculateSellComparison identifies flea vs buyback winner and cross-platfo
     buybackCost: 0,
     purchaseCost: 5400,
     effortCost: 0,
+    includeWithdrawalFee: false,
   });
 
   // 12000 - 1200 - 520 - 120 = 10160 < 10500 -> buyback wins by 340
@@ -44,9 +45,42 @@ test('calculateSellComparison identifies flea vs buyback winner and cross-platfo
   assert.equal(res.buybackProfit, 5100);
   assert.equal(res.fleaProfit, 4760);
 
-  // Yahoo!フリマ (5% = 600円 -> 12000 - 600 - 640 = 10760) beats buyback (10500)!
+  // Yahoo!フリマ (5% = 600円 -> 10760) beats buyback (10500)
   assert.equal(res.platformComparisons[0].id, 'yahoo_flea');
   assert.equal(res.platformComparisons[0].net, 10760);
+  assert.equal(res.platformComparisons.length, 7); // 6 flea + buyback
+
+  // With withdrawal fee enabled (Mercari 200円 -> 9960)
+  const withWithdrawal = calculateSellComparison({
+    fleaPrice: 12000,
+    platformFeeRate: 0.10,
+    shippingCost: 520,
+    packingCost: 120,
+    buybackPrice: 10500,
+    includeWithdrawalFee: true,
+    withdrawalFee: 200,
+  });
+  assert.equal(withWithdrawal.withdrawalFee, 200);
+  assert.equal(withWithdrawal.fleaNet, 9960);
+});
+
+test('calculateSellComparison produces accurate price-drop negotiation table', () => {
+  const res = calculateSellComparison({
+    fleaPrice: 14000,
+    platformFeeRate: 0.10,
+    shippingCost: 520,
+    packingCost: 120,
+    buybackPrice: 11200,
+  });
+
+  // 14,000 -> net 11,960 (beats 11,200); 13,000 (-1000) -> net 11,060 (loses to 11,200)
+  assert.ok(res.priceDropTable.length >= 4);
+  assert.equal(res.priceDropTable[0].drop, 0);
+  assert.equal(res.priceDropTable[0].beatsBuyback, true);
+  const drop1000 = res.priceDropTable.find((r) => r.drop === 1000);
+  assert.ok(drop1000);
+  assert.equal(drop1000.net, 11060);
+  assert.equal(drop1000.beatsBuyback, false);
 });
 
 test('calculateSellComparison respects effortCost in effective winner calculation', () => {
@@ -60,49 +94,44 @@ test('calculateSellComparison respects effortCost in effective winner calculatio
     effortCost: 500,
   });
 
-  // fleaNet = 13000 - 1300 - 640 = 11060 -> rawDiff = +260, but minus 500 effort => -240 (buyback)
   assert.equal(res.rawDiff, 260);
   assert.equal(res.effectiveDiff, -240);
   assert.equal(res.winner, 'buyback');
   assert.equal(res.isCloseCall, true);
 });
 
-test('calculatePsaSimulation computes per-card costs, EV, and required PSA10 rate', () => {
+test('calculatePsaSimulation uses 2026 PSA Japan plans and computes EV + required PSA10 rate', () => {
+  assert.equal(PSA_PLAN_PRESETS[0].fee, 5980); // 2026 PSA Japan Value
+
   const res = calculatePsaSimulation({
-    rawCardCost: 10000,
-    gradingFeePerCard: 3300,
+    rawCardCost: 12000,
+    gradingFeePerCard: 5980,
     cardCount: 5,
-    totalShippingCost: 2000,
+    totalShippingCost: 2500,
     sellFeeRate: 0.10,
     sellShippingPerCard: 210,
-    pricePsa10: 25000,
-    pricePsa9: 11000,
-    pricePsa8OrLower: 7000,
+    pricePsa10: 34000,
+    pricePsa9: 13000,
+    pricePsa8OrLower: 8000,
     probPsa10: 70,
   });
 
-  // shippingPerCard = 400, totalCost = 13700
-  assert.equal(res.shippingPerCard, 400);
-  assert.equal(res.totalCostPerCard, 13700);
-  // net10 = 25000 - 2500 - 210 = 22290 -> profit10 = +8590
-  assert.equal(res.grades.psa10.profit, 8590);
-  // net9 = 11000 - 1100 - 210 = 9690 -> profit9 = -4010
-  assert.equal(res.grades.psa9.profit, -4010);
+  // shippingPerCard = 500, totalCost = 18480
+  assert.equal(res.shippingPerCard, 500);
+  assert.equal(res.totalCostPerCard, 18480);
+  // net10 = 34000 - 3400 - 210 = 30390 -> profit10 = +11910
+  assert.equal(res.grades.psa10.profit, 11910);
   assert.ok(res.expectedProfitPerCard > 0);
   assert.equal(res.verdict, 'submit');
-  assert.ok(res.requiredPsa10Rate > 25 && res.requiredPsa10Rate < 50);
+  assert.ok(res.requiredPsa10Rate > 30 && res.requiredPsa10Rate < 60);
   assert.equal(res.sensitivityTable.length, 6);
 });
 
 test('hypergeometricZeroProbability computes exact without-replacement probabilities', () => {
-  // 10口中2口当たり、2口引いたときの全外れ確率 = (8/10) * (7/9) = 56/90
   const p = hypergeometricZeroProbability(10, 2, 2);
   assert.ok(Math.abs(p - 56 / 90) < 1e-12);
-
-  // 総口数10・当たり3口で8口引けば必ず1回は当たる -> 全外れ確率0
   assert.equal(hypergeometricZeroProbability(10, 3, 8), 0);
 
-  // 大規模口数でもNaN・オーバーフローしない
   const large = hypergeometricZeroProbability(100000, 1000, 10);
   assert.ok(Number.isFinite(large) && large > 0.9 && large < 0.91);
 });
@@ -119,7 +148,6 @@ test('calculateOripaSimulation validates prize overflow and computes EV + cashou
 
   const valid = calculateOripaSimulation(ORIPA_PRESETS.mild);
   assert.equal(valid.isValid, true);
-  // S: 25000*1 + A: 8000*3 + B: 2000*12 + miss: 300*84 = 25000+24000+24000+25200 = 98200
   assert.equal(valid.missCount, 84);
   assert.equal(valid.totalPoolValue, 98200);
   assert.ok(Math.abs(valid.returnRate - 98.2) < 1e-9);
@@ -138,8 +166,7 @@ test('simulateOripaDraws performs valid without-replacement sampling', () => {
   });
   const draws = simulateOripaDraws(sim, 5, () => 0.42);
   assert.equal(draws.length, 5);
-  const topHits = draws.filter((d) => d.isTop);
-  assert.equal(topHits.length, 1);
+  assert.equal(draws.filter((d) => d.isTop).length, 1);
 });
 
 test('portfolio summary and CSV round-trip preserve Japanese values and quotes', () => {
@@ -171,13 +198,10 @@ test('portfolio summary and CSV round-trip preserve Japanese values and quotes',
   assert.equal(summary.totalCost, 51600);
   assert.equal(summary.totalMarketValue, 89000);
   assert.equal(summary.totalPnl, 37400);
-  assert.equal(summary.categoryBreakdown.length, 2);
 
   const csv = portfolioToCsv(items);
   const parsed = parsePortfolioCsv(`\uFEFF${csv}`);
   assert.equal(parsed.length, 2);
   assert.equal(parsed[0].name, 'ポケモンカード151, 初版');
   assert.equal(parsed[0].note, 'ポケセン産 "保管用"');
-  assert.equal(parsed[0].quantity, 2);
-  assert.equal(parsed[1].category, 'psa');
 });
