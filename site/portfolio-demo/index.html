@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>月額サーバー代0円 Web情報自動収集＆Googleスプレッドシート自動化｜実績デモ・料金案内</title>
-  <meta name="description" content="GitHub Actions × Python × Googleスプレッドシートで月額サーバー費0円の自動収集＆比較表を実現。IMPORTXMLエラーやGASの6分制限を解消し、EC競合価格チェック・トレカ相場監視・在庫アラート・商用OKスマホ1タップ手動更新まで実物デモで体験できます。">
+  <meta name="description" content="月額サーバー代0円で毎日の価格チェック・相場比較・在庫確認を自動化。スプレッドシート関数のエラーや6分制限を解消し、色分け比較表・30日推移グラフ・スマホ1タップ手動更新まで実物デモで体験できます。">
   <meta name="robots" content="noindex, nofollow">
   <meta property="og:type" content="website">
   <meta property="og:title" content="月額サーバー代0円 Web情報自動収集＆Googleスプレッドシート自動化｜実績デモ">
-  <meta property="og:description" content="PC起動・VPS不要。GitHub Actions × Python × Googleスプレッドシートで名寄せ・色分け比較表・30日推移グラフ・スマホ1タップ手動更新を体験できるインタラクティブデモ。">
+  <meta property="og:description" content="PCつけっぱなし・レンタルサーバー不要。色分け比較表・30日価格グラフ・スマホ1タップ手動更新をブラウザで体験できる実績デモページ。">
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <meta name="theme-color" content="#1B325F">
@@ -25,18 +25,18 @@
         <img class="brand-mark" src="./favicon.svg" alt="" width="34" height="34">
         <span class="brand-text">
           <span class="brand-name">ZeroRun Automation</span>
-          <span class="brand-sub">月額0円 Web自動収集 × スプレッドシート整形</span>
+          <span class="brand-sub">月額0円 Web自動収集 × スプレッドシート自動化</span>
         </span>
       </a>
       <button id="navToggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="メニューを開く">☰</button>
       <nav id="siteNav" class="site-nav" aria-label="ページ内ナビゲーション">
-        <a class="nav-link" href="#compare">他方式と比較</a>
-        <a class="nav-link" href="#architecture">仕組み</a>
+        <a class="nav-link" href="#compare">比較</a>
+        <a class="nav-link" href="#architecture">しくみ</a>
         <a class="nav-link" href="#live-demo">実物デモ</a>
-        <a class="nav-link" href="#genres">対応・法令</a>
+        <a class="nav-link" href="#genres">対応例</a>
         <a class="nav-link" href="#pricing">料金・納期</a>
-        <a class="nav-link" href="#faq">FAQ</a>
-        <a class="nav-cta" href="#estimator">30秒簡易見積</a>
+        <a class="nav-link" href="#faq">よくある質問</a>
+        <a class="nav-cta" href="#estimator">30秒見積</a>
       </nav>
     </div>
   </header>
@@ -46,44 +46,44 @@
     <section id="hero" class="hero-section" aria-label="サービス概要">
       <div class="container hero-grid">
         <div>
-          <p class="hero-eyebrow">EC・物販・リユース・リサーチ担当者向け ｜ 月額維持費 ¥0</p>
+          <p class="hero-eyebrow">EC・物販・リユース・リサーチ担当者向け ｜ 月額サーバー代 ¥0</p>
           <h1 class="hero-title">月額サーバー代0円で、毎朝スプレッドシートを自動更新。</h1>
           <p class="hero-lead">
             手作業で行っている競合価格チェック・相場比較・在庫確認を、
-            <strong>GitHub Actions × Python × Googleスプレッドシート</strong>で完全自動化します。
-            <code>IMPORTXML</code> のエラーや GAS の6分制限、VPSの月額固定費、外部AIの従量課金はすべて不要。
-            <strong>「ただ取るだけ」ではなく、名寄せ・色分け・30日推移グラフまで自動で整う</strong>実用シートを最短3営業日で納品します。
+            <strong>無料のクラウド自動実行 × Googleスプレッドシート</strong>でまるごと自動化します。
+            スプレッドシート関数のエラーや6分制限、レンタルサーバーの月額費用、AIの従量課金はすべて不要。
+            <strong>「ただ集めるだけ」ではなく、商品名ズレの統一・色分け・30日価格グラフまで自動で整う</strong>実用シートを最短3営業日でお届けします。
           </p>
           <div class="hero-actions">
             <a class="btn btn-primary btn-lg" href="#live-demo">実物デモを体験する →</a>
             <a class="btn btn-secondary btn-lg" href="#estimator">30秒で無料試算する</a>
           </div>
           <p class="hero-microcopy">
-            <span>✓ 契約前の技術・規約調査は無料（24時間以内）</span>
+            <span>✓ 契約前の「取れるか調査」は無料（24時間以内）</span>
             <span>✓ 買い切り・月額サーバー費¥0</span>
             <span>✓ 強引な営業なし</span>
           </p>
 
           <div class="trust-metrics" aria-label="運用実績の指標">
             <div class="trust-metric">
-              <span class="trust-metric-label">月額ランニングコスト</span>
+              <span class="trust-metric-label">納品後の月額サーバー費</span>
               <span class="trust-metric-val num">¥0 / 月</span>
-              <span class="trust-metric-sub">無料枠内（月間消費 約5%未満）</span>
+              <span class="trust-metric-sub">無料枠内（月間使用量は5%未満）</span>
             </div>
             <div class="trust-metric">
-              <span class="trust-metric-label">実運用パフォーマンス</span>
+              <span class="trust-metric-label">毎日の自動更新</span>
               <span class="trust-metric-val num">毎日定時 / 約2分</span>
-              <span class="trust-metric-sub">商用OKスマホ1タップ更新も併用可</span>
+              <span class="trust-metric-sub">スマホ1タップ手動更新も併用OK</span>
             </div>
             <div class="trust-metric">
-              <span class="trust-metric-label">意思決定シート設計</span>
-              <span class="trust-metric-val">6タブ自動整形</span>
-              <span class="trust-metric-sub">名寄せ・差率/差額強調＋30日推移</span>
+              <span class="trust-metric-label">すぐ使えるシート整形</span>
+              <span class="trust-metric-val">見やすい自動色分け</span>
+              <span class="trust-metric-sub">価格差強調＋30日ミニ折れ線グラフ</span>
             </div>
             <div class="trust-metric">
               <span class="trust-metric-label">納期の目安</span>
               <span class="trust-metric-val">最短 3営業日〜</span>
-              <span class="trust-metric-sub">自動テスト＆運用マニュアル付き</span>
+              <span class="trust-metric-sub">初心者向けマニュアル＆テスト付き</span>
             </div>
           </div>
         </div>
@@ -154,7 +154,7 @@
               <span id="roiFirstYearSelf" class="num">¥30,000</span>
             </div>
             <div class="cost-row">
-              <span>一般VPS / 代行会社 初年度総額</span>
+              <span>一般のサーバー契約・代行会社 初年度総額</span>
               <span id="roiFirstYearOther" class="num">¥110,000〜¥360,000</span>
             </div>
           </div>
@@ -166,10 +166,10 @@
     <section id="compare" class="section-alt" aria-labelledby="compareTitle">
       <div class="container">
         <div class="section-head">
-          <p class="section-kicker">COMPARISON / 他方式との徹底比較</p>
-          <h2 id="compareTitle">なぜ「GitHub Actions × Python × Sheets」が選ばれるのか？</h2>
+          <p class="section-kicker">COMPARISON / ほかの方法との違い</p>
+          <h2 id="compareTitle">ほかの自動化方法と何が違うの？ 4つの方法を比較</h2>
           <p class="section-lead">
-            「IMPORTXMLがエラーで止まる」「GASの6分制限に引っかかる」「代行会社は月額が高すぎる」——現場で起きがちな課題を12ヶ月総額と運用面で比較しました。
+            「スプレッドシートの関数がエラーで止まる」「GASの6分制限に引っかかる」「代行会社は月額が高すぎる」——よくあるお悩みを1年間の総額と使い勝手で比べました。
           </p>
         </div>
 
@@ -177,11 +177,11 @@
           <table class="compare-table">
             <thead>
               <tr>
-                <th>比較項目</th>
+                <th>くらべる項目</th>
                 <th>毎日の手作業</th>
-                <th>IMPORTXML / GAS</th>
-                <th>一般的な代行会社・VPS</th>
-                <th class="is-featured-col">当サービス（本構成）</th>
+                <th>スプレッドシート関数 / GAS</th>
+                <th>一般的な代行会社・サーバー契約</th>
+                <th class="is-featured-col">当サービス（月額0円構成）</th>
               </tr>
             </thead>
             <tbody>
@@ -193,53 +193,53 @@
                 <td class="is-featured-col"><strong>¥15,000〜¥50,000（買い切り）</strong></td>
               </tr>
               <tr>
-                <th>月額ランニング費</th>
+                <th>毎月の維持費</th>
                 <td>人件費（月1.6万〜5万円相当）</td>
                 <td>¥0</td>
                 <td>月額 ¥5,000〜¥30,000</td>
                 <td class="is-featured-col"><strong class="cmp-good">¥0 / 月（無料枠内）</strong></td>
               </tr>
               <tr>
-                <th>12ヶ月トータルコスト</th>
+                <th>1年間の合計コスト</th>
                 <td>約 ¥198,000〜 / 年</td>
-                <td>運用崩壊・手直し工数大</td>
+                <td>エラー修正の手間が増えがち</td>
                 <td>約 ¥110,000〜¥560,000 / 年</td>
                 <td class="is-featured-col"><strong class="cmp-good">¥15,000〜¥50,000 のみ</strong></td>
               </tr>
               <tr>
-                <th>JS描画サイト（最新EC）</th>
-                <td>目視確認のみ</td>
-                <td class="cmp-bad">× 取得不可（空になる）</td>
+                <th>動きのある最新ECサイト</th>
+                <td>目で見てコピペ</td>
+                <td class="cmp-bad">× 読み込めず空になることが多い</td>
                 <td>○ 対応可（追加費用になりやすい）</td>
-                <td class="is-featured-col"><strong class="cmp-good">◎ Playwrightで安定取得</strong></td>
+                <td class="is-featured-col"><strong class="cmp-good">◎ 自動ブラウザで安定取得</strong></td>
               </tr>
               <tr>
-                <th>実行時間の制限</th>
-                <td>作業時間に比例</td>
-                <td class="cmp-bad">× 6分で強制終了・関数上限</td>
+                <th>処理時間の制限</th>
+                <td>商品数だけ時間がかかる</td>
+                <td class="cmp-bad">× 6分で強制終了・件数上限あり</td>
                 <td>○ 制限なし</td>
-                <td class="is-featured-col"><strong class="cmp-good">◎ 6分制限なし（30分枠）</strong></td>
+                <td class="is-featured-col"><strong class="cmp-good">◎ 6分制限なし（余裕の30分枠）</strong></td>
               </tr>
               <tr>
-                <th>表記揺れ名寄せ・シート整形</th>
-                <td>毎回コピペ・加工が必要</td>
-                <td>△ 複雑になると保守困難</td>
-                <td>△ 生CSV納品が多く加工残る</td>
-                <td class="is-featured-col"><strong class="cmp-good">◎ 名寄せ・色分け・30日推移まで自動</strong></td>
+                <th>表記ゆれの統一・見やすい整形</th>
+                <td>毎回手作業で整理</td>
+                <td>△ 複雑になると壊れやすい</td>
+                <td>△ 生データ渡しが多く加工が残る</td>
+                <td class="is-featured-col"><strong class="cmp-good">◎ 表記統一・色分け・30日グラフまで自動</strong></td>
               </tr>
               <tr>
-                <th>Google未確認アプリ警告</th>
+                <th>Googleの怖い警告画面</th>
                 <td>なし</td>
-                <td class="cmp-bad">× 初回に赤い警告画面が出る</td>
+                <td class="cmp-bad">× 初回に「未確認アプリ」警告が出る</td>
                 <td>なし</td>
-                <td class="is-featured-col"><strong class="cmp-good">◎ 警告ゼロ（Service Account連携）</strong></td>
+                <td class="is-featured-col"><strong class="cmp-good">◎ 警告ゼロ（公式連携方式）</strong></td>
               </tr>
               <tr>
-                <th>レイアウト変更時の安全対策</th>
+                <th>サイト変更で失敗したとき</th>
                 <td>目視で気づく</td>
-                <td class="cmp-bad">× #N/A でシートが崩れる</td>
+                <td class="cmp-bad">× エラー表示でシートが崩れる</td>
                 <td>○ 保守契約で対応（月額必須）</td>
-                <td class="is-featured-col"><strong class="cmp-good">◎ 0件時上書き停止＋スポット復旧可</strong></td>
+                <td class="is-featured-col"><strong class="cmp-good">◎ 既存データを守って停止＋単発復旧OK</strong></td>
               </tr>
             </tbody>
           </table>
@@ -252,56 +252,56 @@
     <section id="architecture" aria-labelledby="archTitle">
       <div class="container">
         <div class="section-head">
-          <p class="section-kicker">ARCHITECTURE / 仕組み</p>
-          <h2 id="archTitle">月額サーバー代0円で安定稼働する自動化アーキテクチャ</h2>
+          <p class="section-kicker">HOW IT WORKS / しくみ</p>
+          <h2 id="archTitle">どうして「月額サーバー代0円」で毎日自動で動くの？</h2>
           <p class="section-lead">
-            実運用で磨き上げた5段階パイプラインです。各ステップをクリックすると「なぜ壊れにくいか・なぜ商用でも月額0円で動くか」の詳細を確認できます。
+            パソコンの電源を切っていても、無料のクラウド上で「収集 → 整理 → シート反映」まで毎日自動で行います。各ステップを押すと詳しい安心ポイントが見られます。
           </p>
         </div>
 
         <div class="arch-toolbar">
-          <span class="arch-hint">各ステップをクリックして仕様を確認するか、右のボタンで自動実行の流れをシミュレーションできます。</span>
-          <button id="runArchDemoBtn" class="btn btn-navy btn-sm" type="button">▶ 自動更新フローを模擬実行</button>
+          <span class="arch-hint">各ステップをクリックして詳細を確認するか、右のボタンで自動更新の流れを体験できます。</span>
+          <button id="runArchDemoBtn" class="btn btn-navy btn-sm" type="button">▶ 自動更新の流れを再生</button>
         </div>
 
-        <div class="arch-pipeline" role="tablist" aria-label="自動化パイプライン各ステップ">
+        <div class="arch-pipeline" role="tablist" aria-label="自動化の5ステップ">
           <button type="button" class="arch-step is-active" data-arch-step="0" role="tab" aria-selected="true">
             <span class="arch-step-num mono"><span>STEP 01</span><span>→</span></span>
-            <span class="arch-step-title">定時スケジュール＆スマホ1タップ起動</span>
-            <span class="arch-step-tech">GitHub Actions cron + Cloudflare無料枠</span>
+            <span class="arch-step-title">毎日自動で起動（＋スマホボタン）</span>
+            <span class="arch-step-tech">無料の自動実行クラウド＋スマホ更新</span>
             <span class="arch-step-cost num">月額 ¥0（商用利用OK）</span>
           </button>
           <button type="button" class="arch-step" data-arch-step="1" role="tab" aria-selected="false">
             <span class="arch-step-num mono"><span>STEP 02</span><span>→</span></span>
-            <span class="arch-step-title">丁寧なWeb自動収集（静的＋SPA対応）</span>
-            <span class="arch-step-tech">Python / BeautifulSoup / Playwright</span>
-            <span class="arch-step-cost num">負荷配慮・自動再試行</span>
+            <span class="arch-step-title">相手サイトへ配慮しながら自動収集</span>
+            <span class="arch-step-tech">シンプルサイトも最新ECも両方対応</span>
+            <span class="arch-step-cost num">1秒間隔・自動リトライ</span>
           </button>
           <button type="button" class="arch-step" data-arch-step="2" role="tab" aria-selected="false">
             <span class="arch-step-num mono"><span>STEP 03</span><span>→</span></span>
-            <span class="arch-step-title">日本語名寄せ＆異常値セーフティ</span>
-            <span class="arch-step-tech">NFKC正規化・状態分離・0件保護</span>
-            <span class="arch-step-cost num">誤上書きを防止</span>
+            <span class="arch-step-title">商品名ズレを統一＆失敗時のデータ保護</span>
+            <span class="arch-step-tech">表記ゆれ自動整理・0件時の上書き防止</span>
+            <span class="arch-step-cost num">データ消失を防止</span>
           </button>
           <button type="button" class="arch-step" data-arch-step="3" role="tab" aria-selected="false">
             <span class="arch-step-num mono"><span>STEP 04</span><span>→</span></span>
-            <span class="arch-step-title">Googleスプレッドシート自動整形</span>
-            <span class="arch-step-tech">Sheets API batch_update・SPARKLINE</span>
-            <span class="arch-step-cost num">月額 ¥0（300req/分無料）</span>
+            <span class="arch-step-title">Googleスプレッドシートを自動整形</span>
+            <span class="arch-step-tech">色分け・価格差強調・30日ミニグラフ</span>
+            <span class="arch-step-cost num">月額 ¥0（無料枠に余裕）</span>
           </button>
           <button type="button" class="arch-step" data-arch-step="4" role="tab" aria-selected="false">
             <span class="arch-step-num mono"><span>STEP 05</span><span>✓</span></span>
-            <span class="arch-step-title">即判断できる閲覧・履歴管理・通知</span>
-            <span class="arch-step-tech">スマホ閲覧・Excel用CSV・任意通知</span>
-            <span class="arch-step-cost num">ログイン不要で閲覧</span>
+            <span class="arch-step-title">開くだけですぐ判断＆履歴も自動保存</span>
+            <span class="arch-step-tech">スマホ閲覧・Excel出力・任意通知</span>
+            <span class="arch-step-cost num">普段はシートを見るだけ</span>
           </button>
         </div>
 
         <div class="arch-detail-grid">
           <div id="archDetailPanel" class="arch-detail-panel" role="tabpanel">
             <div class="arch-detail-header">
-              <h3 id="archDetailTitle" class="arch-detail-title">STEP 01｜定時スケジュール＆スマホ1タップ起動</h3>
-              <span id="archDetailBadge" class="arch-detail-badge">GitHub Actions + Cloudflare無料枠</span>
+              <h3 id="archDetailTitle" class="arch-detail-title">STEP 01｜毎日自動で起動（＋スマホ更新ボタン）</h3>
+              <span id="archDetailBadge" class="arch-detail-badge">無料クラウド自動実行</span>
             </div>
             <p id="archDetailDesc" class="arch-detail-desc"></p>
             <ul id="archMetaList" class="arch-meta-list"></ul>
@@ -309,8 +309,8 @@
 
           <div class="arch-log-panel" aria-live="polite">
             <div class="arch-log-head">
-              <span class="mono">github-actions / runner-log</span>
-              <span id="archLogStatus" class="arch-log-status">待機中（最終成功: 17:02 JST）</span>
+              <span class="mono">クラウド自動実行ログ（イメージ）</span>
+              <span id="archLogStatus" class="arch-log-status">待機中（最終成功: 17:02）</span>
             </div>
             <ul id="archLogBody" class="arch-log-body"></ul>
           </div>
@@ -323,19 +323,19 @@
       <div class="container">
         <div class="section-head">
           <p class="section-kicker">INTERACTIVE DEMO / 実物イメージ体験</p>
-          <h2 id="demoTitle">納品されるGoogleスプレッドシート＆スマホ1タップ更新を体験</h2>
+          <h2 id="demoTitle">実際に届くGoogleスプレッドシート＆スマホ更新ボタンを体験</h2>
           <p class="section-lead">
-            業種を切り替えて、実際の自動整形シート（差率・差額の自動強調、30日SPARKLINE推移、<strong>名寄せBefore/After</strong>、更新履歴）と、スマホ手動更新ボタンの動作を体験できます。
+            業種ボタンを押して、色分けされた比較表・30日価格グラフ・<strong>表記ゆれ統一のビフォーアフター</strong>・更新履歴や、スマホからの手動更新の動きをお試しいただけます。
           </p>
         </div>
 
         <div class="demo-notice" role="note">
-          <strong>デモデータについて：</strong>表示されている店舗名・商品名・価格はすべて公開用の架空サンプルデータです。実際の納品時はお客様専用の非公開リポジトリおよび専用スプレッドシートで安全に稼働させます。
+          <strong>デモデータについて：</strong>表示されているお店・商品名・価格はすべて架空のサンプルです。実際のご依頼では、お客様専用の非公開環境と専用スプレッドシートで安全に動かします。
         </div>
 
         <div class="genre-switcher" role="group" aria-label="デモ業種を切り替え">
           <button type="button" class="genre-btn is-active" data-genre="ec">EC競合価格チェック（家電・ガジェット）</button>
-          <button type="button" class="genre-btn" data-genre="hobby">トレカ・ホビー相場監視（状態別名寄せ）</button>
+          <button type="button" class="genre-btn" data-genre="hobby">トレカ・ホビー相場監視（状態別に整理）</button>
           <button type="button" class="genre-btn" data-genre="stock">在庫復活・値下げアラート（アウトドア）</button>
         </div>
 
@@ -374,13 +374,13 @@
 
             <div class="sheet-tabbar" role="tablist" aria-label="スプレッドシートのタブ">
               <button type="button" class="sheet-tab is-active" data-sheet-tab="compare" role="tab" aria-selected="true">比較（2サイト以上）</button>
-              <button type="button" class="sheet-tab" data-sheet-tab="trend" role="tab" aria-selected="false">30日推移（SPARKLINE）</button>
-              <button type="button" class="sheet-tab" data-sheet-tab="beforeAfter" role="tab" aria-selected="false">Before/After（名寄せ体験）</button>
+              <button type="button" class="sheet-tab" data-sheet-tab="trend" role="tab" aria-selected="false">30日間の価格グラフ</button>
+              <button type="button" class="sheet-tab" data-sheet-tab="beforeAfter" role="tab" aria-selected="false">整形前 → 整形後（表記統一）</button>
               <button type="button" class="sheet-tab" data-sheet-tab="summary" role="tab" aria-selected="false">サマリー＆更新履歴</button>
             </div>
 
             <div id="sheetLegend" class="sheet-legend">
-              <span class="legend-item"><span class="legend-swatch" style="background:#c6efce;border:1px solid #82c997;"></span>最有利価格（緑）</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:#c6efce;border:1px solid #82c997;"></span>いちばん有利な価格（緑）</span>
               <span class="legend-item"><span class="legend-swatch" style="background:#b42318;"></span>差率5%以上（赤太字）</span>
               <span class="legend-item"><span class="legend-swatch" style="background:#a66900;"></span>差額¥3,000以上（金太字）</span>
               <span class="legend-item"><span class="legend-swatch" style="background:#fff2cc;border:1px solid #e6c66a;"></span>状態推定などの注意</span>
@@ -391,18 +391,18 @@
           <!-- Smartphone 1-Tap Manual Updater Simulator -->
           <aside class="mobile-trigger-card" aria-label="スマホ1タップ手動更新デモ">
             <div class="mobile-trigger-head">
-              <p class="mobile-kicker">OPTIONAL / SMARTPHONE TRIGGER</p>
+              <p class="mobile-kicker">オプション ／ スマホ更新ボタン</p>
               <h3>スマホ1タップ手動更新デモ</h3>
-              <p>毎日定時の自動更新に加え、「今すぐ最新を見たい」時にスマホから合言葉1つで起動できます。</p>
+              <p>毎日決まった時刻の自動更新に加えて、「今すぐ最新を見たい」時にスマホから合言葉1つで更新できます。</p>
             </div>
 
             <form id="mobileUpdateForm">
               <div class="mobile-form-group">
-                <label for="demoPassphrase">更新用合言葉（デモ用）</label>
+                <label for="demoPassphrase">更新用の合言葉（デモ用）</label>
                 <input id="demoPassphrase" class="mobile-input" type="password" value="demo2026" autocomplete="off" placeholder="合言葉を入力">
                 <div class="mobile-hint-row">
                   <span>デモ合言葉: <code class="mono">demo2026</code></span>
-                  <button id="wrongPassTestBtn" class="text-link-btn" type="button">誤入力テスト</button>
+                  <button id="wrongPassTestBtn" class="text-link-btn" type="button">まちがいテスト</button>
                 </div>
               </div>
               <button id="mobileTriggerBtn" class="btn btn-primary" type="submit" style="width:100%;">
@@ -411,15 +411,15 @@
             </form>
 
             <div id="mobileStatusBox" class="mobile-status-box" role="status" aria-live="polite">
-              上のボタンを押すと、認証 → 収集 → スプレッドシートの数値と更新履歴がリアルタイムに反映されます。
+              上のボタンを押すと、合言葉チェック → 自動取得 → スプレッドシートの価格と更新履歴がリアルタイムに変わります。
             </div>
 
             <ul class="mobile-security-list">
-              <li>Cloudflare Pages / Workers 無料枠（商用利用OK）</li>
-              <li>Google「未確認アプリ警告」が出ない安全構成</li>
-              <li>合言葉はSHA-256ハッシュで安全照合</li>
-              <li>5分間の連打防止＆同時実行キュー制御</li>
-              <li>GitHub・Googleログイン不要で現場スタッフも利用可</li>
+              <li>商用利用OKの無料クラウド（Cloudflare）で月額0円</li>
+              <li>Googleの「未確認アプリ警告」が出ない安心設計</li>
+              <li>合言葉は暗号化して安全チェック（漏えい防止）</li>
+              <li>5分間の連打防止＆二重起動ブロック付き</li>
+              <li>ログイン不要で現場スタッフもすぐ使える</li>
             </ul>
           </aside>
         </div>
@@ -427,8 +427,8 @@
         <!-- Mid-page CTA Banner -->
         <div class="mid-cta-banner">
           <div>
-            <strong>「自分の監視したいURLでも、同じように自動化できる？」</strong>
-            <p>対象URLをお知らせいただければ、規約・技術可否・概算費用を24時間以内に無料調査します。</p>
+            <strong>「自分のチェックしたいサイトでも、同じように自動化できる？」</strong>
+            <p>対象URLを教えていただければ、規約・取得できるかどうか・費用目安を24時間以内に無料でお調べします。</p>
           </div>
           <a class="btn btn-primary" href="#estimator">30秒で概算見積＆相談メモを作る →</a>
         </div>
@@ -439,10 +439,10 @@
     <section id="genres" aria-labelledby="genresTitle">
       <div class="container">
         <div class="section-head">
-          <p class="section-kicker">USE CASES &amp; COMPLIANCE / 対応ジャンル・法令遵守</p>
+          <p class="section-kicker">USE CASES &amp; SAFETY / よくあるご依頼例・安心基準</p>
           <h2 id="genresTitle">こんな「毎日の手作業チェック」を安全に自動化できます</h2>
           <p class="section-lead">
-            公開Webページや公開CSV・公開シートから必要な項目だけを抽出し、意思決定しやすい形に整形して自動蓄積します。
+            ログインなしで誰でも見られるWebページや公開価格表から必要な項目だけを集め、判断しやすい形に整えて自動記録します。
           </p>
         </div>
 
@@ -450,67 +450,67 @@
           <article class="genre-card">
             <span class="genre-card-tag">EC・物販</span>
             <h3>EC競合価格チェック＆値付け支援</h3>
-            <p>競合2〜5店舗の商品価格・送料・ポイント条件を毎朝取得。自社価格より安い商品や価格差5%以上のSKUを自動で赤字強調します。</p>
+            <p>競合2〜5店舗の商品価格・送料・ポイント条件を毎朝取得。自社より安い商品や価格差5%以上の商品を自動で赤字強調します。</p>
             <div class="genre-card-plan">おすすめ：スタンダード（¥30,000）</div>
           </article>
 
           <article class="genre-card">
             <span class="genre-card-tag">リユース・ホビー</span>
             <h3>トレカ・中古相場・買取価格比較</h3>
-            <p>「新品/未開封/傷あり」等の状態別に商品を名寄せし、複数店舗の最高値・最安値と30日間の相場推移ミニグラフを自動更新します。</p>
+            <p>「新品・未開封・傷あり」などの状態ごとに商品を自動でまとめ、複数店舗の最高値・最安値と30日間の価格グラフを自動更新します。</p>
             <div class="genre-card-plan">おすすめ：スタンダード（¥30,000）</div>
           </article>
 
           <article class="genre-card">
             <span class="genre-card-tag">仕入れ・在庫</span>
             <h3>在庫復活・値下げアラート監視</h3>
-            <p>対象商品ページの「欠品→在庫あり」や設定価格以下への値下げを検知。シート更新と同時にメール・Slack・Discordへ通知可能です。</p>
+            <p>チェックしたい商品の「売り切れ → 在庫あり」や目標価格以下への値下げを検知。シート更新と同時にメール・Slack・Discordへお知らせできます。</p>
             <div class="genre-card-plan">おすすめ：ライト〜カスタム（¥15,000〜）</div>
           </article>
 
           <article class="genre-card">
             <span class="genre-card-tag">営業・リサーチ</span>
             <h3>新着情報（不動産・求人・補助金・入札）</h3>
-            <p>複数ポータルの新着一覧を毎日巡回し、重複を除外した新着案件だけをスプレッドシートへ自動追記。見逃しゼロを実現します。</p>
+            <p>複数サイトの新着一覧を毎日巡回し、重複を除いた新しい案件だけをスプレッドシートへ自動追記。見逃しゼロを実現します。</p>
             <div class="genre-card-plan">おすすめ：ライト〜スタンダード（¥15,000〜）</div>
           </article>
 
           <article class="genre-card">
             <span class="genre-card-tag">マーケティング</span>
             <h3>ランキング・掲載順位の定点観測</h3>
-            <p>自社・競合のカテゴリ順位やレビュー件数を日次・週次で自動記録。過去データも非表示アーカイブへ欠損なく保管できます。</p>
+            <p>自社・競合のカテゴリ順位やレビュー件数を毎日・毎週自動で記録。過去データも裏の保管用シートへ漏れなく蓄積できます。</p>
             <div class="genre-card-plan">おすすめ：スタンダード（¥30,000）</div>
           </article>
 
           <article class="genre-card">
             <span class="genre-card-tag">業務効率化</span>
-            <h3>IMPORTXML / GASタイムアウトからの乗換</h3>
-            <p>「IMPORTXMLが#N/Aになる」「GASが6分制限で止まる」「ExcelマクロがPC依存」といった既存運用を、月額0円のクラウド実行へ移行します。</p>
+            <h3>関数エラー・GASの6分制限からの乗換</h3>
+            <p>「スプレッドシート関数がよくエラーになる」「GASが6分で止まる」「Excelマクロが特定PCでしか動かない」といった悩みを月額0円で解決します。</p>
             <div class="genre-card-plan">おすすめ：ライト〜カスタム（¥15,000〜）</div>
           </article>
         </div>
 
         <div class="compliance-box">
-          <h3>法令・利用規約遵守の「4つの事前審査基準」（ご安心いただくための線引き）</h3>
+          <h3>ルールと法律を守る「4つの事前チェック基準」（安心して任せていただくために）</h3>
           <p class="compliance-lead">
-            「法的に大丈夫です」と曖昧に請け負うのではなく、着手前に必ず以下の4基準を無料確認し、長期的に安全運用できる案件のみをお受けします。
+            「何でも取れます」と安請け合いせず、ご契約前に必ず以下の4つを無料で確認し、長く安全に使い続けられる案件だけをお受けします。
           </p>
           <div class="compliance-grid">
             <div class="compliance-item">
-              <strong>1. 利用規約・robots.txt の確認</strong>
-              <span>自動取得が明確に禁止されているサイトや、CAPTCHA／bot対策の突破は一切行いません。</span>
+              <strong>1. サイトの利用規約・アクセスルールを確認</strong>
+              <span>自動取得が禁止されているサイトや、「私はロボットではありません」等の認証画面を突破する処理は一切行いません。</span>
             </div>
             <div class="compliance-item">
-              <strong>2. サーバー負荷への徹底配慮</strong>
-              <span>既定1秒以上のアクセス間隔・429/5xx指数バックオフを実装し、過度な高頻度アクセスを回避します。</span>
+              <strong>2. 相手サイトに迷惑をかけない速度で取得</strong>
+              <span>1秒以上の間隔を空けて丁寧に読み込み、アクセスが集中した時は自動で待つ仕組みを入れます。</span>
             </div>
             <div class="compliance-item">
-              <strong>3. 非ログイン公開情報のみ対象</strong>
-              <span>不正アクセス禁止法・個人情報保護法の観点から、会員限定ページや個人情報の収集はお受けしません。</span>
+              <strong>3. ログイン不要の公開ページのみ対象</strong>
+              <span>会員限定ページや個人情報の収集はお受けせず、誰でも見られる公開データ（価格・在庫など）だけを対象にします。</span>
             </div>
             <div class="compliance-item">
-              <strong>4. 情報解析・比較用途に限定</strong>
-              <span>価格・在庫等の事実データの社内比較分析（著作権法30条の4の趣旨に配慮）とし、記事・画像の無断転載は行いません。</span>
+              <strong>4. 価格比較・分析の用途に限定</strong>
+              <span>社内の相場確認や価格分析（著作権法30条の4の趣旨に配慮）に限定し、記事本文や画像の無断転載は行いません。</span>
             </div>
           </div>
         </div>
@@ -524,7 +524,7 @@
           <p class="section-kicker">PRICING &amp; SCHEDULE / 料金プラン・納期目安</p>
           <h2 id="pricingTitle">初期費用のみの買い切り設計（月額サーバー代¥0）</h2>
           <p class="section-lead">
-            要件のシンプルさに応じた明朗な3プラン構成です。ご予算に合わせて最小構成からスタートし、後から機能追加することも可能です。
+            やりたいことの規模に合わせた分かりやすい3プランです。まずは最小構成で試して、あとから機能を追加することもできます。
           </p>
         </div>
 
@@ -535,11 +535,11 @@
             <div class="plan-price num">¥15,000<small>（目安）</small></div>
             <div class="plan-meta">納期目安：<strong>3〜4営業日</strong> ｜ 月額維持費：¥0</div>
             <ul class="plan-features">
-              <li>対象サイト：静的HTML 1〜2サイト</li>
-              <li>毎日定時の自動更新（GitHub Actions）</li>
+              <li>対象サイト：一般的なWebページ 1〜2サイト</li>
+              <li>毎日決まった時刻にクラウド自動更新</li>
               <li>Googleスプレッドシート自動出力（一覧＋更新履歴）</li>
-              <li>1秒間隔アクセス制御・0件エラー保護</li>
-              <li>非エンジニア向け初期設定・運用マニュアル</li>
+              <li>1秒間隔の丁寧アクセス＆失敗時のデータ保護</li>
+              <li>初心者向けの初期設定・使い方マニュアル</li>
             </ul>
             <a class="btn btn-secondary" href="#estimator" data-select-plan="light">このプランで試算する</a>
           </article>
@@ -550,25 +550,25 @@
             <div class="plan-price num">¥30,000<small>（目安）</small></div>
             <div class="plan-meta">納期目安：<strong>5〜7営業日</strong> ｜ 月額維持費：¥0</div>
             <ul class="plan-features">
-              <li>対象サイト：2〜3サイト（JS描画・Playwright対応可）</li>
-              <li>複数サイトの表記揺れ名寄せ＆状態分離ロジック</li>
-              <li>自動整形シート（比較・差率/差額色分け・単独分離）</li>
-              <li>30日価格推移マトリクス＋SPARKLINEミニグラフ</li>
-              <li>自動テストコード付き＋初期設定サポート</li>
+              <li>対象サイト：2〜3サイト（動きのある最新サイトも対応可）</li>
+              <li>お店ごとの商品名ズレを自動で統一＆状態別に整理</li>
+              <li>自動整形シート（比較・価格差の色分け・単独掲載の分離）</li>
+              <li>30日間の価格推移表＋セル内ミニ折れ線グラフ</li>
+              <li>自動チェックテスト付き＋初期設定サポート</li>
             </ul>
             <a class="btn btn-primary" href="#estimator" data-select-plan="standard">このプランで試算する</a>
           </article>
 
           <article class="plan-card">
-            <span class="plan-badge">高機能・現場チーム運用</span>
+            <span class="plan-badge">高機能・チーム運用向け</span>
             <h3 class="plan-name">カスタムプラン</h3>
             <div class="plan-price num">¥50,000〜<small>（目安）</small></div>
             <div class="plan-meta">納期目安：<strong>7〜14営業日</strong> ｜ 月額維持費：¥0</div>
             <ul class="plan-features">
-              <li>対象サイト：4サイト以上・詳細バリエーション展開対応</li>
+              <li>対象サイト：4サイト以上・サイズや状態別の詳細取得</li>
               <li><strong>スマホ1タップ手動更新ページ</strong>（合言葉認証・Cloudflare無料枠・商用OK）</li>
-              <li>条件一致アラート通知（メール / Slack / Discord）</li>
-              <li>業務固有の利益計算・仕入れ判定ロジック組み込み</li>
+              <li>条件達成アラート通知（メール / Slack / Discord）</li>
+              <li>業務に合わせた利益計算・仕入れ判定ルールの組み込み</li>
               <li>納品後1ヶ月の軽微レイアウト変更サポート込み</li>
             </ul>
             <a class="btn btn-secondary" href="#estimator" data-select-plan="custom">このプランで試算する</a>
@@ -578,22 +578,22 @@
         <!-- Included Deliverables & Post-Delivery Maintenance Assurance -->
         <div class="assurance-strip" aria-label="全プラン共通の標準納品物と保守目安">
           <div class="assurance-col">
-            <h3>全プラン共通の標準納品物（5点セット）</h3>
+            <h3>全プランに付いてくる標準セット（5点）</h3>
             <ul class="assurance-list">
-              <li>お客様専用の非公開GitHubリポジトリ用ソースコード一式</li>
-              <li>Googleスプレッドシート自動出力・書式整形設定</li>
-              <li>改修時の劣化を防ぐオフライン単体テストコード</li>
-              <li>非エンジニア向け運用マニュアル＆保守セレクタ一覧</li>
-              <li>検収期間5営業日の不具合無料修正保証</li>
+              <li>お客様専用の非公開フォルダに保管する自動化プログラム一式</li>
+              <li>Googleスプレッドシート自動出力・見やすい色分け設定</li>
+              <li>修正しても壊れにくい動作チェック用テスト</li>
+              <li>初心者でも迷わない運用マニュアル＆将来の修正箇所メモ</li>
+              <li>納品後5営業日の不具合無料修正保証</li>
             </ul>
           </div>
           <div class="assurance-col">
-            <h3>納品後の保守・変更対応（必要な時だけ明朗価格）</h3>
+            <h3>納品後の修理・追加も「必要な時だけ」明朗価格</h3>
             <ul class="assurance-list">
-              <li>対象サイトのデザイン変更に伴うスポット復旧：<strong>¥5,000〜¥10,000 / 回</strong></li>
-              <li>比較対象サイトの追加（1サイト）：<strong>+¥8,000〜</strong></li>
-              <li>月額保守契約は<strong>必須ではありません</strong>（任意で月額¥3,000〜のライト保守も相談可）</li>
-              <li>他社引き継ぎも可能な整理されたコード＆ドキュメント構成</li>
+              <li>対象サイトのデザイン変更による単発修理：<strong>¥5,000〜¥10,000 / 回</strong></li>
+              <li>チェックするサイトの追加（1サイト）：<strong>+¥8,000〜</strong></li>
+              <li>毎月の保守契約は<strong>必須ではありません</strong>（ご希望時のみ月額¥3,000〜で相談可）</li>
+              <li>整理された構成でお渡しするため、将来の引き継ぎも安心</li>
             </ul>
           </div>
         </div>
@@ -601,14 +601,14 @@
         <!-- Quick Estimator -->
         <div id="estimator" class="estimator-box">
           <div class="section-head" style="margin-bottom:22px;">
-            <p class="section-kicker">QUICK ESTIMATOR / 30秒 簡易見積もり（登録不要）</p>
-            <h3 style="font-size:1.35rem;">ご希望条件から概算費用と相談用メモを作成</h3>
+            <p class="section-kicker">QUICK ESTIMATOR / 30秒かんたん見積もり（登録不要）</p>
+            <h3 style="font-size:1.35rem;">ご希望を選ぶだけで、概算費用と「そのまま送れる相談メモ」を作成</h3>
           </div>
 
           <div class="estimator-grid">
             <div>
               <div class="est-group">
-                <span class="est-group-label">1. 収集対象サイト数</span>
+                <span class="est-group-label">1. チェックしたいサイトの数</span>
                 <div class="est-radio-row">
                   <label class="est-choice"><input type="radio" name="estSites" value="1-2"> 1〜2サイト</label>
                   <label class="est-choice"><input type="radio" name="estSites" value="3" checked> 3サイト</label>
@@ -617,27 +617,27 @@
               </div>
 
               <div class="est-group">
-                <span class="est-group-label">2. 対象ページの技術方式</span>
+                <span class="est-group-label">2. 対象サイトのタイプ</span>
                 <div class="est-radio-row is-two">
-                  <label class="est-choice"><input type="radio" name="estTech" value="static"> 通常のWebページ中心</label>
-                  <label class="est-choice"><input type="radio" name="estTech" value="spa" checked> 動的表示（JS/SPA）あり・不明</label>
+                  <label class="est-choice"><input type="radio" name="estTech" value="static"> シンプルな価格表・一覧ページ</label>
+                  <label class="est-choice"><input type="radio" name="estTech" value="spa" checked> 最新EC・動きのあるサイト・よく分からない</label>
                 </div>
               </div>
 
               <div class="est-group">
-                <span class="est-group-label">3. データ加工・比較レベル</span>
+                <span class="est-group-label">3. シートの作り方</span>
                 <div class="est-radio-row is-two">
-                  <label class="est-choice"><input type="radio" name="estCompare" value="list"> サイト別の一覧取得のみ</label>
-                  <label class="est-choice"><input type="radio" name="estCompare" value="match" checked> 複数サイトの名寄せ・価格比較</label>
+                  <label class="est-choice"><input type="radio" name="estCompare" value="list"> サイトごとに一覧化するだけ</label>
+                  <label class="est-choice"><input type="radio" name="estCompare" value="match" checked> 複数サイトの商品を並べて比較する</label>
                 </div>
               </div>
 
               <div class="est-group" style="margin-bottom:0;">
-                <span class="est-group-label">4. 追加オプション</span>
+                <span class="est-group-label">4. 追加したい便利機能（オプション）</span>
                 <div class="est-checkbox-list">
-                  <label class="est-choice"><input id="optTrend" type="checkbox" checked> 30日推移マトリクス＋SPARKLINEグラフ（+¥5,000）</label>
+                  <label class="est-choice"><input id="optTrend" type="checkbox" checked> 30日間の価格推移表＋ミニ折れ線グラフ（+¥5,000）</label>
                   <label class="est-choice"><input id="optMobile" type="checkbox"> スマホ1タップ手動更新ページ・合言葉認証（+¥10,000）</label>
-                  <label class="est-choice"><input id="optNotify" type="checkbox"> 条件アラート通知（メール / Slack / Discord）（+¥8,000）</label>
+                  <label class="est-choice"><input id="optNotify" type="checkbox"> 条件達成アラート通知（メール / Slack / Discord）（+¥8,000）</label>
                   <label class="est-choice"><input id="optSupport" type="checkbox"> 納品後1ヶ月 軽微レイアウト修正保証（+¥5,000）</label>
                 </div>
               </div>
@@ -661,7 +661,7 @@
               <label class="est-group-label" for="estSummaryText">このまま相談メッセージに貼れる要件メモ</label>
               <textarea id="estSummaryText" class="est-summary-text" readonly></textarea>
               <button id="copySummaryBtn" class="btn btn-primary btn-lg" type="button" style="width:100%;">相談用メモをコピーする</button>
-              <p class="est-microcopy">コピーしたメモをココナラ・クラウドワークス・ランサーズ・Xの相談欄に貼るだけで、24時間以内に無料調査結果をお返しします。</p>
+              <p class="est-microcopy">コピーしたメモをココナラ・クラウドワークス・ランサーズ・Xの相談欄に貼るだけで、24時間以内に無料調査の結果をお返しします。</p>
               <div id="copyFeedback" class="copy-feedback" role="status" aria-live="polite"></div>
             </div>
           </div>
@@ -673,71 +673,71 @@
     <section id="faq" aria-labelledby="processTitle">
       <div class="container">
         <div class="section-head">
-          <p class="section-kicker">WORKFLOW &amp; FAQ / 導入の流れ・よくある質問</p>
-          <h2 id="processTitle">ご相談から納品・運用開始までの4ステップ</h2>
+          <p class="section-kicker">FLOW &amp; FAQ / ご相談からの流れ・よくある質問</p>
+          <h2 id="processTitle">ご相談から納品・運用スタートまでの4ステップ</h2>
         </div>
 
         <div class="process-grid">
           <div class="process-step">
             <div class="process-num">STEP 01</div>
-            <h3>無料ヒアリング＆技術調査</h3>
-            <p>対象URLと欲しい項目を伺い、規約面・取得可否・最適構成を24時間以内に確認します。</p>
+            <h3>無料相談＆「取れるか」調査</h3>
+            <p>対象URLと欲しい項目を伺い、規約面・取得できるかどうか・最適プランを24時間以内に確認します。</p>
           </div>
           <div class="process-step">
             <div class="process-num">STEP 02</div>
-            <h3>仕様・見積・検収条件の確定</h3>
-            <p>出力タブの列構成やスコープを明文化し、認識ズレや追加費用の不安をなくして着手します。</p>
+            <h3>シート構成・金額・納期の確定</h3>
+            <p>どの列を出力するか・どこまでが料金内かを分かりやすく共有し、認識ズレをなくしてから着手します。</p>
           </div>
           <div class="process-step">
             <div class="process-num">STEP 03</div>
-            <h3>開発＆サンプルデータ確認</h3>
-            <p>自動テスト付きで実装し、実データが入ったテスト用スプレッドシートをご確認いただきます。</p>
+            <h3>作成＆テストシートでのご確認</h3>
+            <p>実データが入ったテスト用スプレッドシートをお見せし、見やすさや数字の正確さをご確認いただきます。</p>
           </div>
           <div class="process-step">
             <div class="process-num">STEP 04</div>
-            <h3>お客様環境へ設置＆納品</h3>
-            <p>お客様のGitHub・Google環境へ反映し、定時実行と手動更新の疎通を確認後、運用マニュアルをお渡しします。</p>
+            <h3>お客様環境へ設置＆納品完了</h3>
+            <p>お客様のGoogleシートと自動実行環境をつなぎ、動作を確認したうえで初心者向けマニュアルをお渡しします。</p>
           </div>
         </div>
 
         <div class="faq-list">
           <details class="faq-item" open>
-            <summary>本当に商用利用でも月額サーバー代0円で使い続けられますか？</summary>
-            <p>はい。自動実行に使うGitHub Actionsは非公開リポジトリでも月2,000 Linux分まで無料で、1日1回・約2〜3分の更新なら月約70〜90分（無料枠の5%未満）で収まります。Google Sheets APIも無料（1分あたり300リクエスト・日次上限なし）で、<code>batch_update</code> 集約により1実行約20コール程度です。さらにスマホ手動更新ページには<strong>商用利用が公式に許可されているCloudflare Pages / Workers無料枠（1日10万リクエスト無料）</strong>を採用しています（個人・非商用用途ならVercel Hobby等も選択可）。</p>
+            <summary>本当にお仕事（商用利用）で使っても月額サーバー代0円ですか？</summary>
+            <p>はい。毎日の自動実行に使う無料クラウド（GitHub Actions）は非公開環境でも月2,000分まで無料で、1日1回2〜3分の更新なら月約70〜90分（無料枠の5%未満）で収まります。Googleスプレッドシートへの書き込みも無料枠内で余裕があり、スマホ手動更新ページも<strong>商用利用が公式に許可された無料クラウド（Cloudflare）</strong>を使うため維持費はかかりません。</p>
           </details>
           <details class="faq-item">
-            <summary>プログラミングやGitHubを触ったことがなくても大丈夫ですか？</summary>
-            <p>普段の業務で見るのはGoogleスプレッドシートだけなので、コードに触れる必要はありません。初回セットアップ（Googleシートの共有やシークレット登録）も、画面手順書またはチャット案内で迷わず完了できるようサポートします。</p>
+            <summary>パソコンやプログラミングの知識がなくても使えますか？</summary>
+            <p>はい。普段の業務で見るのはいつものGoogleスプレッドシートだけなので、難しい画面を操作する必要はありません。最初の連携設定（スプレッドシートの共有など）も、図解付き手順書またはチャット案内で迷わず終わるようサポートします。</p>
           </details>
           <details class="faq-item">
-            <summary>対象サイトのデザイン変更で取得できなくなったらどうなりますか？</summary>
-            <p>HTML構造の変化で取得件数が0件になった場合、既存のスプレッドシートを空データで上書きしない保護機能（strictガード）を標準搭載しています。また、構造変更時のスポット修正（¥5,000〜¥10,000目安）や任意の月額ライト保守にも対応可能です。</p>
+            <summary>相手サイトのデザインが変わって動かなくなったらどうなりますか？</summary>
+            <p>サイトの変化でデータが取れなくなった場合でも、今あるスプレッドシートを空っぽにして上書きしない「データ保護機能」を標準で入れています。復旧が必要な場合も、単発修理（¥5,000〜¥10,000目安）で素早く直せます。</p>
           </details>
           <details class="faq-item">
-            <summary>Google Apps Script（GAS）やIMPORTXMLで作る場合と何が違いますか？</summary>
-            <p>IMPORTXMLは件数が増えると「#N/A」や読み込み失敗が頻発し、GASには「1回の実行が最大6分で強制終了する」「JavaScript描画サイトを取れない」「初回にGoogleの未確認アプリ警告が出る」という弱点があります。GitHub Actions＋Python構成ならこれらの制約がなく、名寄せ・大量ページ巡回・高速な書式一括整形まで安定して動かせます。</p>
+            <summary>スプレッドシート関数（IMPORTXML）やGASと何が違いますか？</summary>
+            <p>スプレッドシート関数は件数が増えるとエラーで止まりやすく、GASには「1回の処理が6分で強制終了する」「動きのある最新ECサイトが読めない」「初回に赤い未確認アプリ警告が出る」という弱点があります。本サービスは外部の無料クラウドで動かすため、これらの制限をすべて解消できます。</p>
           </details>
           <details class="faq-item">
-            <summary>GitHub Actionsは60日間リポジトリ更新がないと定期実行が止まるって本当ですか？</summary>
-            <p>公開（Public）リポジトリでは60日間コミット等の活動がないとスケジュール実行が自動停止する仕様があります。本サービスでは原則お客様専用の<strong>非公開（Private）リポジトリ</strong>で運用するほか、万一停止した場合のワンクリック再開手順やエラー通知設計もマニュアルに明記しているため安心です。</p>
+            <summary>「60日間ほったらかしだと自動実行が止まる」と聞いたことがありますが大丈夫？</summary>
+            <p>公開設定で放置した場合に自動停止するルールが一部ありますが、本サービスでは原則お客様専用の<strong>非公開設定</strong>で運用します。さらに万一止まった場合でもワンクリックで再開できる手順をマニュアルへ明記しているため安心です。</p>
           </details>
           <details class="faq-item">
-            <summary>Webスクレイピングは法律や規約面で問題ありませんか？</summary>
-            <p>ログイン不要の公開情報であっても、利用規約やアクセス頻度によってはトラブルになり得ます。そのため契約前に必ず「利用規約・robots.txt」「1秒以上の間隔制御」「非ログイン・個人情報非取得」「比較解析用途限定（著作権法30条の4への配慮）」の4基準を無料審査し、安全に運用できる対象のみを構築します。</p>
+            <summary>自動収集は法律や規約面で問題ありませんか？</summary>
+            <p>公開ページであっても、利用規約やアクセス頻度によってはトラブルの原因になります。そのため契約前に必ず「利用規約・アクセスルール」「1秒以上の丁寧な間隔」「ログイン不要の公開データ限定」「比較分析用途（著作権法30条の4への配慮）」の4基準を無料審査し、安全な案件のみをお受けします。</p>
           </details>
           <details class="faq-item">
-            <summary>スマホから好きなタイミングで更新できますか？</summary>
-            <p>はい（オプション／カスタムプラン）。合言葉認証付きの専用更新ページをCloudflare無料枠で設置できるため、外出先や仕入れの現場からスマホで1タップするだけで数分後に最新データへ更新できます。</p>
+            <summary>スマホから好きなタイミングで最新データに更新できますか？</summary>
+            <p>はい（オプション／カスタムプラン）。合言葉付きの専用更新ページを無料クラウド（Cloudflare）に設置できるため、外出先や仕入れの現場からスマホで1タップするだけで数分後に最新データへ更新できます。</p>
           </details>
         </div>
 
         <!-- Bottom Conversion Banner -->
         <div class="bottom-cta-box">
-          <p class="section-kicker" style="color:#a7f3d0;">FREE PRE-CHECK / 契約前の技術調査は無料</p>
+          <p class="section-kicker" style="color:#a7f3d0;">FREE PRE-CHECK / ご契約前の「取れるか調査」は無料</p>
           <h3>まずは「このURLで自動化できるか？」を無料で確認しませんか？</h3>
-          <p>30秒の簡易見積もりで要件メモを作成し、ココナラ・クラウドワークス・ランサーズ・Xからそのままお送りください。24時間以内に取得可否と確定見積もりをご回答します。</p>
+          <p>30秒のかんたん見積もりで相談メモを作り、ココナラ・クラウドワークス・ランサーズ・Xからそのままお送りください。24時間以内に可否と確定見積もりをご回答します。</p>
           <div class="bottom-cta-actions">
-            <a class="btn btn-primary btn-lg" href="#estimator">30秒簡易見積もりへ進む →</a>
+            <a class="btn btn-primary btn-lg" href="#estimator">30秒かんたん見積もりへ進む →</a>
             <a class="btn btn-outline-light btn-lg" href="#live-demo">実物デモをもう一度試す</a>
           </div>
         </div>
@@ -748,17 +748,17 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div>
-        <div class="footer-brand">ZeroRun Automation — Portfolio &amp; Interactive Demo</div>
-        <p class="footer-note">月額サーバー代0円 Web情報自動収集＆Googleスプレッドシート自動化 実績デモページ（サンプルデータはすべて匿名・架空データです）</p>
+        <div class="footer-brand">ZeroRun Automation — 実績デモ＆料金案内</div>
+        <p class="footer-note">月額サーバー代0円 Web情報自動収集＆Googleスプレッドシート自動化（デモ画面のデータはすべて架空のサンプルです）</p>
       </div>
-      <div class="footer-note">Static HTML / CSS / Vanilla JS（外部AI課金なし・商用無料枠準拠）</div>
+      <div class="footer-note">外部AIの従量課金なし・商用利用OKの無料枠構成</div>
     </div>
   </footer>
 
   <!-- Mobile Sticky Bottom CTA Bar -->
   <div id="mobileStickyCta" class="mobile-sticky-cta" hidden>
     <a class="btn btn-secondary btn-sm mobile-sticky-sub" href="#live-demo">実物デモ</a>
-    <a class="btn btn-primary mobile-sticky-main" href="#estimator">30秒で無料試算・相談メモ →</a>
+    <a class="btn btn-primary mobile-sticky-main" href="#estimator">30秒で無料試算する →</a>
   </div>
 
   <script src="./app.js" defer></script>

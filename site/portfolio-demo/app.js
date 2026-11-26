@@ -94,24 +94,24 @@
     }
 
     const selectedOptions = [];
-    if (optTrend) selectedOptions.push('30日価格推移マトリクス＋SPARKLINE');
+    if (optTrend) selectedOptions.push('30日間の価格推移表＋ミニ折れ線グラフ');
     if (optMobile) selectedOptions.push('スマホ1タップ手動更新ページ（合言葉認証・Cloudflare無料枠）');
-    if (optNotify) selectedOptions.push('条件アラート通知（メール/Slack/Discord）');
+    if (optNotify) selectedOptions.push('条件達成アラート通知（メール/Slack/Discord）');
     if (optSupport) selectedOptions.push('納品後1ヶ月 軽微レイアウト修正保証');
 
     const siteText = sites === '1-2' ? '1〜2サイト' : sites === '3' ? '3サイト' : '4〜5サイト';
-    const techText = tech === 'static' ? '通常Webページ中心' : 'JS描画（SPA）含む・または不明';
-    const compareText = compare === 'list' ? 'サイト別一覧出力' : '複数サイト名寄せ・比較整形';
+    const techText = tech === 'static' ? 'シンプルな価格表・一覧ページ' : '最新EC・動きのあるサイト・よく分からない';
+    const compareText = compare === 'list' ? 'サイトごとに一覧化するだけ' : '複数サイトの商品を並べて比較する';
 
     const summaryText = [
-      '【自動化システム 相談メモ（簡易見積もり結果）】',
-      `・対象サイト数：${siteText}`,
-      `・対象サイト方式：${techText}`,
-      `・データ加工：${compareText}`,
-      `・希望オプション：${selectedOptions.length ? selectedOptions.join(' / ') : 'なし'}`,
+      '【自動化システム 相談メモ（かんたん見積もり結果）】',
+      `・チェックしたいサイト数：${siteText}`,
+      `・対象サイトのタイプ：${techText}`,
+      `・シートの作り方：${compareText}`,
+      `・追加したい機能：${selectedOptions.length ? selectedOptions.join(' / ') : 'なし'}`,
       `・想定プラン：${planName}（概算 ¥${minPrice.toLocaleString('ja-JP')}〜¥${maxPrice.toLocaleString('ja-JP')} / 納期 ${schedule}）`,
       '・対象URL（記入欄）：',
-      '・取得したい項目（記入欄）：商品名、価格、在庫状況 など',
+      '・集めたい項目（記入欄）：商品名、価格、在庫状況 など',
     ].join('\n');
 
     return {
@@ -129,64 +129,64 @@
 
   const ARCH_STEPS = [
     {
-      title: 'STEP 01｜定時スケジュール＆スマホ1タップ起動',
-      badge: 'GitHub Actions + Cloudflare無料枠',
-      desc: '毎日決まった時間（例：朝8:00や夕方17:00）にクラウド上のLinux環境が自動起動します。さらに商用利用OKのCloudflare Pages / Workers無料枠を使ったスマホ専用ページで、外出先から合言葉1つで即座に手動実行できます。',
+      title: 'STEP 01｜毎日自動で起動（＋スマホ1タップ更新）',
+      badge: '無料クラウド（GitHub Actions ＋ Cloudflare）',
+      desc: '毎日決まった時間（例：朝8:00や夕方17:00）に無料のクラウド環境が自動で動き出します。オプションのスマホ専用ページを追加すれば、外出先から合言葉1つで「今すぐ更新」もできます。',
       metas: [
-        { label: '月額0円・商用OKの根拠', text: 'GitHub Actions非公開リポジトリ月2,000 Linux分無料（1日1回2〜3分で月約70〜90分＝5%未満）。スマホ手動更新もCloudflare無料枠（商用OK・1日10万req）で¥0です。' },
-        { label: '安全・連打対策', text: '合言葉はSHA-256ハッシュで照合し、5分間クールダウンと同時実行キュー制御で誤連打を防止します。' },
-        { label: 'PC不要・警告ゼロ', text: '自分のPCをつけっぱなしにする必要なし。GAS特有の「未確認アプリ警告」や6分制限もありません。' },
-        { label: '最小権限・非公開運用', text: 'GitHubトークンはActions起動権限のみに限定。非公開リポジトリ運用で公開リポの60日停止リスクも抑えます。' },
+        { label: '月額0円・商用OKの理由', text: '自動実行に使うGitHub無料枠は月2,000分。1日1回2〜3分なら月約70〜90分（5%未満）で収まります。スマホ更新も商用OKのCloudflare無料枠で¥0です。' },
+        { label: '安全な合言葉＆連打防止', text: '合言葉は暗号化して安全にチェック。さらに5分間の連打防止＆二重起動ブロックで誤操作を防ぎます。' },
+        { label: 'PC不要・怖い警告なし', text: 'ご自身のパソコンをつけっぱなしにする必要なし。GAS特有の「未確認アプリ」の赤い警告画面も出ません。' },
+        { label: '非公開環境で安心運用', text: 'お客様専用の非公開環境で管理するため、社外にデータや設定が漏れず、公開放置の自動停止も防げます。' },
       ],
-      logLine: '[17:00:01 JST] Trigger accepted (schedule: 0 8 * * * UTC / ubuntu-latest)',
+      logLine: '[17:00:01] 毎日17:00のタイマーで無料クラウドが自動起動しました',
     },
     {
-      title: 'STEP 02｜丁寧なWeb自動収集（静的＋SPA両対応）',
-      badge: 'Python / BeautifulSoup / Playwright',
-      desc: '通常のHTMLサイトは軽量なrequests＋BeautifulSoupで高速取得し、JavaScriptで後から描画される最新SPAサイトはヘッドレスChromium（Playwright）で確実に読み取ります。',
+      title: 'STEP 02｜相手サイトへ配慮しながら自動収集',
+      badge: '通常ページ＆最新ECサイト両対応',
+      desc: 'シンプルな一覧ページは軽量に高速取得し、画面を開いたあとに価格が表示される最新ECサイトは自動ブラウザ（Playwright）で確実に読み取ります。',
       metas: [
-        { label: 'バリエーション展開', text: 'サイズ違い・状態違いなどのプルダウンや商品詳細JSONも個別レコードへ正確に展開可能です。' },
-        { label: 'マナー配慮アクセス', text: 'リクエスト間隔を既定1秒以上に制御し、429/5xx応答には指数バックオフ＋Retry-Afterで穏やかに再試行します。' },
-        { label: 'サイト独立エラー処理', text: '1サイトだけ一時障害が起きても、原因をログに記録しつつ他の設定と切り分けて追跡できます。' },
-        { label: 'テスト可能性', text: '保存済みHTMLフィクスチャでオフライン単体テストを回せるため、改修時のデグレを防ぎます。' },
+        { label: 'サイズ・状態違いにも対応', text: 'プルダウン切り替えが必要な「新品・中古」「サイズ別」などの価格も1件ずつ分けて取得できます。' },
+        { label: '迷惑をかけない丁寧な巡回', text: '1秒以上の間隔を空けて読み込み、相手サイトが混雑している時は自動で待ってから再挑戦します。' },
+        { label: 'サイト別の原因追跡', text: '1サイトだけ一時的に繋がらない場合でも、どのサイトで何が起きたかを分かりやすく記録します。' },
+        { label: '修正時も壊れにくいテスト', text: '保存データを使った自動テストを用意するため、将来の調整時に別の箇所が壊れるのを防ぎます。' },
       ],
-      logLine: '[17:00:48 JST] Fetched 3 sources politely (delay=1.0s, retries=0, total=148 rows)',
+      logLine: '[17:00:48] 対象3サイトから148件を1秒間隔で丁寧に取得しました（エラー0件）',
     },
     {
-      title: 'STEP 03｜日本語名寄せ＆異常値セーフティ',
-      badge: 'NFKC正規化 + Strict Guard',
-      desc: '店舗ごとにバラバラな全角半角・記号・シリーズ接頭辞・型番を自動クレンジングして同一商品として突合します。万一サイト変更で0件になった場合は上書きを中断します。',
+      title: 'STEP 03｜商品名ズレを統一＆失敗時のデータ保護',
+      badge: '表記ゆれ自動整理 ＋ データ保護機能',
+      desc: 'お店ごとにバラバラな全角・半角、「送料無料」などの余計な文字、型番を自動で整えて同じ商品を1行に揃えます。万一サイト変更で0件になった時は、今あるシートを消さずに停止します。',
       metas: [
-        { label: '表記揺れ吸収', text: 'Unicode NFKC正規化、長いノイズ語からの優先除去、別名辞書で店舗間の商品名ズレを解消します。' },
-        { label: '状態・区分を厳格分離', text: '「新品/未開封」と「開封済/訳あり」を誤って混ぜず、片方のみ未記載なら「状態推定」と明示します。' },
-        { label: '0件時データ保護', text: 'レイアウト変更で取得0件になった場合は異常終了させ、既存の正常なスプレッドシートを守ります。' },
-        { label: '異常値レポート', text: '価格差20%超の商品や取得件数サマリーをJSONログへ出力し、運用の異変をすぐ検知できます。' },
+        { label: 'バラバラの商品名を自動統一', text: '全角・半角の統一、販促ワードの除去、別名辞書によって、お店ごとの表記ズレをきれいに揃えます。' },
+        { label: '新品・中古を混ぜない工夫', text: '状態違いを誤って同じ行に混ぜず、片方のお店だけ状態記載がない時は「状態推定」と注意表示します。' },
+        { label: '失敗してもシートを守る', text: '相手サイトの変更で0件になった場合は自動で処理を止め、前回まで正常だったシートをそのまま保護します。' },
+        { label: 'おかしな価格差もチェック', text: '価格差が20%を超える異常値や取得件数の変化をログへ記録し、運用の異変にすぐ気づけます。' },
       ],
-      logLine: '[17:00:54 JST] Normalized & matched 72 multi-site items (strict guard: PASSED)',
+      logLine: '[17:00:54] 表記ゆれを統一し、複数店舗で一致した72商品を整理（データ保護OK）',
     },
     {
-      title: 'STEP 04｜Googleスプレッドシート自動整形',
-      badge: 'Sheets API batch_update',
-      desc: '値を入れるだけでなく、色分け・列幅・通貨書式・ヘッダー注釈・30日SPARKLINEミニグラフまでSheets APIのバッチ更新で毎回美しく再構築します。',
+      title: 'STEP 04｜Googleスプレッドシートを自動整形',
+      badge: '色分け・価格差強調・30日グラフ',
+      desc: 'ただ文字を貼り付けるだけでなく、色分け・見やすい列幅・¥表示・項目の説明メモ・30日ミニ折れ線グラフまで毎回自動で美しく整えます。',
       metas: [
-        { label: '一発で分かる強調', text: '最有利セルを緑、差率5%以上を赤太字、差額¥3,000以上を金太字にし、見落としをゼロにします。' },
-        { label: '肥大化しない推移設計', text: '全履歴は非表示アーカイブに蓄積し、表示タブは1商品1行の30日横型マトリクス＋SPARKLINEで軽快に保ちます。' },
-        { label: '手入力エリアの保護', text: 'サマリーの決まったセル範囲だけを更新し、お客様が書き込んだメモ欄を消さない設計が可能です。' },
-        { label: 'Google無料API枠に余裕', text: 'Google Sheets APIは無料（300req/分・日次上限なし）。batch_update集約により1実行約20コールで完結します。' },
+        { label: 'パッと見で判断できる色分け', text: 'いちばん有利な価格を緑、差率5%以上を赤太字、差額¥3,000以上を金太字にして見落としを防ぎます。' },
+        { label: 'ずっと重くならないグラフ設計', text: '過去全データは裏の保管用シートへ自動で貯め、見る画面は「1商品1行＋30日ミニグラフ」で軽快に保ちます。' },
+        { label: '手入力メモ欄は消さない', text: 'お客様が自分でメモを書くセル範囲には触れない設計ができ、日々のメモと両立できます。' },
+        { label: 'Googleの無料枠にたっぷり余裕', text: '1回の更新をまとめて書き込む工夫（約20回）により、Google公式APIの無料枠内で安定稼働します。' },
       ],
-      logLine: '[17:01:12 JST] Google Sheets batch_update complete (6 tabs formatted, 19 API calls)',
+      logLine: '[17:01:12] Googleスプレッドシート6タブの色分け・30日グラフを更新しました',
     },
     {
-      title: 'STEP 05｜即判断できる閲覧・履歴管理・通知',
-      badge: 'Google Sheets / Excel CSV / 任意通知',
-      desc: '普段の業務で開くのは見慣れたGoogleスプレッドシートだけ。最新の更新履歴が最上段（2行目）に自動で積み上がり、必要に応じてメールやチャット通知も連携できます。',
+      title: 'STEP 05｜開くだけですぐ判断＆履歴も自動保存',
+      badge: 'スマホ閲覧・Excel出力・任意通知',
+      desc: '普段のお仕事で開くのは見慣れたGoogleスプレッドシートだけ。最新の更新履歴がいちばん上に自動で残り、ご希望ならメールやチャット通知もつけられます。',
       metas: [
-        { label: '文字化けゼロCSV', text: 'Excelダウンロード用CSVもUTF-8 BOM付き（utf-8-sig）で出力でき、Windows Excelでも崩れません。' },
-        { label: '履歴トレーサビリティ', text: '「いつ・何件取れて・エラーが何件か」を最大365回分自動記録し、サマリーと数式連動します。' },
-        { label: '条件アラート拡張', text: '「目標価格を下回った」「在庫が復活した」時だけSlack・Discord・メールへ通知する拡張も可能です。' },
-        { label: '保守しやすいドキュメント', text: '対象CSSセレクタと変更箇所をまとめた運用マニュアル付きで、長期運用も安心です。' },
+        { label: 'Excelでも文字化けしない', text: 'GoogleシートからExcel保存できるほか、Windows版Excelでも文字化けしないCSV出力にも対応できます。' },
+        { label: '更新履歴を最大365回分記録', text: '「いつ・何件取れて・エラーが何件か」を自動記録。サマリー画面の数字も自動で連動します。' },
+        { label: '条件達成の即時お知らせ', text: '「目標価格を下回った」「在庫が復活した」時だけメール・Slack・Discordへ通知する拡張も可能です。' },
+        { label: '分かりやすい説明書付き', text: '操作方法と将来の修正箇所をまとめた説明書をお渡しするため、長く安心してお使いいただけます。' },
       ],
-      logLine: '[17:01:15 JST] DONE — Duration: 1m14s (Monthly free quota used: ~3.2%)',
+      logLine: '[17:01:15] 完了（処理時間 1分14秒 ／ 無料枠の月間使用目安 約3.2%）',
     },
   ];
 
@@ -279,7 +279,7 @@
             rawPrice: '24,800円(税込)',
             normalizedName: 'ノイズキャンセリングイヤホン Pro X2',
             condition: '国内正規品・新品',
-            ruleNote: 'NFKC全角→半角・販促括弧除去',
+            ruleNote: '全角→半角に揃え、「送料無料」などの余計な語をカット',
           },
           {
             shop: 'ストアB',
@@ -287,7 +287,7 @@
             rawPrice: '¥27,400',
             normalizedName: 'ノイズキャンセリングイヤホン Pro X2',
             condition: '国内正規品・新品',
-            ruleNote: 'スペース揺れ・別名辞書で自動突合',
+            ruleNote: 'スペース差や呼び方違いを自動で同じ商品に統合',
           },
           {
             shop: 'ストアC',
@@ -295,14 +295,14 @@
             rawPrice: '14,900円',
             normalizedName: 'メカニカルキーボード 75% 静音赤軸',
             condition: '日本語配列（状態推定）',
-            ruleNote: '片側記載省略→「状態推定」フラグ付与',
+            ruleNote: '片方の店だけ状態記載なし → 「状態推定」の印を表示',
           },
         ],
       },
 
       hobby: {
         docTitle: 'トレカ・ホビー買取相場比較シート（サンプル）',
-        modeLabel: '最高買取値（状態別名寄せ）',
+        modeLabel: '最高買取値（状態別に整理）',
         bestColLabel: '最高値',
         bestShopLabel: '最高値の店',
         shops: ['ショップα', 'ショップβ', 'ショップγ'],
@@ -382,7 +382,7 @@
             rawPrice: '18,500円',
             normalizedName: '蒼穹レジェンド 拡張BOX',
             condition: 'シュリンク有',
-            ruleNote: '注記・品番(S99a)・括弧を安全除去',
+            ruleNote: '注記・型番(S99a)・括弧を自動でカットして整理',
           },
           {
             shop: 'ショップβ',
@@ -390,7 +390,7 @@
             rawPrice: '¥16,200',
             normalizedName: '蒼穹レジェンド 拡張BOX',
             condition: 'シュリンク有',
-            ruleNote: 'NFKC正規化＋状態語抽出で同一キー化',
+            ruleNote: '全角・半角を揃えて「シュリンク有」で同じ行に統合',
           },
           {
             shop: 'ショップγ',
@@ -398,14 +398,14 @@
             rawPrice: '12,800円',
             normalizedName: '蒼穹レジェンド 拡張BOX',
             condition: 'シュリンク無',
-            ruleNote: '「シュリンク有」と誤統合せず別行分離',
+            ruleNote: '「シュリンク有」と混ぜず、別の行として正しく分離',
           },
         ],
       },
 
       stock: {
         docTitle: '仕入れ・人気アウトドアギア 在庫＆価格監視（サンプル）',
-        modeLabel: '最安仕入＆在庫復活検知',
+        modeLabel: '最安仕入＆在庫復活チェック',
         bestColLabel: '最安値',
         bestShopLabel: '最安ショップ',
         shops: ['ショップX', 'ショップY', 'ショップZ'],
@@ -475,7 +475,7 @@
             rawPrice: '¥36,800',
             normalizedName: '軽量ソロテント UL-180（サンド）',
             condition: '在庫復活',
-            ruleNote: '前回「欠品」→今回「在庫あり」を差分検知',
+            ruleNote: '前回「売り切れ」→今回「在庫あり」を自動で検知',
           },
           {
             shop: 'ショップY',
@@ -483,7 +483,7 @@
             rawPrice: '41,200円',
             normalizedName: '軽量ソロテント UL-180（サンド）',
             condition: '在庫あり',
-            ruleNote: 'ハイフン・英日カラー表記を別名辞書で統一',
+            ruleNote: 'ハイフン有無や英語・日本語の色名を同じ商品に統一',
           },
           {
             shop: 'ショップZ',
@@ -491,7 +491,7 @@
             rawPrice: '49,800円',
             normalizedName: 'ダウンシュラフ 600FP 厳冬期モデル',
             condition: '残りわずか',
-            ruleNote: '残数テキストからステータスを自動分類',
+            ruleNote: '残り個数の表記から在庫ステータスを自動判定',
           },
         ],
       },
@@ -703,7 +703,7 @@
         if (state.archAnimating) return;
         state.archAnimating = true;
         runArchDemoBtn.disabled = true;
-        archLogStatus.textContent = '模擬実行中...';
+        archLogStatus.textContent = '自動更新の流れを再生中...';
         let current = 0;
 
         function advance() {
@@ -716,7 +716,7 @@
           } else {
             window.setTimeout(() => {
               archStepBtns.forEach((b) => b.classList.remove('is-running'));
-              archLogStatus.textContent = '模擬実行完了（消費枠 約2分 / ¥0）';
+              archLogStatus.textContent = '再生完了（処理目安 約2分 ／ ¥0）';
               state.archAnimating = false;
               runArchDemoBtn.disabled = false;
             }, 650);
@@ -746,7 +746,7 @@
       if (sheetLegend) {
         if (state.sheetTab === 'compare') {
           sheetLegend.innerHTML =
-            '<span class="legend-item"><span class="legend-swatch" style="background:#c6efce;border:1px solid #82c997;"></span>最有利価格（緑）</span>' +
+            '<span class="legend-item"><span class="legend-swatch" style="background:#c6efce;border:1px solid #82c997;"></span>いちばん有利な価格（緑）</span>' +
             '<span class="legend-item"><span class="legend-swatch" style="background:#b42318;"></span>差率5%以上（赤太字）</span>' +
             '<span class="legend-item"><span class="legend-swatch" style="background:#a66900;"></span>差額¥3,000以上（金太字）</span>' +
             '<span class="legend-item"><span class="legend-swatch" style="background:#fff2cc;border:1px solid #e6c66a;"></span>状態推定などの注意</span>' +
@@ -755,17 +755,17 @@
           sheetLegend.innerHTML =
             '<span class="legend-item"><span class="legend-swatch" style="background:#137333;"></span>前回比・7日前比の上昇（緑）</span>' +
             '<span class="legend-item"><span class="legend-swatch" style="background:#175cd3;"></span>下落（青）</span>' +
-            '<span class="legend-item">1商品1行の横型マトリクス＋非表示アーカイブ自動蓄積</span>' +
+            '<span class="legend-item">1商品1行で見やすく表示（過去全データは裏シートに自動保管）</span>' +
             '<span class="legend-scroll-cue">← 横スクロールで過去日付列を表示 →</span>';
         } else if (state.sheetTab === 'beforeAfter') {
           sheetLegend.innerHTML =
-            '<span class="legend-item"><span class="legend-swatch" style="background:#fffaf5;border:1px solid #e8cfa0;"></span>Before：取得元の生テキスト</span>' +
-            '<span class="legend-item"><span class="legend-swatch" style="background:#f2fbf7;border:1px solid #82c997;"></span>After：NFKC正規化＋状態分離後</span>' +
-            '<span class="legend-scroll-cue">← 横スクロールで処理ルールを確認 →</span>';
+            '<span class="legend-item"><span class="legend-swatch" style="background:#fffaf5;border:1px solid #e8cfa0;"></span>整形前：お店ごとのバラバラな表記</span>' +
+            '<span class="legend-item"><span class="legend-swatch" style="background:#f2fbf7;border:1px solid #82c997;"></span>整形後：全角・半角＆状態まで自動整理</span>' +
+            '<span class="legend-scroll-cue">← 横スクロールで自動整理の理由を確認 →</span>';
         } else {
           sheetLegend.innerHTML =
-            '<span class="legend-item"><span class="legend-swatch" style="background:#e8f5f0;border:1px solid #82c997;"></span>最新実行が常に最上段（最大365回分保持）</span>' +
-            '<span class="legend-item">取得エラー時は既存データを保護して通知</span>';
+            '<span class="legend-item"><span class="legend-swatch" style="background:#e8f5f0;border:1px solid #82c997;"></span>最新の実行履歴が常にいちばん上（最大365回分）</span>' +
+            '<span class="legend-item">エラー時は前回までのデータを守って停止</span>';
         }
       }
 
@@ -793,7 +793,7 @@
 
         const headerHtml = `
           <tr>
-            <th>商品名（名寄せ後）</th>
+            <th>商品名（表記統一後）</th>
             <th>状態</th>
             <th class="is-num">${escapeHtml(ds.bestColLabel)}</th>
             <th class="is-num" title="前回更新時との差額（上昇=緑、下落=青）">前回比</th>
@@ -857,7 +857,7 @@
             <th>${escapeHtml(ds.bestShopLabel)}</th>
             <th class="is-num">前回比</th>
             <th class="is-num">7日前比</th>
-            <th title="セル内SPARKLINE関数で自動描画（左＝古 → 右＝新）">30日推移</th>
+            <th title="セル内に自動で描かれる30日ミニ折れ線グラフ（左＝古 → 右＝新）">30日グラフ</th>
             ${dates.map((d) => `<th class="is-num">${d}</th>`).join('')}
           </tr>
         `;
@@ -892,19 +892,19 @@
         const samples = Array.isArray(ds.rawSamples) ? ds.rawSamples : [];
         const beforeAfterHtml = `
           <div class="sheet-ba-intro">
-            <strong>なぜ「取るだけ」の格安ツールと違うのか？</strong>
-            <span>店舗ごとにバラバラな全角・型番・販促文・状態表記を自動名寄せし、同一商品だけを正確に横並び比較します。</span>
+            <strong>なぜ「集めるだけ」のツールと違うの？</strong>
+            <span>お店ごとにバラバラな全角・型番・販促文字・状態の書き方を自動で揃え、同じ商品だけを正確に横並び比較します。</span>
           </div>
           <div class="sheet-table-scroll">
             <table class="sheet-table">
               <thead>
                 <tr>
-                  <th>取得元</th>
-                  <th>Before：サイト上の生商品名（表記揺れあり）</th>
-                  <th class="is-num">生価格表記</th>
-                  <th>After：統一商品名（名寄せ後）</th>
-                  <th>抽出状態</th>
-                  <th>自動処理ルール</th>
+                  <th>お店</th>
+                  <th>整形前：サイト上の元の商品名（表記バラバラ）</th>
+                  <th class="is-num">元の価格表記</th>
+                  <th>整形後：統一した商品名</th>
+                  <th>判定した状態</th>
+                  <th>自動整理の内容</th>
                 </tr>
               </thead>
               <tbody>
@@ -932,21 +932,21 @@
         const summaryHtml = `
           <div class="sheet-summary-wrap">
             <div class="sheet-kpi-grid">
-              <div class="sheet-kpi-box"><span>全取得レコード</span><strong class="num">${latest.total} 件</strong></div>
-              <div class="sheet-kpi-box"><span>比較行（2サイト以上）</span><strong class="num">${latest.matched} 件</strong></div>
-              <div class="sheet-kpi-box"><span>単独掲載（分離表示）</span><strong class="num">${latest.single} 件</strong></div>
+              <div class="sheet-kpi-box"><span>取得した全件数</span><strong class="num">${latest.total} 件</strong></div>
+              <div class="sheet-kpi-box"><span>比較できた商品（2店以上）</span><strong class="num">${latest.matched} 件</strong></div>
+              <div class="sheet-kpi-box"><span>1店のみ掲載（別タブ整理）</span><strong class="num">${latest.single} 件</strong></div>
               <div class="sheet-kpi-box"><span>取得エラー</span><strong class="num" style="color:var(--brand);">${latest.errors} 件</strong></div>
             </div>
             <div class="sheet-table-scroll">
               <table class="sheet-table">
                 <thead>
                   <tr>
-                    <th>実行日時（最新が最上段）</th>
-                    <th>起動トリガー</th>
+                    <th>更新した日時（最新がいちばん上）</th>
+                    <th>更新のきっかけ</th>
                     <th class="is-num">全取得</th>
-                    <th class="is-num">2サイト以上比較</th>
-                    <th class="is-num">単独掲載</th>
-                    <th class="is-num">取得エラー</th>
+                    <th class="is-num">2店以上の比較</th>
+                    <th class="is-num">1店のみ</th>
+                    <th class="is-num">エラー</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1078,14 +1078,14 @@
 
         const inputVal = (demoPassphrase?.value || '').trim();
         if (inputVal !== 'demo2026') {
-          setMobileStatus('401 Unauthorized：合言葉が一致しません（デモ用は demo2026 です）。', 'error');
+          setMobileStatus('合言葉が違います（デモ用の合言葉は demo2026 です）。', 'error');
           return;
         }
 
         const now = Date.now();
         if (state.mobileCooldownUntil > now) {
           const remainMin = Math.max(1, Math.ceil((state.mobileCooldownUntil - now) / 60000));
-          setMobileStatus(`429 Too Many Requests：連続実行防止中です。約${remainMin}分後に再実行できます（上部の「初期状態に戻す」で即再テスト可）。`, 'warn');
+          setMobileStatus(`連打防止ガードが働いています。約${remainMin}分後に再実行できます（上部の「初期状態に戻す」で即テスト可）。`, 'warn');
           return;
         }
 
@@ -1093,10 +1093,10 @@
         state.mobileRunning = true;
         mobileTriggerBtn.disabled = true;
         clearMobileTimers();
-        setMobileStatus('1/3 合言葉SHA-256照合OK → GitHub Actions ワークフローを起動しています...', '');
+        setMobileStatus('1/3 合言葉OK！無料クラウドの自動更新をスタートしています...', '');
 
         const step2Timer = window.setTimeout(() => {
-          setMobileStatus('2/3 対象サイトを巡回中（1秒間隔アクセス制御・名寄せ検証中）...', '');
+          setMobileStatus('2/3 対象サイトを1秒間隔で丁寧にチェック中（商品名ズレを自動整理）...', '');
         }, 700);
 
         const step3Timer = window.setTimeout(() => {
@@ -1133,7 +1133,7 @@
           state.mobileRunning = false;
           state.mobileCooldownUntil = Date.now() + 5 * 60 * 1000;
           mobileTriggerBtn.disabled = false;
-          setMobileStatus('3/3 更新完了！スプレッドシートの価格・前回比・30日推移・更新履歴が反映されました（5分間の連打ガード有効）。', 'success');
+          setMobileStatus('3/3 更新完了！シートの価格・前回比・30日グラフ・更新履歴が最新になりました（5分間の連打防止中）。', 'success');
           renderSpreadsheet();
         }, 1550);
 
