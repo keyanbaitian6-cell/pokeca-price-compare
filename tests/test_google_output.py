@@ -6,12 +6,14 @@ from gspread.utils import ValueRenderOption
 from card_price_compare.collectors.collect_sheet import SPREADSHEET_ID
 from card_price_compare.google_output import (
     COMPARISON_COLUMNS,
-    COMPARISON_HEADER_NOTES,
+    COMPARISON_HEADER_NOTES_BY_NAME,
     HISTORY_HEADERS,
     MANUAL_UPDATE_FORMULA,
     MANUAL_UPDATE_URL,
+    NO_SHRINK_COLUMNS,
     SINGLE_LISTING_COLUMNS,
     SPREADSHEET_TITLE,
+    STORE_GUIDE_COLUMNS,
     SUMMARY_COUNTER_LIMIT,
     SUMMARY_COUNTER_ROWS,
     TREND_ARCHIVE_SHEET_TITLE,
@@ -24,12 +26,15 @@ from card_price_compare.google_output import (
     _history_backfill_updates,
     _history_row,
     _merge_trend_history,
+    _no_shrink_format_requests,
+    _no_shrink_sheet_frame,
     _prepare_history_rows,
     _publish_shrink_trends,
     _raw_sheet_frame,
     _row_runs,
     _shrink_trend_frame,
     _single_listing_sheet_frame,
+    _store_guide_sheet_frame,
     _store_label,
     _trend_history_frame,
     _trend_matrix_frame,
@@ -349,16 +354,74 @@ def test_single_site_rows_move_out_of_the_comparison_tab(comparison: pd.DataFram
     assert list(single_site["product_name_normalized"]) == ["第1弾", "e 基本 海からの風"]
 
 
-def test_comparison_tab_keeps_eleven_readable_columns(comparison: pd.DataFrame) -> None:
+def test_comparison_tab_uses_dynamic_store_columns_and_series_msrp_ratio(
+    comparison: pd.DataFrame,
+) -> None:
     prepared = _comparison_sheet_frame(comparison)
 
-    assert list(prepared.columns) == COMPARISON_COLUMNS
-    assert len(COMPARISON_COLUMNS) == 11
+    assert list(prepared.columns) == [
+        "シリーズ",
+        "商品名",
+        "最高値",
+        "前回比",
+        "最高値の店",
+        "差率",
+        "差額",
+        "定価比",
+        "runto",
+        "買取ソムリエ",
+        "コレクト",
+        "注意",
+    ]
     assert len(prepared) == 2
-    assert set(prepared["状態"]) == {"シュリンク有"}
     assert "ステラミラクル" not in prepared["商品名"].tolist()
+    assert prepared.loc[prepared["商品名"] == "白銀のランス", "シリーズ"].iloc[0] == "S&S"
+    assert prepared.loc[prepared["商品名"] == "白銀のランス", "定価比"].iloc[0] == pytest.approx(
+        round(17_500 / 4_950, 2)
+    )
     # The original store names stay on the raw tab instead of widening this one.
     assert "runto商品名" not in prepared.columns
+
+
+def test_no_shrink_tab_computes_shrink_penalty_against_shrink_wrapped_peak() -> None:
+    df = pd.DataFrame(
+        [
+            _comparison_record("151", "shrink_wrapped", collect=40_000, runto=42_000),
+            _comparison_record("151", "no_shrink", collect=35_000, runto=37_000),
+        ]
+    )
+    prepared = _no_shrink_sheet_frame(df)
+
+    assert list(prepared.columns) == [
+        "シリーズ",
+        "商品名",
+        "シュリンク無最高値",
+        "最高値の店",
+        "シュリンク有最高値",
+        "有無差額",
+        "有無差率",
+        "runto",
+        "コレクト",
+    ]
+    row = prepared.iloc[0]
+    assert row["シリーズ"] == "SV"
+    assert row["シュリンク無最高値"] == 37_000
+    assert row["シュリンク有最高値"] == 42_000
+    assert row["有無差額"] == 5_000
+    assert row["有無差率"] == pytest.approx(round(5_000 / 42_000, 6))
+    reqs = _no_shrink_format_requests(99, prepared)
+    assert any("setBasicFilter" in req for req in reqs)
+
+
+def test_store_guide_tab_reflects_active_and_paused_stores() -> None:
+    raw = pd.DataFrame({"source": ["homura", "homura", "runto"]})
+    guide = _store_guide_sheet_frame(raw)
+
+    assert list(guide.columns) == STORE_GUIDE_COLUMNS
+    by_name = guide.set_index("店舗名")
+    assert by_name.loc["買取ホムラ", "取得状態"] == "稼働中"
+    assert by_name.loc["買取ホムラ", "今回取得件数"] == 2
+    assert by_name.loc["コレクト", "取得状態"] == "一時中断"
 
 
 def test_comparison_tab_computes_previous_price_deltas(comparison: pd.DataFrame) -> None:
@@ -394,6 +457,7 @@ def test_tied_best_stores_are_joined_with_a_middle_dot() -> None:
     assert _store_label("collect,runto") == "コレクト・runto"
     assert _store_label("collect,somurie") == "コレクト・買取ソムリエ"
     assert _store_label("collect,runto,somurie") == "3店同額"
+    assert _store_label("homura,tcgpro,morimori,runto") == "4店同額"
     assert _store_label("") == ""
 
 
@@ -415,10 +479,11 @@ def test_single_listing_tab_lists_one_store_rows_by_price(comparison: pd.DataFra
     assert prepared.iloc[0]["状態"] == "状態不明"
 
 
-def test_empty_comparison_still_produces_both_tab_layouts() -> None:
+def test_empty_comparison_still_produces_all_tab_layouts() -> None:
     empty = pd.DataFrame()
 
     assert list(_comparison_sheet_frame(empty).columns) == COMPARISON_COLUMNS
+    assert list(_no_shrink_sheet_frame(empty).columns) == NO_SHRINK_COLUMNS
     assert list(_single_listing_sheet_frame(empty).columns) == SINGLE_LISTING_COLUMNS
 
 
@@ -483,12 +548,13 @@ def test_comparison_formatting_highlights_the_best_price_cells(
 ) -> None:
     prepared = _comparison_sheet_frame(comparison)
     requests = _comparison_format_requests(123, prepared)
+    cols = list(prepared.columns)
 
-    # runto wins row 1; row 2 is a three-way tie, so all three go green (cols 7, 8, 9).
+    # runto wins row 1; row 2 is a three-way tie, so all three store columns go green.
     assert _ranges_with_background(requests, GREEN) == [
-        _cell_range(123, (2, 3), 7),
-        _cell_range(123, (1, 3), 8),
-        _cell_range(123, (2, 3), 9),
+        _cell_range(123, (1, 3), cols.index("runto")),
+        _cell_range(123, (2, 3), cols.index("買取ソムリエ")),
+        _cell_range(123, (2, 3), cols.index("コレクト")),
     ]
 
 
@@ -511,14 +577,17 @@ def test_comparison_formatting_marks_high_spread_rates_deltas_and_warnings() -> 
         previous_prices={"ステラミラクル": 11_000, "白銀のランス": 18_000},
     )
     requests = _comparison_format_requests(7, prepared)
+    cols = list(prepared.columns)
 
-    assert _text_ranges(requests, RED) == [_cell_range(7, (1, 2), 5)]
-    assert _text_ranges(requests, UP_GREEN) == [_cell_range(7, (1, 2), 3)]
-    assert _text_ranges(requests, DOWN_BLUE) == [_cell_range(7, (2, 3), 3)]
-    assert _ranges_with_background(requests, YELLOW) == [_cell_range(7, (2, 3), 10)]
+    assert _text_ranges(requests, RED) == [_cell_range(7, (1, 2), cols.index("差率"))]
+    assert _text_ranges(requests, UP_GREEN) == [_cell_range(7, (1, 2), cols.index("前回比"))]
+    assert _text_ranges(requests, DOWN_BLUE) == [_cell_range(7, (2, 3), cols.index("前回比"))]
+    assert _ranges_with_background(requests, YELLOW) == [
+        _cell_range(7, (2, 3), cols.index("注意"))
+    ]
 
 
-def test_comparison_formatting_freezes_the_name_and_condition_columns(
+def test_comparison_formatting_freezes_the_series_and_name_columns(
     comparison: pd.DataFrame,
 ) -> None:
     requests = _comparison_format_requests(7, _comparison_sheet_frame(comparison))
@@ -539,16 +608,16 @@ def test_comparison_formatting_freezes_the_name_and_condition_columns(
     }
 
 
-def test_history_row_reports_single_site_rows_separately() -> None:
-    comparison = pd.DataFrame({"matched_site_count": [3, 2, 2, 1]})
-    raw = pd.DataFrame({"source": ["collect", "runto", "somurie"]})
+def test_history_row_reports_three_plus_and_single_site_rows_separately() -> None:
+    comparison = pd.DataFrame({"matched_site_count": [5, 3, 2, 2, 1]})
+    raw = pd.DataFrame({"source": ["homura", "tcgpro", "morimori", "runto", "somurie"]})
 
     assert _history_row(
         comparison,
         raw,
         fetched_at="2026-08-18T12:34:56+09:00",
         error_count=0,
-    ) == ["2026-08-18 12:34", 3, 3, 1, 2, 0, 1]
+    ) == ["2026-08-18 12:34", 5, 4, 2, 2, 0, 1]
     assert len(HISTORY_HEADERS) == 7
 
 
@@ -697,13 +766,16 @@ def test_large_yen_gaps_are_marked_even_when_the_rate_is_small() -> None:
 
     assert list(frame["商品名"]) == ["イーブイヒーローズ"]
     requests = _comparison_format_requests(7, frame)
-    # The no-shrink row is excluded; the expensive shrink-wrapped box still marks its yen gap (col 6).
+    cols = list(frame.columns)
+    # The no-shrink row is excluded; the expensive shrink-wrapped box still marks its yen gap.
     assert _text_ranges(requests, RED) == []
-    assert _text_ranges(requests, GOLD) == [_cell_range(7, (1, 2), 6)]
+    assert _text_ranges(requests, GOLD) == [_cell_range(7, (1, 2), cols.index("差額"))]
 
 
 def test_header_notes_explain_the_narrow_columns(comparison: pd.DataFrame) -> None:
-    requests = _comparison_format_requests(7, _comparison_sheet_frame(comparison))
+    prepared = _comparison_sheet_frame(comparison)
+    cols = list(prepared.columns)
+    requests = _comparison_format_requests(7, prepared)
     notes = {
         request["updateCells"]["range"]["startColumnIndex"]: request["updateCells"]["rows"][0][
             "values"
@@ -712,9 +784,11 @@ def test_header_notes_explain_the_narrow_columns(comparison: pd.DataFrame) -> No
         if "updateCells" in request
     }
 
-    assert set(notes) == set(COMPARISON_HEADER_NOTES)
-    assert "前回比" in notes[3]
-    assert "状態推定" in notes[10]
+    expected_indices = {cols.index(name) for name in COMPARISON_HEADER_NOTES_BY_NAME}
+    assert set(notes) == expected_indices
+    assert "前回比" in notes[cols.index("前回比")]
+    assert "定価比" in notes[cols.index("定価比")]
+    assert "状態推定" in notes[cols.index("注意")]
     assert all(
         request["updateCells"]["range"]["startRowIndex"] == 0
         for request in requests

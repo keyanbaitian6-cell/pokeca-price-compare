@@ -16,7 +16,11 @@ def test_parse_collect_box_columns() -> None:
 
 def test_default_cli_sources_pause_collect() -> None:
     from card_price_compare.cli import build_parser
+    from card_price_compare.stores import DEFAULT_SOURCES
 
     args = build_parser().parse_args([])
-    assert args.sources == "runto,somurie"
+    parsed_sources = args.sources.split(",")
+    assert parsed_sources == list(DEFAULT_SOURCES)
+    assert "collect" not in parsed_sources
+    assert set(parsed_sources) == {"homura", "tcgpro", "morimori", "runto", "rudeya", "somurie"}
 

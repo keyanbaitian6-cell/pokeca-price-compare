@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+from statistics import median
+
 import pandas as pd
 
 from .models import PriceRecord
 from .normalize import normalize_product_name
+from .stores import ALL_SOURCE_ORDER
 
 
-SOURCE_ORDER = ["collect", "runto", "somurie"]
+SOURCE_ORDER = list(ALL_SOURCE_ORDER)
 ACTUAL_CONDITIONS = {"shrink_wrapped", "no_shrink", "no_perforation"}
 UNSPECIFIED_CONDITIONS = {"unspecified", "sealed_unspecified"}
 COMPARABLE_CONDITIONS = ACTUAL_CONDITIONS | UNSPECIFIED_CONDITIONS
@@ -18,20 +21,22 @@ def records_to_frame(records: list[PriceRecord]) -> pd.DataFrame:
 
 
 def build_box_comparison(raw: pd.DataFrame) -> pd.DataFrame:
+    price_columns = [f"{source}_price_yen" for source in SOURCE_ORDER]
+    name_columns = [f"{source}_name" for source in SOURCE_ORDER]
     output_columns = [
         "product_name_normalized",
         "condition",
         "condition_inferred",
-        "collect_price_yen",
-        "runto_price_yen",
-        "somurie_price_yen",
+        *price_columns,
         "best_site",
         "best_price_yen",
+        "lowest_price_yen",
+        "median_price_yen",
+        "second_best_price_yen",
+        "top_lead_yen",
         "spread_yen",
         "matched_site_count",
-        "collect_name",
-        "runto_name",
-        "somurie_name",
+        *name_columns,
     ]
     if raw.empty:
         return pd.DataFrame(columns=output_columns)
@@ -110,13 +115,16 @@ def build_box_comparison(raw: pd.DataFrame) -> pd.DataFrame:
         result[f"{source}_price_yen"] = price_values.astype("Int64")
         result[f"{source}_name"] = names[source] if source in names else pd.NA
 
-    price_columns = [f"{source}_price_yen" for source in SOURCE_ORDER]
     result["matched_site_count"] = result[price_columns].notna().sum(axis=1)
     result["best_price_yen"] = result[price_columns].max(axis=1, skipna=True).astype("Int64")
+    result["lowest_price_yen"] = result[price_columns].min(axis=1, skipna=True).astype("Int64")
+
+    def _row_values(row: pd.Series) -> list[int]:
+        return [int(row[column]) for column in price_columns if pd.notna(row[column])]
 
     def best_site(row: pd.Series) -> str:
         candidates = {
-            source: row[f"{source}_price_yen"]
+            source: int(row[f"{source}_price_yen"])
             for source in SOURCE_ORDER
             if pd.notna(row[f"{source}_price_yen"])
         }
@@ -126,11 +134,26 @@ def build_box_comparison(raw: pd.DataFrame) -> pd.DataFrame:
         return ",".join(source for source, price in candidates.items() if price == best)
 
     def spread(row: pd.Series) -> int | None:
-        values = [int(row[column]) for column in price_columns if pd.notna(row[column])]
+        values = _row_values(row)
         return max(values) - min(values) if len(values) >= 2 else None
+
+    def median_price(row: pd.Series) -> int | None:
+        values = _row_values(row)
+        return int(round(median(values))) if values else None
+
+    def second_best(row: pd.Series) -> int | None:
+        values = sorted(_row_values(row), reverse=True)
+        return values[1] if len(values) >= 2 else None
+
+    def top_lead(row: pd.Series) -> int | None:
+        values = sorted(_row_values(row), reverse=True)
+        return values[0] - values[1] if len(values) >= 2 else None
 
     result["best_site"] = result.apply(best_site, axis=1)
     result["spread_yen"] = result.apply(spread, axis=1).astype("Int64")
+    result["median_price_yen"] = result.apply(median_price, axis=1).astype("Int64")
+    result["second_best_price_yen"] = result.apply(second_best, axis=1).astype("Int64")
+    result["top_lead_yen"] = result.apply(top_lead, axis=1).astype("Int64")
     result = result.reset_index(drop=True)
     result = result[output_columns]
     return result.sort_values(

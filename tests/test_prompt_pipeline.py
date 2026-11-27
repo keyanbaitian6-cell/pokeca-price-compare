@@ -7,13 +7,14 @@ import pandas as pd
 
 from card_price_compare import cli
 from card_price_compare.google_output import (
-    COMPARISON_COLUMNS,
     COMPARISON_SHEET_TITLE,
     HISTORY_HEADERS,
     HISTORY_SHEET_TITLE,
+    NO_SHRINK_SHEET_TITLE,
     PROMPT_SHEET_TITLE,
     RAW_SHEET_TITLE,
     SINGLE_LISTING_SHEET_TITLE,
+    STORE_GUIDE_SHEET_TITLE,
     SUMMARY_COUNTER_ROWS,
     SUMMARY_SHEET_TITLE,
     TREND_ARCHIVE_SHEET_TITLE,
@@ -234,6 +235,7 @@ def test_publish_frames_adds_prompt_tab_without_breaking_existing_tabs_or_cell_p
             },
         ]
     )
+    web_json = tmp_path / "market_index.json"
 
     url = publish_frames(
         spreadsheet_id="output-sheet-id",
@@ -243,17 +245,40 @@ def test_publish_frames_adds_prompt_tab_without_breaking_existing_tabs_or_cell_p
         fetched_at="2026-11-24T17:00:00+09:00",
         error_count=0,
         prompt_output_dir=tmp_path,
+        web_market_json_path=web_json,
     )
 
     assert url == "https://docs.google.com/spreadsheets/d/output-sheet-id/edit"
 
-    # Existing tabs remain completely intact
+    # Existing tabs remain completely intact with dynamic store columns
     comp_ws = spreadsheet.worksheets[COMPARISON_SHEET_TITLE]
-    assert comp_ws.updates[0][1][0] == COMPARISON_COLUMNS
+    assert comp_ws.updates[0][1][0] == [
+        "シリーズ",
+        "商品名",
+        "最高値",
+        "前回比",
+        "最高値の店",
+        "差率",
+        "差額",
+        "定価比",
+        "runto",
+        "買取ソムリエ",
+        "注意",
+    ]
     hist_ws = spreadsheet.worksheets[HISTORY_SHEET_TITLE]
     assert hist_ws.updates[0][1][0] == HISTORY_HEADERS
     assert [rng for rng, _, _ in summary_ws.updates] == ["A3", "A9"]
     assert summary_ws.updates[0][1] == SUMMARY_COUNTER_ROWS
+    assert NO_SHRINK_SHEET_TITLE in spreadsheet.worksheets
+    assert STORE_GUIDE_SHEET_TITLE in spreadsheet.worksheets
+
+    # Public anonymized web market JSON is exported with full archive history and zero store leaks
+    web_text = web_json.read_text(encoding="utf-8")
+    assert find_leaked_store_terms(web_text) == []
+    web_payload = json.loads(web_text)
+    assert web_payload["anonymized"] is True
+    assert web_payload["summary"]["history_days"] == 3
+    assert len(web_payload["items"]) == 2
 
     # New 発信プロンプト tab is populated via RAW with multi-day archive insights
     prompt_ws = spreadsheet.worksheets[PROMPT_SHEET_TITLE]
@@ -274,7 +299,7 @@ def test_publish_frames_adds_prompt_tab_without_breaking_existing_tabs_or_cell_p
     # Zero store name leakage inside 発信プロンプト
     assert find_leaked_store_terms(prompt_sheet_blob) == []
 
-    # Tab ordering keeps existing 6 visible tabs in indices 0..5, adds 発信プロンプト at 6, hidden archive at 7
+    # Tab ordering keeps visible tabs clean and archive hidden at the end
     reorder_batch = spreadsheet.batches[-1]["requests"]
     id_to_title = {ws.id: title for title, ws in spreadsheet.worksheets.items()}
     ordered = [
@@ -289,12 +314,14 @@ def test_publish_frames_adds_prompt_tab_without_breaking_existing_tabs_or_cell_p
     assert ordered == [
         (SUMMARY_SHEET_TITLE, 0, False),
         (COMPARISON_SHEET_TITLE, 1, False),
-        (TREND_SHEET_TITLE, 2, False),
-        (SINGLE_LISTING_SHEET_TITLE, 3, False),
-        (HISTORY_SHEET_TITLE, 4, False),
-        (RAW_SHEET_TITLE, 5, False),
-        (PROMPT_SHEET_TITLE, 6, False),
-        (TREND_ARCHIVE_SHEET_TITLE, 7, True),
+        (NO_SHRINK_SHEET_TITLE, 2, False),
+        (TREND_SHEET_TITLE, 3, False),
+        (SINGLE_LISTING_SHEET_TITLE, 4, False),
+        (STORE_GUIDE_SHEET_TITLE, 5, False),
+        (HISTORY_SHEET_TITLE, 6, False),
+        (RAW_SHEET_TITLE, 7, False),
+        (PROMPT_SHEET_TITLE, 8, False),
+        (TREND_ARCHIVE_SHEET_TITLE, 9, True),
     ]
 
     # Local artifacts in prompt_output_dir are refreshed using the archive history too
@@ -311,6 +338,10 @@ def test_cli_from_local_data_regenerates_prompts_with_zero_network_calls(
     def _fail_if_called(*_args, **_kwargs):
         raise AssertionError("Scraping must not be invoked in --from-local-data mode")
 
+    monkeypatch.setattr(cli, "fetch_homura_records", _fail_if_called)
+    monkeypatch.setattr(cli, "fetch_tcgpro_records", _fail_if_called)
+    monkeypatch.setattr(cli, "fetch_morimori_records", _fail_if_called)
+    monkeypatch.setattr(cli, "fetch_rudeya_records", _fail_if_called)
     monkeypatch.setattr(cli, "fetch_runto_records", _fail_if_called)
     monkeypatch.setattr(cli, "fetch_somurie_records", _fail_if_called)
     monkeypatch.setattr(cli, "fetch_collect_records", _fail_if_called)
@@ -336,7 +367,10 @@ def test_cli_from_local_data_regenerates_prompts_with_zero_network_calls(
         columns=TREND_HEADERS,
     ).to_csv(tmp_path / "shrink_trend_history.csv", index=False, encoding="utf-8-sig")
 
-    rc = cli.main(["--from-local-data", "--output-dir", str(tmp_path)])
+    web_json = tmp_path / "market.json"
+    rc = cli.main(
+        ["--from-local-data", "--output-dir", str(tmp_path), "--web-market-json", str(web_json)]
+    )
     assert rc == 0
 
     md = (tmp_path / "ai_prompts.md").read_text(encoding="utf-8")
@@ -344,6 +378,8 @@ def test_cli_from_local_data_regenerates_prompts_with_zero_network_calls(
     assert "+5,000円" in md
     assert "+10,000円" in md
     assert find_leaked_store_terms(md) == []
+    assert web_json.exists()
+    assert find_leaked_store_terms(web_json.read_text(encoding="utf-8")) == []
 
 
 def test_cli_normal_run_persists_local_trend_and_generates_prompts(
@@ -400,7 +436,7 @@ def test_cli_normal_run_persists_local_trend_and_generates_prompts(
         columns=TREND_HEADERS,
     ).to_csv(tmp_path / "shrink_trend_history.csv", index=False, encoding="utf-8-sig")
 
-    rc = cli.main(["--output-dir", str(tmp_path)])
+    rc = cli.main(["--sources", "runto,somurie", "--output-dir", str(tmp_path)])
     assert rc == 0
 
     assert (tmp_path / "raw_prices.csv").exists()
@@ -422,7 +458,9 @@ def test_cli_normal_run_persists_local_trend_and_generates_prompts(
 
     # --skip-prompts leaves existing CSV pipeline intact without writing prompt artifacts
     skip_dir = tmp_path / "skip_run"
-    rc_skip = cli.main(["--output-dir", str(skip_dir), "--skip-prompts"])
+    rc_skip = cli.main(
+        ["--sources", "runto,somurie", "--output-dir", str(skip_dir), "--skip-prompts"]
+    )
     assert rc_skip == 0
     assert (skip_dir / "box_comparison.csv").exists()
     assert not (skip_dir / "ai_prompts.md").exists()

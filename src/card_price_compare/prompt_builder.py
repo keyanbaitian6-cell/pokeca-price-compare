@@ -25,16 +25,11 @@ DEFAULT_BOX_YAHOO_FEE_RATE = 0.05
 DEFAULT_BOX_SHIPPING_YEN = 520
 DEFAULT_BOX_PACKING_YEN = 120
 
+from .stores import all_forbidden_store_terms
+
 # Outward-facing prompts and drafts must never expose specific store identities
 # or raw store-by-store price tables (see docs/DECISIONS.md).
-FORBIDDEN_STORE_TERMS = (
-    "runto",
-    "runto666",
-    "somurie",
-    "買取ソムリエ",
-    "コレクト",
-    "collect_sheet",
-)
+FORBIDDEN_STORE_TERMS = all_forbidden_store_terms()
 
 PROMPT_SHEET_HEADERS = [
     "区分",

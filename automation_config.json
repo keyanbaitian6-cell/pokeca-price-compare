@@ -7,6 +7,9 @@
   "automatic_schedule": true,
   "schedule_time_zone": "Asia/Tokyo",
   "schedule_local_time": "13:42",
+  "active_sources": ["homura", "tcgpro", "morimori", "runto", "rudeya", "somurie"],
+  "paused_sources": ["collect"],
+  "public_market_url": "https://keyanbaitian6-cell.github.io/pokeca-price-compare/market/",
   "collect_source_spreadsheet_id": "1uNtzhQBeiPmGR8rjqgwNdesCHbD4Nr6Y4ecZAjBE15g",
   "protected_source_note": "コレクトの参照元シートには書き込まず、output_spreadsheet_idだけを更新する。"
 }

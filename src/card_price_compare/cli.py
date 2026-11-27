@@ -9,8 +9,12 @@ from pathlib import Path
 import pandas as pd
 
 from .collectors.collect_sheet import fetch_collect_records
+from .collectors.homura import fetch_homura_records
+from .collectors.morimori import fetch_morimori_records
+from .collectors.rudeya import fetch_rudeya_records
 from .collectors.runto import fetch_runto_records
 from .collectors.somurie import fetch_somurie_records
+from .collectors.tcgpro import fetch_tcgpro_records
 from .compare import build_box_comparison, records_to_frame
 from .google_output import (
     TREND_HEADERS,
@@ -26,18 +30,24 @@ from .prompt_builder import (
     build_prompt_bundle,
     write_prompt_outputs,
 )
+from .stores import ALL_SOURCE_ORDER, DEFAULT_SOURCES
+from .web_export import write_web_market_json
 
 
 LOGGER = logging.getLogger("card_price_compare")
 JAPAN_TIME_ZONE = timezone(timedelta(hours=9), name="JST")
+VALID_SOURCES = set(ALL_SOURCE_ORDER)
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="未開封ポケカBOXの買取価格を比較します。")
     parser.add_argument(
         "--sources",
-        default="runto,somurie",
-        help="runto,somurie,collect のカンマ区切り（既定: runto,somurie。collect は一時中断）",
+        default=",".join(DEFAULT_SOURCES),
+        help=(
+            f"{','.join(ALL_SOURCE_ORDER)} のカンマ区切り"
+            f"（既定: {','.join(DEFAULT_SOURCES)}。collect は一時中断）"
+        ),
     )
     parser.add_argument("--output-dir", default="data", help="CSV保存先")
     parser.add_argument("--request-delay", type=float, default=1.0, help="同一処理内のHTTPアクセス間隔（秒）")
@@ -50,6 +60,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--trend-history-csv",
         help="ローカル日次推移CSVのパス（省略時は <output-dir>/shrink_trend_history.csv）",
+    )
+    parser.add_argument(
+        "--web-market-json",
+        help="公開Web価格表（匿名集計）JSONの出力先パス（例: site/market/data/market_index.json）",
     )
     parser.add_argument(
         "--skip-prompts",
@@ -114,6 +128,8 @@ def run(args: argparse.Namespace) -> int:
         if getattr(args, "trend_history_csv", None)
         else output_dir / "shrink_trend_history.csv"
     )
+    web_market_json_arg = getattr(args, "web_market_json", None)
+    web_market_json_path = Path(web_market_json_arg) if web_market_json_arg else None
     tool_url = getattr(args, "tool_url", TOOL_SITE_BASE_URL) or TOOL_SITE_BASE_URL
     skip_prompts = bool(getattr(args, "skip_prompts", False))
 
@@ -123,6 +139,15 @@ def run(args: argparse.Namespace) -> int:
         insights = analyze_market(comparison, trend_history, fetched_at=fetched_at)
         bundle = build_prompt_bundle(insights, tool_base_url=tool_url)
         prompt_paths = write_prompt_outputs(insights, bundle, output_dir)
+        if web_market_json_path is not None:
+            write_web_market_json(
+                web_market_json_path,
+                comparison,
+                trend_history,
+                fetched_at=fetched_at,
+                insights=insights,
+            )
+            LOGGER.info("公開Web用相場JSONを再生成しました: %s", web_market_json_path)
         LOGGER.info(
             "ローカルデータから発信プロンプトを再生成しました: %s",
             prompt_paths["ai_prompts_md"],
@@ -130,7 +155,7 @@ def run(args: argparse.Namespace) -> int:
         return 0
 
     requested_sources = {part.strip().lower() for part in args.sources.split(",") if part.strip()}
-    unknown = requested_sources - {"collect", "runto", "somurie"}
+    unknown = requested_sources - VALID_SOURCES
     if unknown:
         raise ValueError(f"未対応の取得元です: {', '.join(sorted(unknown))}")
 
@@ -138,12 +163,20 @@ def run(args: argparse.Namespace) -> int:
     errors: dict[str, str] = {}
     requester = PoliteRequester(build_session(), delay_seconds=max(args.request_delay, 0.5))
 
-    for source in ("collect", "runto", "somurie"):
+    for source in ALL_SOURCE_ORDER:
         if source not in requested_sources:
             continue
         try:
             LOGGER.info("%s の取得を開始します", source)
-            if source == "collect":
+            if source == "homura":
+                source_records = fetch_homura_records(requester, fetched_at=fetched_at)
+            elif source == "tcgpro":
+                source_records = fetch_tcgpro_records(requester, fetched_at=fetched_at)
+            elif source == "morimori":
+                source_records = fetch_morimori_records(requester, fetched_at=fetched_at)
+            elif source == "rudeya":
+                source_records = fetch_rudeya_records(requester, fetched_at=fetched_at)
+            elif source == "collect":
                 source_records = fetch_collect_records(requester, fetched_at=fetched_at)
             elif source == "runto":
                 source_records = fetch_runto_records(
@@ -175,18 +208,20 @@ def run(args: argparse.Namespace) -> int:
     )
     prompt_files: dict[str, str] = {}
     sentiment_summary: dict[str, object] = {}
-    if not skip_prompts:
-        insights = analyze_market(comparison, local_trend_history, fetched_at=fetched_at)
-        bundle = build_prompt_bundle(insights, tool_base_url=tool_url)
-        written_paths = write_prompt_outputs(insights, bundle, output_dir)
+    local_insights = None
+    if not skip_prompts or web_market_json_path is not None:
+        local_insights = analyze_market(comparison, local_trend_history, fetched_at=fetched_at)
+    if not skip_prompts and local_insights is not None:
+        bundle = build_prompt_bundle(local_insights, tool_base_url=tool_url)
+        written_paths = write_prompt_outputs(local_insights, bundle, output_dir)
         prompt_files = {key: str(path.name) for key, path in written_paths.items()}
         sentiment_summary = {
-            "mood_label": insights.sentiment.mood_label,
-            "prev_up_count": insights.sentiment.prev_up_count,
-            "prev_down_count": insights.sentiment.prev_down_count,
-            "week_up_count": insights.sentiment.week_up_count,
-            "week_down_count": insights.sentiment.week_down_count,
-            "high_spread_box_count": insights.high_spread_box_count,
+            "mood_label": local_insights.sentiment.mood_label,
+            "prev_up_count": local_insights.sentiment.prev_up_count,
+            "prev_down_count": local_insights.sentiment.prev_down_count,
+            "week_up_count": local_insights.sentiment.week_up_count,
+            "week_down_count": local_insights.sentiment.week_down_count,
+            "high_spread_box_count": local_insights.high_spread_box_count,
         }
 
     summary = {
@@ -222,12 +257,14 @@ def run(args: argparse.Namespace) -> int:
         ),
         "market_sentiment": sentiment_summary,
         "prompt_files": prompt_files,
+        "web_market_json": str(web_market_json_path) if web_market_json_path else None,
         "errors": errors,
     }
     (output_dir / "run_summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
+    published_web_json_via_google = False
     if args.google_spreadsheet_id or args.google_credentials:
         if not (args.google_spreadsheet_id and args.google_credentials):
             raise ValueError("Google出力には --google-spreadsheet-id と --google-credentials の両方が必要です。")
@@ -244,8 +281,24 @@ def run(args: argparse.Namespace) -> int:
                 prompt_output_dir=None if skip_prompts else output_dir,
                 skip_prompts=skip_prompts,
                 tool_base_url=tool_url,
+                web_market_json_path=web_market_json_path,
             )
+            published_web_json_via_google = web_market_json_path is not None
             LOGGER.info("Googleスプレッドシートを更新しました: %s", url)
+
+    if web_market_json_path is not None and not published_web_json_via_google:
+        active_store_count = (
+            int(raw["source"].dropna().nunique()) if not raw.empty and "source" in raw.columns else None
+        )
+        write_web_market_json(
+            web_market_json_path,
+            comparison,
+            local_trend_history,
+            fetched_at=fetched_at,
+            active_store_count=active_store_count,
+            insights=local_insights,
+        )
+        LOGGER.info("公開Web用相場JSONを書き出しました: %s", web_market_json_path)
 
     LOGGER.info("完了: raw=%d件 comparison=%d件 errors=%d件", len(raw), len(comparison), len(errors))
     if not records or (args.strict and errors):

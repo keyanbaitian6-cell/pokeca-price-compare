@@ -6,6 +6,9 @@ on:
     paths:
       - "site/**"
       - ".github/workflows/deploy-pages.yml"
+  workflow_run:
+    workflows: ["ポケカ価格表を手動更新"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -19,10 +22,13 @@ concurrency:
 
 jobs:
   test-and-build:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: ソースコードを取得
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Node.jsを準備
         uses: actions/setup-node@v4

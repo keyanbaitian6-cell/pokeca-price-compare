@@ -7,7 +7,7 @@ on:
     - cron: "42 4 * * *"
 
 permissions:
-  contents: read
+  contents: write
 
 # A second button press waits instead of cancelling an update in progress.
 concurrency:
@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: ソースコードを取得
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Pythonを準備
         uses: actions/setup-python@v6
@@ -40,7 +42,7 @@ jobs:
       - name: Chromiumを導入
         run: python -m playwright install --with-deps chromium
 
-      - name: 価格表を取得してGoogleシートを更新
+      - name: 価格表を取得してGoogleシートと公開相場JSONを更新
         env:
           GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
           OUTPUT_SPREADSHEET_ID: "1N3mF4tIjuq8FC3JO5QnT2rPKPn-tu3I8lFLP8ZNysYI"
@@ -50,7 +52,21 @@ jobs:
           credentials_path="$RUNNER_TEMP/google-credentials.json"
           printf '%s' "$GOOGLE_CREDENTIALS_JSON" > "$credentials_path"
           python -m card_price_compare \
-            --strict \
             --output-dir "$RUNNER_TEMP/card-price-output" \
             --google-spreadsheet-id "$OUTPUT_SPREADSHEET_ID" \
-            --google-credentials "$credentials_path"
+            --google-credentials "$credentials_path" \
+            --web-market-json "site/market/data/market_index.json"
+
+      - name: 公開相場インデックスJSONの変更を反映
+        shell: bash
+        run: |
+          if git diff --quiet -- site/market/data/market_index.json; then
+            echo "market_index.json に変更はありません。"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/market/data/market_index.json
+          git commit -m "chore(market): 日次匿名相場インデックスを更新 ($(date +%Y-%m-%d))"
+          git pull --rebase origin main
+          git push origin HEAD:main

@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from .catalog import box_msrp_yen, box_series_label
 from .collectors.collect_sheet import SPREADSHEET_ID as COLLECT_SOURCE_SPREADSHEET_ID
 from .market_analysis import analyze_market
 from .normalize import normalize_product_name
@@ -16,6 +17,14 @@ from .prompt_builder import (
     build_prompt_bundle,
     write_prompt_outputs,
 )
+from .stores import (
+    ALL_SOURCE_ORDER,
+    DEFAULT_SOURCES,
+    SOURCE_LABELS,
+    STORE_BY_CODE,
+    STORE_REGISTRY,
+)
+from .web_export import write_web_market_json
 
 
 LOGGER = logging.getLogger(__name__)
@@ -23,43 +32,64 @@ LOGGER = logging.getLogger(__name__)
 
 SPREADSHEET_TITLE = "ポケカ買取価格表"
 
-SOURCE_LABELS = {
-    "collect": "コレクト",
-    "runto": "runto",
-    "somurie": "買取ソムリエ",
-}
-SOURCE_ORDER = ("collect", "runto", "somurie")
-PRICE_COLUMN_LABELS = ["コレクト", "runto", "買取ソムリエ"]
-PRICE_SOURCE_COLUMNS = ["collect_price_yen", "runto_price_yen", "somurie_price_yen"]
+SOURCE_ORDER = ALL_SOURCE_ORDER
+PRICE_COLUMN_LABELS = [SOURCE_LABELS[code] for code in DEFAULT_SOURCES]
+PRICE_SOURCE_COLUMNS = [f"{code}_price_yen" for code in DEFAULT_SOURCES]
 
-# The comparison tab only answers "which store pays more" and "did it move";
-# the original store names stay on the raw tab so this table stays narrow enough to read.
-COMPARISON_COLUMNS = [
+COMPARISON_LEADING_COLUMNS = [
+    "シリーズ",
     "商品名",
-    "状態",
     "最高値",
     "前回比",
     "最高値の店",
     "差率",
     "差額",
-    "コレクト",
-    "runto",
-    "買取ソムリエ",
-    "注意",
+    "定価比",
 ]
-COMPARISON_SOURCE_COLUMNS = [
+COMPARISON_TRAILING_COLUMNS = ["注意"]
+
+# Default 比較 columns (active store columns expand/contract dynamically from fetched data).
+COMPARISON_COLUMNS = (
+    COMPARISON_LEADING_COLUMNS + PRICE_COLUMN_LABELS + COMPARISON_TRAILING_COLUMNS
+)
+COMPARISON_REQUIRED_COLUMNS = [
     "product_name_normalized",
     "condition",
     "condition_inferred",
-    "collect_price_yen",
-    "runto_price_yen",
-    "somurie_price_yen",
     "best_site",
     "best_price_yen",
     "spread_yen",
     "matched_site_count",
 ]
-SINGLE_LISTING_COLUMNS = ["商品名", "状態", "掲載店", "買取価格"]
+COMPARISON_SOURCE_COLUMNS = COMPARISON_REQUIRED_COLUMNS + PRICE_SOURCE_COLUMNS
+
+NO_SHRINK_LEADING_COLUMNS = [
+    "シリーズ",
+    "商品名",
+    "シュリンク無最高値",
+    "最高値の店",
+    "シュリンク有最高値",
+    "有無差額",
+    "有無差率",
+]
+NO_SHRINK_DEFAULT_STORES = ("homura", "runto")
+NO_SHRINK_COLUMNS = NO_SHRINK_LEADING_COLUMNS + [
+    SOURCE_LABELS[code] for code in NO_SHRINK_DEFAULT_STORES
+]
+
+SINGLE_LISTING_COLUMNS = ["シリーズ", "商品名", "状態", "掲載店", "買取価格"]
+STORE_GUIDE_COLUMNS = [
+    "店舗名",
+    "取得状態",
+    "今回取得件数",
+    "送料条件",
+    "価格保証",
+    "振込手数料",
+    "入金目安",
+    "シュリンク無",
+    "特徴・注意点",
+    "公式価格表URL",
+]
 
 RAW_HEADERS = {
     "source": "取得元",
@@ -93,8 +123,10 @@ ALL_SITES_TIED_LABEL = "3店同額"
 
 SUMMARY_SHEET_TITLE = "サマリー"
 COMPARISON_SHEET_TITLE = "比較"
+NO_SHRINK_SHEET_TITLE = "シュリンク無比較"
 TREND_SHEET_TITLE = "価格推移（シュリンク有）"
 SINGLE_LISTING_SHEET_TITLE = "単独掲載"
+STORE_GUIDE_SHEET_TITLE = "店舗条件"
 HISTORY_SHEET_TITLE = "更新履歴"
 RAW_SHEET_TITLE = "全取得"
 PROMPT_SHEET_TITLE = "発信プロンプト"
@@ -111,12 +143,12 @@ HISTORY_HEADERS = [
     "実行日時",
     "全取得レコード",
     "比較行（2サイト以上）",
-    "3サイト一致",
+    "3サイト以上一致",
     "2サイト一致",
     "取得エラー",
     "1サイトのみ",
 ]
-HISTORY_COLUMN_WIDTHS = [150, 120, 155, 110, 110, 100, 115]
+HISTORY_COLUMN_WIDTHS = [150, 120, 155, 125, 110, 100, 115]
 MAX_HISTORY_ROWS = 365
 
 JAPAN_TIME_ZONE = timezone(timedelta(hours=9), name="JST")
@@ -149,7 +181,7 @@ SUMMARY_COUNTER_ROWS = [
     ["全取得レコード", "=" + _latest_history_value("B")],
     ["BOX比較件数（2サイト以上）", "=" + _latest_history_value("C")],
     [
-        "内訳（3サイト／2サイト）",
+        "内訳（3サイト以上／2サイト）",
         f'={_latest_history_value("D")}&" / "&{_latest_history_value("E")}',
     ],
     ["1サイトのみ（単独掲載）", "=" + _latest_history_value("G")],
@@ -166,6 +198,7 @@ SIGNED_YEN_PATTERN = '+¥#,##0;-¥#,##0;"±0"'
 INTEGER_PATTERN = "#,##0"
 DATETIME_PATTERN = "yyyy-mm-dd hh:mm"
 RATE_PATTERN = "0.0%"
+RATIO_PATTERN = '0.0"倍"'
 
 HEADER_BACKGROUND_HEX = "1F3864"
 ZEBRA_BACKGROUND_HEX = "F7F9FC"
@@ -177,14 +210,24 @@ UP_PRICE_TEXT_HEX = "137333"
 DOWN_PRICE_TEXT_HEX = "1967D2"
 FLAT_PRICE_TEXT_HEX = "80868B"
 
-COMPARISON_HEADER_NOTES = {
-    3: "前回比 ＝ 前日以前の直近記録（シュリンク有の最高値）との差額。上昇は緑、下落は青で表示します。",
-    5: "差率 ＝ 差額 ÷ 最高値。5%以上は赤太字。表はこの列の降順です。",
-    6: "差額 ＝ 最高値 － 最安値。3,000円以上は金色の太字。率が低くても手取りの差が大きい商品を見落とさないための印です。",
-    10: (
+COMPARISON_HEADER_NOTES_BY_NAME = {
+    "前回比": "前回比 ＝ 前日以前の直近記録（シュリンク有の最高値）との差額。上昇は緑、下落は青で表示します。",
+    "差率": "差率 ＝ 差額 ÷ 最高値。5%以上は赤太字。表はこの列の降順です。",
+    "差額": "差額 ＝ 最高値 － 最安値。3,000円以上は金色の太字。率が低くても手取りの差が大きい商品を見落とさないための印です。",
+    "定価比": "定価比 ＝ 最高値 ÷ 公式BOX定価（税込）。1.0倍に近いほど定価付近の底値圏、高いほどプレミア相場です。",
+    "注意": (
         "片方の店舗だけ状態の記載がない場合、同名商品の状態を当てはめて比較しています（状態推定）。"
-        "元の商品名と表記は「全取得」タブで確認できます。"
+        "元の商品名・送料や価格保証条件は「店舗条件」「全取得」タブで確認できます。"
     ),
+}
+# Kept for backwards compatibility with callers/tests inspecting default column indices.
+COMPARISON_HEADER_NOTES = {
+    COMPARISON_COLUMNS.index(name): note
+    for name, note in COMPARISON_HEADER_NOTES_BY_NAME.items()
+}
+NO_SHRINK_HEADER_NOTES_BY_NAME = {
+    "有無差額": "有無差額 ＝ 同名BOXのシュリンク有最高値 － シュリンク無最高値。シュリンク無による相場ペナルティ額です。",
+    "有無差率": "有無差率 ＝ 有無差額 ÷ シュリンク有最高値。率が小さいBOXほどシュリンク無でも高く売れやすい傾向があります。",
 }
 TREND_HEADER_NOTES = {
     1: "シュリンク有と明記された買取価格の最新最高値です（状態不明の価格は含みません）。",
@@ -205,8 +248,29 @@ PROMPT_HEADER_NOTES = {
 }
 PROMPT_CATEGORY_ACCENT_HEX = "E8F0FE"
 
-COMPARISON_COLUMN_WIDTHS = [280, 95, 95, 90, 130, 70, 90, 95, 95, 105, 80]
-SINGLE_LISTING_COLUMN_WIDTHS = [300, 100, 120, 110]
+COMPARISON_COLUMN_WIDTHS_BY_NAME = {
+    "シリーズ": 95,
+    "商品名": 250,
+    "最高値": 95,
+    "前回比": 90,
+    "最高値の店": 135,
+    "差率": 70,
+    "差額": 90,
+    "定価比": 72,
+    "注意": 80,
+}
+STORE_PRICE_COLUMN_WIDTH = 95
+NO_SHRINK_COLUMN_WIDTHS_BY_NAME = {
+    "シリーズ": 95,
+    "商品名": 250,
+    "シュリンク無最高値": 115,
+    "最高値の店": 130,
+    "シュリンク有最高値": 115,
+    "有無差額": 95,
+    "有無差率": 78,
+}
+SINGLE_LISTING_COLUMN_WIDTHS = [95, 290, 100, 125, 110]
+STORE_GUIDE_COLUMN_WIDTHS = [115, 85, 95, 210, 210, 165, 185, 85, 270, 240]
 RAW_COLUMN_WIDTHS = [80, 300, 220, 220, 110, 100, 100, 100, 100, 100, 90, 220, 120, 150, 150]
 PROMPT_COLUMN_WIDTHS = [115, 215, 220, 680, 255]
 
@@ -250,13 +314,25 @@ def _store_label(value: object) -> str:
     sources = [part.strip() for part in str(value or "").split(",") if part.strip()]
     if not sources:
         return ""
-    if len(sources) >= len(SOURCE_LABELS):
-        return ALL_SITES_TIED_LABEL
+    if len(sources) >= 3:
+        return f"{len(sources)}店同額"
     return "・".join(SOURCE_LABELS.get(source, source) for source in sources)
 
 
 def _has_comparison_columns(frame: pd.DataFrame) -> bool:
-    return not frame.empty and set(COMPARISON_SOURCE_COLUMNS).issubset(frame.columns)
+    return not frame.empty and set(COMPARISON_REQUIRED_COLUMNS).issubset(frame.columns)
+
+
+def _active_store_codes(frame: pd.DataFrame, *, fallback: tuple[str, ...] = DEFAULT_SOURCES) -> list[str]:
+    """Select store columns that actually contain at least one price in this comparison frame."""
+    if frame.empty:
+        return list(fallback)
+    active = [
+        code
+        for code in SOURCE_ORDER
+        if f"{code}_price_yen" in frame.columns and frame[f"{code}_price_yen"].notna().any()
+    ]
+    return active if active else list(fallback)
 
 
 def split_comparison(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -280,6 +356,10 @@ def _comparison_sheet_frame(
     if multi_site.empty:
         return pd.DataFrame(columns=COMPARISON_COLUMNS)
 
+    active_codes = _active_store_codes(multi_site, fallback=DEFAULT_SOURCES)
+    active_labels = [SOURCE_LABELS[code] for code in active_codes]
+    columns = COMPARISON_LEADING_COLUMNS + active_labels + COMPARISON_TRAILING_COLUMNS
+
     rows: list[dict[str, object]] = []
     for _, record in multi_site.iterrows():
         name = str(record["product_name_normalized"])
@@ -294,26 +374,88 @@ def _comparison_sheet_frame(
         spread = _optional_int(record["spread_yen"])
         spread = 0 if spread == "" else spread
         rate = round(spread / best_price, 6) if isinstance(best_price, int) and best_price else 0.0
+        msrp = box_msrp_yen(name)
+        msrp_ratio: object = (
+            round(best_price / msrp, 2)
+            if isinstance(best_price, int) and msrp and msrp > 0
+            else ""
+        )
         row: dict[str, object] = {
+            "シリーズ": box_series_label(name),
             "商品名": name,
-            "状態": _display_condition(record["condition"]),
             "最高値": best_price,
             "前回比": prev_diff,
             "最高値の店": _store_label(record["best_site"]),
             "差率": rate,
             "差額": spread,
+            "定価比": msrp_ratio,
             "注意": CONDITION_INFERRED_LABEL if bool(record["condition_inferred"]) else "",
         }
-        for label, column in zip(PRICE_COLUMN_LABELS, PRICE_SOURCE_COLUMNS):
-            row[label] = _optional_int(record[column])
+        for code, label in zip(active_codes, active_labels):
+            row[label] = _optional_int(record.get(f"{code}_price_yen"))
         rows.append(row)
 
-    prepared = pd.DataFrame(rows, columns=COMPARISON_COLUMNS)
+    prepared = pd.DataFrame(rows, columns=columns)
     # Sorted by rate so the products where the store choice actually matters
     # stay at the top, regardless of how expensive the box is.
     return prepared.sort_values(
-        ["差率", "差額", "商品名", "状態"],
-        ascending=[False, False, True, True],
+        ["差率", "差額", "最高値", "商品名"],
+        ascending=[False, False, False, True],
+        kind="mergesort",
+    ).reset_index(drop=True)
+
+
+def _no_shrink_sheet_frame(frame: pd.DataFrame) -> pd.DataFrame:
+    """Build the シュリンク無比較 tab showing no-shrink store comparison & shrink penalty."""
+    if not _has_comparison_columns(frame):
+        return pd.DataFrame(columns=NO_SHRINK_COLUMNS)
+
+    no_shrink = frame[
+        (frame["condition"] == "no_shrink") & frame["best_price_yen"].notna()
+    ].copy()
+    if no_shrink.empty:
+        return pd.DataFrame(columns=NO_SHRINK_COLUMNS)
+
+    shrink_best_map: dict[str, int] = {}
+    shrink_rows = frame[
+        (frame["condition"] == "shrink_wrapped") & frame["best_price_yen"].notna()
+    ]
+    for _, record in shrink_rows.iterrows():
+        best_val = _optional_int(record["best_price_yen"])
+        if isinstance(best_val, int):
+            shrink_best_map[str(record["product_name_normalized"])] = best_val
+
+    active_codes = _active_store_codes(no_shrink, fallback=NO_SHRINK_DEFAULT_STORES)
+    active_labels = [SOURCE_LABELS[code] for code in active_codes]
+    columns = NO_SHRINK_LEADING_COLUMNS + active_labels
+
+    rows: list[dict[str, object]] = []
+    for _, record in no_shrink.iterrows():
+        name = str(record["product_name_normalized"])
+        ns_best = _optional_int(record["best_price_yen"])
+        shrink_best: object = shrink_best_map.get(name, "")
+        gap_yen: object = ""
+        gap_rate: object = ""
+        if isinstance(ns_best, int) and isinstance(shrink_best, int) and shrink_best > 0:
+            gap_yen = shrink_best - ns_best
+            gap_rate = round(gap_yen / shrink_best, 6)
+        row: dict[str, object] = {
+            "シリーズ": box_series_label(name),
+            "商品名": name,
+            "シュリンク無最高値": ns_best,
+            "最高値の店": _store_label(record["best_site"]),
+            "シュリンク有最高値": shrink_best,
+            "有無差額": gap_yen,
+            "有無差率": gap_rate,
+        }
+        for code, label in zip(active_codes, active_labels):
+            row[label] = _optional_int(record.get(f"{code}_price_yen"))
+        rows.append(row)
+
+    prepared = pd.DataFrame(rows, columns=columns)
+    return prepared.sort_values(
+        ["シュリンク無最高値", "商品名"],
+        ascending=[False, True],
         kind="mergesort",
     ).reset_index(drop=True)
 
@@ -326,6 +468,7 @@ def _single_listing_sheet_frame(frame: pd.DataFrame) -> pd.DataFrame:
 
     rows = [
         {
+            "シリーズ": box_series_label(str(record["product_name_normalized"])),
             "商品名": record["product_name_normalized"],
             "状態": _display_condition(record["condition"]),
             "掲載店": _store_label(record["best_site"]),
@@ -339,6 +482,38 @@ def _single_listing_sheet_frame(frame: pd.DataFrame) -> pd.DataFrame:
         ascending=[False, True, True],
         kind="mergesort",
     ).reset_index(drop=True)
+
+
+def _store_guide_sheet_frame(raw: pd.DataFrame) -> pd.DataFrame:
+    """Build the 店舗条件 tab summarizing shipping, price-lock, fee, and live record counts."""
+    counts: dict[str, int] = {}
+    if raw is not None and not raw.empty and "source" in raw.columns:
+        counts = {str(k): int(v) for k, v in raw.groupby("source").size().items()}
+
+    rows: list[dict[str, object]] = []
+    for store in STORE_REGISTRY:
+        fetched_count = counts.get(store.code, 0)
+        if fetched_count > 0:
+            status_label = "稼働中"
+        elif store.default_enabled:
+            status_label = "未取得"
+        else:
+            status_label = "一時中断"
+        rows.append(
+            {
+                "店舗名": store.label,
+                "取得状態": status_label,
+                "今回取得件数": fetched_count,
+                "送料条件": store.shipping_rule,
+                "価格保証": store.price_lock_rule,
+                "振込手数料": store.transfer_fee,
+                "入金目安": store.payout_speed,
+                "シュリンク無": "○" if store.no_shrink_supported else "×",
+                "特徴・注意点": store.notes,
+                "公式価格表URL": store.url,
+            }
+        )
+    return pd.DataFrame(rows, columns=STORE_GUIDE_COLUMNS)
 
 
 def _raw_sheet_frame(frame: pd.DataFrame) -> pd.DataFrame:
@@ -628,8 +803,17 @@ def _basic_filter_requests(
 
 
 def _comparison_format_requests(sheet_id: int, frame: pd.DataFrame) -> list[dict[str, object]]:
-    column_count = len(COMPARISON_COLUMNS)
+    columns = list(frame.columns) if len(frame.columns) else list(COMPARISON_COLUMNS)
+    column_count = len(columns)
     row_count = len(frame)
+    col_index = {name: idx for idx, name in enumerate(columns)}
+    widths = [
+        COMPARISON_COLUMN_WIDTHS_BY_NAME.get(name, STORE_PRICE_COLUMN_WIDTH)
+        for name in columns
+    ]
+    store_label_set = set(SOURCE_LABELS.values())
+    store_columns = [name for name in columns if name in store_label_set]
+
     requests: list[dict[str, object]] = [
         _reset_format_request(sheet_id),
         _header_format_request(sheet_id, column_count),
@@ -637,47 +821,128 @@ def _comparison_format_requests(sheet_id: int, frame: pd.DataFrame) -> list[dict
     ]
     requests += _row_height_requests(sheet_id, row_count)
     requests += [
-        _note_request(sheet_id, 0, column, note)
-        for column, note in COMPARISON_HEADER_NOTES.items()
+        _note_request(sheet_id, 0, col_index[name], note)
+        for name, note in COMPARISON_HEADER_NOTES_BY_NAME.items()
+        if name in col_index
     ]
-    requests += _column_width_requests(sheet_id, COMPARISON_COLUMN_WIDTHS)
+    requests += _column_width_requests(sheet_id, widths)
     if row_count:
         best_prices = list(frame["最高値"])
         requests.append(_clip_request(sheet_id, row_count, column_count))
         requests += _zebra_requests(sheet_id, row_count, column_count)
-        requests.append(_alignment_request(sheet_id, row_count, 1, 2, "CENTER"))
-        requests.append(_alignment_request(sheet_id, row_count, 2, 4, "RIGHT"))
-        requests.append(_alignment_request(sheet_id, row_count, 5, 10, "RIGHT"))
-        requests.append(_alignment_request(sheet_id, row_count, 10, 11, "CENTER"))
-        requests.append(_number_format_request(sheet_id, row_count, 2, 3, "NUMBER", YEN_PATTERN))
-        requests.append(
-            _number_format_request(sheet_id, row_count, 3, 4, "NUMBER", SIGNED_YEN_PATTERN)
-        )
-        requests.append(
-            _number_format_request(sheet_id, row_count, 5, 6, "PERCENT", RATE_PATTERN)
-        )
-        requests.append(_number_format_request(sheet_id, row_count, 6, 10, "NUMBER", YEN_PATTERN))
-        requests += _delta_text_color_requests(sheet_id, list(frame["前回比"]), 3)
-        for offset, label in enumerate(PRICE_COLUMN_LABELS):
+        for name in ("シリーズ", "注意"):
+            if name in col_index:
+                idx = col_index[name]
+                requests.append(_alignment_request(sheet_id, row_count, idx, idx + 1, "CENTER"))
+        right_columns = ["最高値", "前回比", "差率", "差額", "定価比"] + store_columns
+        for name in right_columns:
+            if name in col_index:
+                idx = col_index[name]
+                requests.append(_alignment_request(sheet_id, row_count, idx, idx + 1, "RIGHT"))
+        for name in ["最高値", "差額"] + store_columns:
+            if name in col_index:
+                idx = col_index[name]
+                requests.append(
+                    _number_format_request(sheet_id, row_count, idx, idx + 1, "NUMBER", YEN_PATTERN)
+                )
+        if "前回比" in col_index:
+            idx = col_index["前回比"]
+            requests.append(
+                _number_format_request(
+                    sheet_id, row_count, idx, idx + 1, "NUMBER", SIGNED_YEN_PATTERN
+                )
+            )
+            requests += _delta_text_color_requests(sheet_id, list(frame["前回比"]), idx)
+        if "差率" in col_index:
+            idx = col_index["差率"]
+            requests.append(
+                _number_format_request(sheet_id, row_count, idx, idx + 1, "PERCENT", RATE_PATTERN)
+            )
+            high_spread = [
+                isinstance(rate, (int, float)) and float(rate) >= HIGH_SPREAD_RATE
+                for rate in frame["差率"]
+            ]
+            requests += _text_color_requests(sheet_id, high_spread, idx, HIGH_SPREAD_TEXT_HEX)
+        if "差額" in col_index:
+            idx = col_index["差額"]
+            large_spread = [
+                isinstance(amount, (int, float)) and float(amount) >= HIGH_SPREAD_YEN
+                for amount in frame["差額"]
+            ]
+            requests += _text_color_requests(sheet_id, large_spread, idx, HIGH_SPREAD_YEN_TEXT_HEX)
+        if "定価比" in col_index:
+            idx = col_index["定価比"]
+            requests.append(
+                _number_format_request(sheet_id, row_count, idx, idx + 1, "NUMBER", RATIO_PATTERN)
+            )
+        for label in store_columns:
+            idx = col_index[label]
             flags = [
                 price != "" and best != "" and price == best
                 for price, best in zip(frame[label], best_prices)
             ]
-            requests += _background_requests(
-                sheet_id, flags, 7 + offset, BEST_PRICE_BACKGROUND_HEX
+            requests += _background_requests(sheet_id, flags, idx, BEST_PRICE_BACKGROUND_HEX)
+        if "注意" in col_index:
+            idx = col_index["注意"]
+            warned = [str(value).strip() != "" for value in frame["注意"]]
+            requests += _background_requests(sheet_id, warned, idx, WARNING_BACKGROUND_HEX)
+    requests += _basic_filter_requests(sheet_id, row_count, column_count)
+    return requests
+
+
+def _no_shrink_format_requests(sheet_id: int, frame: pd.DataFrame) -> list[dict[str, object]]:
+    columns = list(frame.columns) if len(frame.columns) else list(NO_SHRINK_COLUMNS)
+    column_count = len(columns)
+    row_count = len(frame)
+    col_index = {name: idx for idx, name in enumerate(columns)}
+    widths = [
+        NO_SHRINK_COLUMN_WIDTHS_BY_NAME.get(name, STORE_PRICE_COLUMN_WIDTH)
+        for name in columns
+    ]
+    store_label_set = set(SOURCE_LABELS.values())
+    store_columns = [name for name in columns if name in store_label_set]
+
+    requests: list[dict[str, object]] = [
+        _reset_format_request(sheet_id),
+        _header_format_request(sheet_id, column_count),
+        _freeze_request(sheet_id, rows=1, columns=2),
+    ]
+    requests += _row_height_requests(sheet_id, row_count)
+    requests += [
+        _note_request(sheet_id, 0, col_index[name], note)
+        for name, note in NO_SHRINK_HEADER_NOTES_BY_NAME.items()
+        if name in col_index
+    ]
+    requests += _column_width_requests(sheet_id, widths)
+    if row_count:
+        best_prices = list(frame["シュリンク無最高値"])
+        requests.append(_clip_request(sheet_id, row_count, column_count))
+        requests += _zebra_requests(sheet_id, row_count, column_count)
+        if "シリーズ" in col_index:
+            idx = col_index["シリーズ"]
+            requests.append(_alignment_request(sheet_id, row_count, idx, idx + 1, "CENTER"))
+        for name in ["シュリンク無最高値", "シュリンク有最高値", "有無差額", "有無差率"] + store_columns:
+            if name in col_index:
+                idx = col_index[name]
+                requests.append(_alignment_request(sheet_id, row_count, idx, idx + 1, "RIGHT"))
+        for name in ["シュリンク無最高値", "シュリンク有最高値", "有無差額"] + store_columns:
+            if name in col_index:
+                idx = col_index[name]
+                requests.append(
+                    _number_format_request(sheet_id, row_count, idx, idx + 1, "NUMBER", YEN_PATTERN)
+                )
+        if "有無差率" in col_index:
+            idx = col_index["有無差率"]
+            requests.append(
+                _number_format_request(sheet_id, row_count, idx, idx + 1, "PERCENT", RATE_PATTERN)
             )
-        high_spread = [
-            isinstance(rate, (int, float)) and float(rate) >= HIGH_SPREAD_RATE
-            for rate in frame["差率"]
-        ]
-        requests += _text_color_requests(sheet_id, high_spread, 5, HIGH_SPREAD_TEXT_HEX)
-        large_spread = [
-            isinstance(amount, (int, float)) and float(amount) >= HIGH_SPREAD_YEN
-            for amount in frame["差額"]
-        ]
-        requests += _text_color_requests(sheet_id, large_spread, 6, HIGH_SPREAD_YEN_TEXT_HEX)
-        warned = [str(value).strip() != "" for value in frame["注意"]]
-        requests += _background_requests(sheet_id, warned, 10, WARNING_BACKGROUND_HEX)
+        for label in store_columns:
+            idx = col_index[label]
+            flags = [
+                price != "" and best != "" and price == best
+                for price, best in zip(frame[label], best_prices)
+            ]
+            requests += _background_requests(sheet_id, flags, idx, BEST_PRICE_BACKGROUND_HEX)
     requests += _basic_filter_requests(sheet_id, row_count, column_count)
     return requests
 
@@ -690,17 +955,63 @@ def _single_listing_format_requests(
     requests: list[dict[str, object]] = [
         _reset_format_request(sheet_id),
         _header_format_request(sheet_id, column_count),
-        _freeze_request(sheet_id, rows=1, columns=1),
+        _freeze_request(sheet_id, rows=1, columns=2),
     ]
     requests += _row_height_requests(sheet_id, row_count)
     requests += _column_width_requests(sheet_id, SINGLE_LISTING_COLUMN_WIDTHS)
     if row_count:
         requests.append(_clip_request(sheet_id, row_count, column_count))
         requests += _zebra_requests(sheet_id, row_count, column_count)
-        requests.append(_alignment_request(sheet_id, row_count, 1, 2, "CENTER"))
-        requests.append(_alignment_request(sheet_id, row_count, 3, 4, "RIGHT"))
-        requests.append(_number_format_request(sheet_id, row_count, 3, 4, "NUMBER", YEN_PATTERN))
+        requests.append(_alignment_request(sheet_id, row_count, 0, 1, "CENTER"))
+        requests.append(_alignment_request(sheet_id, row_count, 2, 3, "CENTER"))
+        requests.append(_alignment_request(sheet_id, row_count, 4, 5, "RIGHT"))
+        requests.append(_number_format_request(sheet_id, row_count, 4, 5, "NUMBER", YEN_PATTERN))
     requests += _basic_filter_requests(sheet_id, row_count, column_count)
+    return requests
+
+
+def _store_guide_format_requests(sheet_id: int, frame: pd.DataFrame) -> list[dict[str, object]]:
+    column_count = len(STORE_GUIDE_COLUMNS)
+    row_count = len(frame)
+    requests: list[dict[str, object]] = [
+        _reset_format_request(sheet_id),
+        _header_format_request(sheet_id, column_count),
+        _freeze_request(sheet_id, rows=1, columns=1),
+    ]
+    requests += _row_height_requests(sheet_id, row_count, header_px=34, data_px=46)
+    requests += _column_width_requests(sheet_id, STORE_GUIDE_COLUMN_WIDTHS)
+    if row_count:
+        requests.append(
+            {
+                "repeatCell": {
+                    "range": _grid_range(sheet_id, 1, row_count + 1, 0, column_count),
+                    "cell": {
+                        "userEnteredFormat": {
+                            "wrapStrategy": "WRAP",
+                            "verticalAlignment": "MIDDLE",
+                        }
+                    },
+                    "fields": "userEnteredFormat(wrapStrategy,verticalAlignment)",
+                }
+            }
+        )
+        requests += _zebra_requests(sheet_id, row_count, column_count)
+        requests.append(_alignment_request(sheet_id, row_count, 1, 2, "CENTER"))
+        requests.append(_alignment_request(sheet_id, row_count, 2, 3, "RIGHT"))
+        requests.append(_alignment_request(sheet_id, row_count, 7, 8, "CENTER"))
+        requests.append(
+            _number_format_request(sheet_id, row_count, 2, 3, "NUMBER", INTEGER_PATTERN)
+        )
+        statuses = [str(v) for v in frame["取得状態"]]
+        requests += _text_color_requests(
+            sheet_id, [s == "稼働中" for s in statuses], 1, UP_PRICE_TEXT_HEX, bold=True
+        )
+        requests += _text_color_requests(
+            sheet_id, [s == "未取得" for s in statuses], 1, HIGH_SPREAD_TEXT_HEX, bold=True
+        )
+        requests += _text_color_requests(
+            sheet_id, [s == "一時中断" for s in statuses], 1, FLAT_PRICE_TEXT_HEX, bold=False
+        )
     return requests
 
 
@@ -764,8 +1075,12 @@ def _history_format_requests(
 def _site_counts(comparison: pd.DataFrame) -> tuple[int, int, int]:
     if comparison.empty or "matched_site_count" not in comparison:
         return 0, 0, 0
-    counts = comparison["matched_site_count"].value_counts()
-    return int(counts.get(3, 0)), int(counts.get(2, 0)), int(counts.get(1, 0))
+    counts = pd.to_numeric(comparison["matched_site_count"], errors="coerce").fillna(0)
+    return (
+        int((counts >= 3).sum()),
+        int((counts == 2).sum()),
+        int((counts == 1).sum()),
+    )
 
 
 def _history_row(
@@ -1488,8 +1803,10 @@ def _reorder_sheets(spreadsheet: object) -> None:
     desired_order = [
         (SUMMARY_SHEET_TITLE, False),
         (COMPARISON_SHEET_TITLE, False),
+        (NO_SHRINK_SHEET_TITLE, False),
         (TREND_SHEET_TITLE, False),
         (SINGLE_LISTING_SHEET_TITLE, False),
+        (STORE_GUIDE_SHEET_TITLE, False),
         (HISTORY_SHEET_TITLE, False),
         (RAW_SHEET_TITLE, False),
         (PROMPT_SHEET_TITLE, False),
@@ -1528,6 +1845,7 @@ def publish_frames(
     prompt_output_dir: str | Path | None = None,
     skip_prompts: bool = False,
     tool_base_url: str = TOOL_SITE_BASE_URL,
+    web_market_json_path: str | Path | None = None,
 ) -> str:
     """Refresh output tabs and append history; never write to the Collect source sheet."""
     if spreadsheet_id == COLLECT_SOURCE_SPREADSHEET_ID:
@@ -1561,9 +1879,19 @@ def publish_frames(
             _comparison_format_requests,
         ),
         (
+            NO_SHRINK_SHEET_TITLE,
+            _no_shrink_sheet_frame(comparison),
+            _no_shrink_format_requests,
+        ),
+        (
             SINGLE_LISTING_SHEET_TITLE,
             _single_listing_sheet_frame(comparison),
             _single_listing_format_requests,
+        ),
+        (
+            STORE_GUIDE_SHEET_TITLE,
+            _store_guide_sheet_frame(raw),
+            _store_guide_format_requests,
         ),
         (RAW_SHEET_TITLE, _raw_sheet_frame(raw), _raw_format_requests),
     )
@@ -1618,16 +1946,34 @@ def publish_frames(
     )
 
     _ensure_summary_sheet(spreadsheet)
-    if not skip_prompts:
+
+    insights = None
+    if not skip_prompts or web_market_json_path is not None:
         insights = analyze_market(
             comparison,
             trend_history,
             fetched_at=effective_fetched_at,
         )
+    if not skip_prompts and insights is not None:
         bundle = build_prompt_bundle(insights, tool_base_url=tool_base_url)
         _publish_prompt_sheet(spreadsheet, bundle)
         if prompt_output_dir is not None:
             write_prompt_outputs(insights, bundle, prompt_output_dir)
+
+    if web_market_json_path is not None:
+        active_store_count = (
+            int(raw["source"].dropna().nunique())
+            if raw is not None and not raw.empty and "source" in raw.columns
+            else None
+        )
+        write_web_market_json(
+            web_market_json_path,
+            comparison,
+            trend_history,
+            fetched_at=effective_fetched_at,
+            active_store_count=active_store_count,
+            insights=insights,
+        )
 
     _reorder_sheets(spreadsheet)
     return f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/edit"
