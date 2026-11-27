@@ -267,8 +267,9 @@ def test_publish_frames_adds_prompt_tab_without_breaking_existing_tabs_or_cell_p
     ]
     hist_ws = spreadsheet.worksheets[HISTORY_SHEET_TITLE]
     assert hist_ws.updates[0][1][0] == HISTORY_HEADERS
-    assert [rng for rng, _, _ in summary_ws.updates] == ["A3", "A9"]
+    assert [rng for rng, _, _ in summary_ws.updates] == ["A3", "A9", "C9", "A10"]
     assert summary_ws.updates[0][1] == SUMMARY_COUNTER_ROWS
+    assert summary_ws.updates[3][1][1][0] == "価格取得元"
     assert NO_SHRINK_SHEET_TITLE in spreadsheet.worksheets
     assert STORE_GUIDE_SHEET_TITLE in spreadsheet.worksheets
 

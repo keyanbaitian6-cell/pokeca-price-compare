@@ -664,13 +664,14 @@ def test_summary_counters_read_the_newest_history_row_not_the_header() -> None:
         assert "MATCH(MAX(更新履歴!A2:A),更新履歴!A:A,0)" in formula
 
 
-def test_ensure_summary_sheet_removes_deprecated_macho_row() -> None:
+def test_ensure_summary_sheet_writes_all_sources_and_unmerges_legacy_rows() -> None:
     class FakeSummary:
         id = 10
 
         def __init__(self) -> None:
             self.a1 = None
             self.updates: list[tuple[str, list[list[object]]]] = []
+            self.cleared_ranges: list[list[str]] = []
 
         def update_acell(self, cell: str, value: str) -> None:
             if cell == "A1":
@@ -685,15 +686,8 @@ def test_ensure_summary_sheet_removes_deprecated_macho_row() -> None:
         ) -> None:
             self.updates.append((range_name, values))
 
-        def get_values(self, _range: str) -> list[list[str]]:
-            return [
-                ["取得元", "URL"],
-                ["collect", "https://example.com/collect"],
-                ["runto", "https://example.com/runto"],
-                ["買取ソムリエ", "https://example.com/somurie"],
-                ["買取マッチョ", "https://kaitori.alc-japan.co.jp/buyback-prices"],
-                ["一部店舗で状態が不明な価格を含む比較は、比較表で橙色の注意表示を付けています。"],
-            ]
+        def batch_clear(self, ranges: list[str]) -> None:
+            self.cleared_ranges.append(ranges)
 
     class FakeSpreadsheet:
         def __init__(self, summary: FakeSummary) -> None:
@@ -708,25 +702,23 @@ def test_ensure_summary_sheet_removes_deprecated_macho_row() -> None:
 
     summary = FakeSummary()
     spreadsheet = FakeSpreadsheet(summary)
-    _ensure_summary_sheet(spreadsheet)
+    raw = pd.DataFrame({"source": ["homura", "homura", "tcgpro", "runto"]})
+    _ensure_summary_sheet(spreadsheet, raw=raw)
 
     assert summary.a1 == SPREADSHEET_TITLE
-    assert spreadsheet.batches == [
-        {
-            "requests": [
-                {
-                    "deleteDimension": {
-                        "range": {
-                            "sheetId": 10,
-                            "dimension": "ROWS",
-                            "startIndex": 13,
-                            "endIndex": 14,
-                        }
-                    }
-                }
-            ]
-        }
-    ]
+    assert [rng for rng, _ in summary.updates] == ["A3", "A9", "C9", "A10"]
+    assert "公開Web相場表" in str(summary.updates[2][1][0][0])
+    source_block = summary.updates[3][1]
+    assert source_block[1] == ["価格取得元", "状態", "今回件数", "シュリンク無", "公式価格表URL"]
+    by_store = {row[0]: row for row in source_block[2:9]}
+    assert by_store["買取ホムラ"][1:4] == ["稼働中", 2, "○"]
+    assert by_store["トレカプロ"][1:4] == ["稼働中", 1, "×"]
+    assert by_store["森森買取"][1:3] == ["未取得", 0]
+    assert by_store["コレクト"][1:4] == ["一時中断", 0, "○"]
+    assert summary.cleared_ranges == [["A22:F30"]]
+    # First batch unmerges legacy merged rows below row 9 (e.g. old A14:F14).
+    assert "unmergeCells" in spreadsheet.batches[0]["requests"][0]
+    assert spreadsheet.batches[0]["requests"][0]["unmergeCells"]["range"]["startRowIndex"] == 9
 
 
 def test_history_row_converts_cloud_utc_timestamp_to_japan_time() -> None:

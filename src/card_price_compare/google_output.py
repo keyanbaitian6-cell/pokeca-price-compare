@@ -154,8 +154,13 @@ MAX_HISTORY_ROWS = 365
 JAPAN_TIME_ZONE = timezone(timedelta(hours=9), name="JST")
 MANUAL_UPDATE_URL = "https://pokeca-price-update.vercel.app"
 MANUAL_UPDATE_FORMULA = f'=HYPERLINK("{MANUAL_UPDATE_URL}","🔄 価格表を手動更新")'
+PUBLIC_MARKET_URL = f"{TOOL_SITE_BASE_URL.rstrip('/')}/market/"
+PUBLIC_MARKET_FORMULA = f'=HYPERLINK("{PUBLIC_MARKET_URL}","📊 公開Web相場表（店舗匿名）")'
 
 SUMMARY_COUNTER_RANGE = "A3"
+SUMMARY_SOURCE_START_ROW = 11  # 1-indexed row for the 価格取得元 header (row 10 is blank spacer)
+SUMMARY_SOURCE_HEADERS = ["価格取得元", "状態", "今回件数", "シュリンク無", "公式価格表URL"]
+SUMMARY_COLUMN_WIDTHS = [235, 175, 95, 95, 430]
 REMOVED_SUMMARY_SOURCES = {"買取マッチョ"}
 
 
@@ -1744,34 +1749,192 @@ def _publish_prompt_sheet(spreadsheet: object, bundle: PromptBundle) -> object:
     return worksheet
 
 
-def _remove_deprecated_summary_sources(spreadsheet: object, summary: object) -> None:
-    """Remove retired store rows (such as 買取マッチョ) from the hand-made source table."""
-    if not (
-        hasattr(summary, "get_values")
-        and hasattr(summary, "id")
-        and hasattr(spreadsheet, "batch_update")
-    ):
-        return
-    rows = summary.get_values("A10:B16")
-    delete_requests = [
+def _summary_source_rows(raw: pd.DataFrame | None = None) -> list[list[object]]:
+    """Build rows A10:E21 for the サマリー tab: spacer, 価格取得元 table, and notes."""
+    counts: dict[str, int] = {}
+    has_raw_counts = raw is not None and not raw.empty and "source" in raw.columns
+    if has_raw_counts:
+        counts = {str(k): int(v) for k, v in raw.groupby("source").size().items()}
+
+    rows: list[list[object]] = [
+        ["", "", "", "", ""],  # Row 10 spacer (clears legacy A10:B10 header)
+        list(SUMMARY_SOURCE_HEADERS),  # Row 11 header
+    ]
+    for store in STORE_REGISTRY:
+        if has_raw_counts:
+            fetched_count: object = counts.get(store.code, 0)
+            if counts.get(store.code, 0) > 0:
+                status_label = "稼働中"
+            elif store.default_enabled:
+                status_label = "未取得"
+            else:
+                status_label = "一時中断"
+        else:
+            fetched_count = ""
+            status_label = "稼働中" if store.default_enabled else "一時中断"
+        rows.append(
+            [
+                store.label,
+                status_label,
+                fetched_count,
+                "○" if store.no_shrink_supported else "×",
+                store.url,
+            ]
+        )
+
+    rows.append(["", "", "", "", ""])
+    rows.append(
+        ["※ 各店舗の送料・価格保証・振込手数料・入金目安は「店舗条件」タブで確認できます。", "", "", "", ""]
+    )
+    rows.append(
+        [
+            "※ 片方のみ状態不明の比較は「比較」タブの注意列に黄色で「状態推定」と表示しています（コレクトは一時中断中）。",
+            "",
+            "",
+            "",
+            "",
+        ]
+    )
+    return rows
+
+
+def _summary_source_format_requests(
+    sheet_id: int,
+    source_rows: list[list[object]],
+) -> list[dict[str, object]]:
+    """Format the auto-managed 価格取得元 block (rows 10..21) without touching A1:B9."""
+    col_count = len(SUMMARY_SOURCE_HEADERS)
+    header_row_idx = SUMMARY_SOURCE_START_ROW - 1  # 0-based index 10 (row 11)
+    data_start_idx = header_row_idx + 1  # 0-based index 11 (row 12)
+    store_count = len(STORE_REGISTRY)
+    data_end_idx = data_start_idx + store_count  # 0-based exclusive index 18 (row 18)
+    note_start_idx = data_end_idx + 1
+    note_end_idx = 9 + len(source_rows)
+
+    requests: list[dict[str, object]] = [
         {
-            "deleteDimension": {
-                "range": {
-                    "sheetId": summary.id,
-                    "dimension": "ROWS",
-                    "startIndex": 9 + offset,
-                    "endIndex": 10 + offset,
+            "repeatCell": {
+                "range": _grid_range(sheet_id, 9, 30, 0, 6),
+                "cell": {"userEnteredFormat": {}},
+                "fields": "userEnteredFormat",
+            }
+        },
+        {
+            "repeatCell": {
+                "range": _grid_range(sheet_id, header_row_idx, header_row_idx + 1, 0, col_count),
+                "cell": {
+                    "userEnteredFormat": {
+                        "backgroundColor": _color(HEADER_BACKGROUND_HEX),
+                        "textFormat": {"bold": True, "foregroundColor": _color("FFFFFF")},
+                        "horizontalAlignment": "CENTER",
+                        "verticalAlignment": "MIDDLE",
+                    }
+                },
+                "fields": (
+                    "userEnteredFormat(backgroundColor,textFormat,"
+                    "horizontalAlignment,verticalAlignment)"
+                ),
+            }
+        },
+        {
+            "repeatCell": {
+                "range": _grid_range(sheet_id, data_start_idx, data_end_idx, 0, col_count),
+                "cell": {
+                    "userEnteredFormat": {
+                        "wrapStrategy": "CLIP",
+                        "verticalAlignment": "MIDDLE",
+                    }
+                },
+                "fields": "userEnteredFormat(wrapStrategy,verticalAlignment)",
+            }
+        },
+        {
+            "repeatCell": {
+                "range": _grid_range(sheet_id, data_start_idx, data_end_idx, 1, 2),
+                "cell": {"userEnteredFormat": {"horizontalAlignment": "CENTER"}},
+                "fields": "userEnteredFormat.horizontalAlignment",
+            }
+        },
+        {
+            "repeatCell": {
+                "range": _grid_range(sheet_id, data_start_idx, data_end_idx, 2, 3),
+                "cell": {
+                    "userEnteredFormat": {
+                        "horizontalAlignment": "RIGHT",
+                        "numberFormat": {"type": "NUMBER", "pattern": INTEGER_PATTERN},
+                    }
+                },
+                "fields": "userEnteredFormat(horizontalAlignment,numberFormat)",
+            }
+        },
+        {
+            "repeatCell": {
+                "range": _grid_range(sheet_id, data_start_idx, data_end_idx, 3, 4),
+                "cell": {"userEnteredFormat": {"horizontalAlignment": "CENTER"}},
+                "fields": "userEnteredFormat.horizontalAlignment",
+            }
+        },
+    ]
+
+    for offset in range(store_count):
+        row_idx = data_start_idx + offset
+        if offset % 2 == 1:
+            requests.append(
+                {
+                    "repeatCell": {
+                        "range": _grid_range(sheet_id, row_idx, row_idx + 1, 0, col_count),
+                        "cell": {
+                            "userEnteredFormat": {
+                                "backgroundColor": _color(ZEBRA_BACKGROUND_HEX)
+                            }
+                        },
+                        "fields": "userEnteredFormat.backgroundColor",
+                    }
+                }
+            )
+        status = str(source_rows[2 + offset][1])
+        if status == "稼働中":
+            status_color, bold = UP_PRICE_TEXT_HEX, True
+        elif status == "未取得":
+            status_color, bold = HIGH_SPREAD_TEXT_HEX, True
+        else:
+            status_color, bold = FLAT_PRICE_TEXT_HEX, False
+        requests.append(
+            {
+                "repeatCell": {
+                    "range": _grid_range(sheet_id, row_idx, row_idx + 1, 1, 2),
+                    "cell": {
+                        "userEnteredFormat": {
+                            "textFormat": {"bold": bold, "foregroundColor": _color(status_color)}
+                        }
+                    },
+                    "fields": "userEnteredFormat.textFormat",
                 }
             }
+        )
+
+    requests.append(
+        {
+            "repeatCell": {
+                "range": _grid_range(sheet_id, note_start_idx, note_end_idx, 0, col_count),
+                "cell": {
+                    "userEnteredFormat": {
+                        "textFormat": {"foregroundColor": _color(FLAT_PRICE_TEXT_HEX)}
+                    }
+                },
+                "fields": "userEnteredFormat.textFormat",
+            }
         }
-        for offset, row in reversed(list(enumerate(rows)))
-        if row and str(row[0]).strip() in REMOVED_SUMMARY_SOURCES
-    ]
-    if delete_requests:
-        spreadsheet.batch_update({"requests": delete_requests})
+    )
+    requests += _column_width_requests(sheet_id, SUMMARY_COLUMN_WIDTHS)
+    return requests
 
 
-def _ensure_summary_sheet(spreadsheet: object) -> object:
+def _ensure_summary_sheet(
+    spreadsheet: object,
+    *,
+    raw: pd.DataFrame | None = None,
+) -> object:
     try:
         summary = spreadsheet.worksheet(SUMMARY_SHEET_TITLE)
     except Exception as exc:
@@ -1780,22 +1943,52 @@ def _ensure_summary_sheet(spreadsheet: object) -> object:
             raise
         summary = spreadsheet.add_worksheet(title=SUMMARY_SHEET_TITLE, rows=30, cols=9)
     summary.update_acell("A1", SPREADSHEET_TITLE)
-    # Counters are refreshed every run so the labels keep matching the tabs.
-    # Nothing outside A3:B8 is written directly: row 9 is the merged link and
-    # the rows under it hold the source table.
+    # Counters stay in A3:B8 above the merged A9:B9 manual-update link.
     summary.update(
         values=SUMMARY_COUNTER_ROWS,
         range_name=SUMMARY_COUNTER_RANGE,
         value_input_option="USER_ENTERED",
     )
-    # Keep the smartphone update entry point even after future cloud refreshes.
-    # Only the top-left cell is written because A9:B9 is merged in the live sheet.
+    # Keep the smartphone update entry point (A9:B9 merged) and link to the public web index (C9).
     summary.update(
         values=[[MANUAL_UPDATE_FORMULA]],
         range_name="A9",
         value_input_option="USER_ENTERED",
     )
-    _remove_deprecated_summary_sources(spreadsheet, summary)
+    summary.update(
+        values=[[PUBLIC_MARKET_FORMULA]],
+        range_name="C9",
+        value_input_option="USER_ENTERED",
+    )
+
+    # Unmerge any legacy merged ranges below row 9 (e.g. old A14:F14 note merge)
+    # BEFORE writing the refreshed 価格取得元 table to A10:E21.
+    can_batch = hasattr(summary, "id") and hasattr(spreadsheet, "batch_update")
+    if can_batch:
+        spreadsheet.batch_update(
+            {
+                "requests": [
+                    {
+                        "unmergeCells": {
+                            "range": _grid_range(summary.id, 9, 30, 0, 6)
+                        }
+                    }
+                ]
+            }
+        )
+    if hasattr(summary, "batch_clear"):
+        summary.batch_clear(["A22:F30"])
+
+    source_rows = _summary_source_rows(raw)
+    summary.update(
+        values=source_rows,
+        range_name="A10",
+        value_input_option="USER_ENTERED",
+    )
+    if can_batch:
+        spreadsheet.batch_update(
+            {"requests": _summary_source_format_requests(summary.id, source_rows)}
+        )
     return summary
 
 
@@ -1945,7 +2138,7 @@ def publish_frames(
         {"requests": _history_format_requests(history.id, prepared_history)}
     )
 
-    _ensure_summary_sheet(spreadsheet)
+    _ensure_summary_sheet(spreadsheet, raw=raw)
 
     insights = None
     if not skip_prompts or web_market_json_path is not None:
