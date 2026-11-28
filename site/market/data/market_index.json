@@ -1,26 +1,26 @@
 {
   "schema_version": 2,
-  "as_of_date": "2026-11-27",
-  "fetched_at": "2026-11-27T23:16:33+09:00",
+  "as_of_date": "2026-11-28",
+  "fetched_at": "2026-11-28T22:32:25+09:00",
   "anonymized": true,
   "monitored_store_count": 6,
   "summary": {
     "total_boxes": 137,
     "multi_store_boxes": 91,
-    "three_plus_store_boxes": 62,
+    "three_plus_store_boxes": 68,
     "no_shrink_compared_boxes": 41,
-    "history_days": 74,
-    "mood_label": "強気（上昇優勢）",
-    "mood_summary": "前回比は上昇37銘柄・下落11銘柄・横ばい24銘柄／7日前比は上昇32銘柄・下落22銘柄・横ばい18銘柄で、相場全体は「強気（上昇優勢）」の地合いです。",
-    "prev_up_count": 37,
-    "prev_down_count": 11,
-    "prev_flat_count": 24,
-    "week_up_count": 32,
-    "week_down_count": 22,
-    "median_spread_rate": 0.0774,
+    "history_days": 75,
+    "mood_label": "弱気（下落優勢）",
+    "mood_summary": "前回比は上昇3銘柄・下落41銘柄・横ばい93銘柄／7日前比は上昇26銘柄・下落24銘柄・横ばい22銘柄で、相場全体は「弱気（下落優勢）」の地合いです。",
+    "prev_up_count": 3,
+    "prev_down_count": 41,
+    "prev_flat_count": 93,
+    "week_up_count": 26,
+    "week_down_count": 24,
+    "median_spread_rate": 0.0829,
     "max_spread_rate": 0.2537,
     "max_spread_yen": 500000,
-    "high_spread_box_count": 42,
+    "high_spread_box_count": 41,
     "series_counts": {
       "MEGA": 10,
       "SV": 27,
@@ -34,86 +34,70 @@
   "highlights": {
     "prev_gainers": [
       {
-        "product_name": "スペースジャグラー",
-        "latest_price_yen": 15000,
-        "reference_price_yen": 11000,
-        "reference_date": "2026-11-23",
-        "diff_yen": 4000,
-        "diff_rate": 0.3636
+        "product_name": "仰天のボルテッカー",
+        "latest_price_yen": 48500,
+        "reference_price_yen": 47000,
+        "reference_date": "2026-11-27",
+        "diff_yen": 1500,
+        "diff_rate": 0.0319
       },
       {
-        "product_name": "バトルリージョン",
-        "latest_price_yen": 12550,
-        "reference_price_yen": 9800,
-        "reference_date": "2026-11-23",
-        "diff_yen": 2750,
-        "diff_rate": 0.2806
+        "product_name": "シャイニートレジャーex",
+        "latest_price_yen": 14800,
+        "reference_price_yen": 14600,
+        "reference_date": "2026-11-27",
+        "diff_yen": 200,
+        "diff_rate": 0.0137
       },
       {
-        "product_name": "タイムゲイザー",
-        "latest_price_yen": 18750,
-        "reference_price_yen": 14700,
-        "reference_date": "2026-11-23",
-        "diff_yen": 4050,
-        "diff_rate": 0.2755
-      },
-      {
-        "product_name": "フュージョンアーツ",
-        "latest_price_yen": 57000,
-        "reference_price_yen": 45000,
-        "reference_date": "2026-11-23",
-        "diff_yen": 12000,
-        "diff_rate": 0.2667
-      },
-      {
-        "product_name": "白銀のランス",
-        "latest_price_yen": 18000,
-        "reference_price_yen": 15000,
-        "reference_date": "2026-09-13",
-        "diff_yen": 3000,
-        "diff_rate": 0.2
+        "product_name": "シャイニースターv",
+        "latest_price_yen": 20000,
+        "reference_price_yen": 19800,
+        "reference_date": "2026-11-27",
+        "diff_yen": 200,
+        "diff_rate": 0.0101
       }
     ],
     "prev_losers": [
       {
-        "product_name": "ダークファンタズマ",
-        "latest_price_yen": 19650,
-        "reference_price_yen": 24000,
-        "reference_date": "2026-11-23",
-        "diff_yen": -4350,
-        "diff_rate": -0.1812
+        "product_name": "ウルトラフォース",
+        "latest_price_yen": 92000,
+        "reference_price_yen": 100000,
+        "reference_date": "2026-11-27",
+        "diff_yen": -8000,
+        "diff_rate": -0.08
+      },
+      {
+        "product_name": "アビスアイ",
+        "latest_price_yen": 6800,
+        "reference_price_yen": 7250,
+        "reference_date": "2026-11-27",
+        "diff_yen": -450,
+        "diff_rate": -0.0621
       },
       {
         "product_name": "スペシャル ポケモンセンタートウホク",
-        "latest_price_yen": 8500,
-        "reference_price_yen": 10000,
-        "reference_date": "2026-11-25",
-        "diff_yen": -1500,
-        "diff_rate": -0.15
+        "latest_price_yen": 8000,
+        "reference_price_yen": 8500,
+        "reference_date": "2026-11-27",
+        "diff_yen": -500,
+        "diff_rate": -0.0588
       },
       {
-        "product_name": "コンセプトパック ポケットモンスターカードゲーム 20th anniversary",
-        "latest_price_yen": 2000000,
-        "reference_price_yen": 2200000,
-        "reference_date": "2026-11-26",
-        "diff_yen": -200000,
-        "diff_rate": -0.0909
+        "product_name": "スペシャル ポケモンセンターフクオカ",
+        "latest_price_yen": 8000,
+        "reference_price_yen": 8500,
+        "reference_date": "2026-11-27",
+        "diff_yen": -500,
+        "diff_rate": -0.0588
       },
       {
-        "product_name": "古代の咆哮",
-        "latest_price_yen": 10000,
-        "reference_price_yen": 11000,
-        "reference_date": "2026-11-26",
-        "diff_yen": -1000,
-        "diff_rate": -0.0909
-      },
-      {
-        "product_name": "ロストアビス",
-        "latest_price_yen": 45000,
-        "reference_price_yen": 47000,
-        "reference_date": "2026-11-25",
-        "diff_yen": -2000,
-        "diff_rate": -0.0426
+        "product_name": "ストームエメラルダ",
+        "latest_price_yen": 6600,
+        "reference_price_yen": 7000,
+        "reference_date": "2026-11-27",
+        "diff_yen": -400,
+        "diff_rate": -0.0571
       }
     ],
     "week_gainers": [
@@ -121,83 +105,83 @@
         "product_name": "スペースジャグラー",
         "latest_price_yen": 15000,
         "reference_price_yen": 11000,
-        "reference_date": "2026-11-20",
+        "reference_date": "2026-11-21",
         "diff_yen": 4000,
         "diff_rate": 0.3636
       },
       {
         "product_name": "バトルリージョン",
-        "latest_price_yen": 12550,
+        "latest_price_yen": 12500,
         "reference_price_yen": 9800,
-        "reference_date": "2026-11-20",
-        "diff_yen": 2750,
-        "diff_rate": 0.2806
-      },
-      {
-        "product_name": "タイムゲイザー",
-        "latest_price_yen": 18750,
-        "reference_price_yen": 14700,
-        "reference_date": "2026-11-20",
-        "diff_yen": 4050,
+        "reference_date": "2026-11-21",
+        "diff_yen": 2700,
         "diff_rate": 0.2755
       },
       {
-        "product_name": "フュージョンアーツ",
-        "latest_price_yen": 57000,
-        "reference_price_yen": 45000,
-        "reference_date": "2026-11-20",
-        "diff_yen": 12000,
-        "diff_rate": 0.2667
+        "product_name": "タイムゲイザー",
+        "latest_price_yen": 18500,
+        "reference_price_yen": 14700,
+        "reference_date": "2026-11-21",
+        "diff_yen": 3800,
+        "diff_rate": 0.2585
       },
       {
-        "product_name": "白銀のランス",
-        "latest_price_yen": 18000,
-        "reference_price_yen": 15000,
-        "reference_date": "2026-09-13",
-        "diff_yen": 3000,
-        "diff_rate": 0.2
+        "product_name": "フュージョンアーツ",
+        "latest_price_yen": 55000,
+        "reference_price_yen": 45000,
+        "reference_date": "2026-11-21",
+        "diff_yen": 10000,
+        "diff_rate": 0.2222
+      },
+      {
+        "product_name": "仰天のボルテッカー",
+        "latest_price_yen": 48500,
+        "reference_price_yen": 40000,
+        "reference_date": "2026-11-21",
+        "diff_yen": 8500,
+        "diff_rate": 0.2125
       }
     ],
     "week_losers": [
       {
         "product_name": "ストームエメラルダ",
-        "latest_price_yen": 7000,
+        "latest_price_yen": 6600,
         "reference_price_yen": 10800,
-        "reference_date": "2026-11-20",
-        "diff_yen": -3800,
-        "diff_rate": -0.3519
+        "reference_date": "2026-11-21",
+        "diff_yen": -4200,
+        "diff_rate": -0.3889
       },
       {
         "product_name": "30th celebration",
-        "latest_price_yen": 16000,
+        "latest_price_yen": 15500,
         "reference_price_yen": 24000,
-        "reference_date": "2026-11-20",
-        "diff_yen": -8000,
-        "diff_rate": -0.3333
-      },
-      {
-        "product_name": "ダークファンタズマ",
-        "latest_price_yen": 19650,
-        "reference_price_yen": 24000,
-        "reference_date": "2026-11-20",
-        "diff_yen": -4350,
-        "diff_rate": -0.1812
+        "reference_date": "2026-11-21",
+        "diff_yen": -8500,
+        "diff_rate": -0.3542
       },
       {
         "product_name": "スペシャル ポケモンセンタートウホク",
-        "latest_price_yen": 8500,
+        "latest_price_yen": 8000,
         "reference_price_yen": 10000,
-        "reference_date": "2026-11-20",
-        "diff_yen": -1500,
-        "diff_rate": -0.15
+        "reference_date": "2026-11-21",
+        "diff_yen": -2000,
+        "diff_rate": -0.2
       },
       {
-        "product_name": "コンセプトパック ポケットモンスターカードゲーム 20th anniversary",
-        "latest_price_yen": 2000000,
-        "reference_price_yen": 2200000,
-        "reference_date": "2026-11-20",
-        "diff_yen": -200000,
-        "diff_rate": -0.0909
+        "product_name": "ダークファンタズマ",
+        "latest_price_yen": 19500,
+        "reference_price_yen": 24000,
+        "reference_date": "2026-11-21",
+        "diff_yen": -4500,
+        "diff_rate": -0.1875
+      },
+      {
+        "product_name": "アビスアイ",
+        "latest_price_yen": 6800,
+        "reference_price_yen": 7800,
+        "reference_date": "2026-11-21",
+        "diff_yen": -1000,
+        "diff_rate": -0.1282
       }
     ]
   },
@@ -212,24 +196,28 @@
       "msrp_ratio": 1.17,
       "msrp_diff_yen": 1000,
       "high_yen": 7000,
-      "median_yen": 6500,
+      "median_yen": 7000,
       "low_yen": 6300,
-      "second_best_yen": 6500,
-      "top_lead_yen": 500,
+      "second_best_yen": 7000,
+      "top_lead_yen": 0,
       "spread_yen": 700,
       "spread_rate": 0.1,
       "store_count": 4,
       "condition_inferred": false,
-      "no_shrink_high_yen": 6200,
-      "no_shrink_gap_yen": 800,
-      "no_shrink_gap_rate": 0.1143,
-      "prev_diff_yen": null,
+      "no_shrink_high_yen": 6600,
+      "no_shrink_gap_yen": 400,
+      "no_shrink_gap_rate": 0.0571,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 8488,
       "yahoo_break_even_yen": 8042,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 7000
+        },
+        {
+          "date": "2026-11-28",
           "price": 7000
         }
       ]
@@ -241,29 +229,25 @@
       "set_code": "M6a",
       "release_date": "2026-09-16",
       "msrp_yen": 7200,
-      "msrp_ratio": 2.19,
-      "msrp_diff_yen": 8600,
-      "high_yen": 15800,
-      "median_yen": 15500,
+      "msrp_ratio": 2.15,
+      "msrp_diff_yen": 8300,
+      "high_yen": 15500,
+      "median_yen": 15000,
       "low_yen": 14000,
-      "second_best_yen": 15500,
+      "second_best_yen": 15200,
       "top_lead_yen": 300,
-      "spread_yen": 1800,
-      "spread_rate": 0.1139,
+      "spread_yen": 1500,
+      "spread_rate": 0.0968,
       "store_count": 5,
       "condition_inferred": false,
-      "no_shrink_high_yen": 14600,
-      "no_shrink_gap_yen": 1200,
-      "no_shrink_gap_rate": 0.0759,
+      "no_shrink_high_yen": 14500,
+      "no_shrink_gap_yen": 1000,
+      "no_shrink_gap_rate": 0.0645,
       "prev_diff_yen": -500,
-      "week_diff_yen": -8000,
-      "mercari_break_even_yen": 18266,
-      "yahoo_break_even_yen": 17305,
+      "week_diff_yen": -8500,
+      "mercari_break_even_yen": 17933,
+      "yahoo_break_even_yen": 16989,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 25500
-        },
         {
           "date": "2026-10-19",
           "price": 25500
@@ -379,6 +363,10 @@
         {
           "date": "2026-11-27",
           "price": 16000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 15500
         }
       ]
     },
@@ -389,29 +377,25 @@
       "set_code": "M6",
       "release_date": "2026-07-31",
       "msrp_yen": 6000,
-      "msrp_ratio": 1.17,
-      "msrp_diff_yen": 1000,
-      "high_yen": 7000,
-      "median_yen": 6750,
-      "low_yen": 6500,
-      "second_best_yen": 6900,
+      "msrp_ratio": 1.1,
+      "msrp_diff_yen": 600,
+      "high_yen": 6600,
+      "median_yen": 6500,
+      "low_yen": 6400,
+      "second_best_yen": 6500,
       "top_lead_yen": 100,
-      "spread_yen": 500,
-      "spread_rate": 0.0714,
+      "spread_yen": 200,
+      "spread_rate": 0.0303,
       "store_count": 4,
       "condition_inferred": false,
       "no_shrink_high_yen": 6000,
-      "no_shrink_gap_yen": 1000,
-      "no_shrink_gap_rate": 0.1429,
-      "prev_diff_yen": 0,
-      "week_diff_yen": -3800,
-      "mercari_break_even_yen": 8488,
-      "yahoo_break_even_yen": 8042,
+      "no_shrink_gap_yen": 600,
+      "no_shrink_gap_rate": 0.0909,
+      "prev_diff_yen": -400,
+      "week_diff_yen": -4200,
+      "mercari_break_even_yen": 8044,
+      "yahoo_break_even_yen": 7621,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 10800
-        },
         {
           "date": "2026-10-19",
           "price": 10800
@@ -527,6 +511,10 @@
         {
           "date": "2026-11-27",
           "price": 7000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 6600
         }
       ]
     },
@@ -537,29 +525,25 @@
       "set_code": "M5",
       "release_date": "2026-05-22",
       "msrp_yen": 6000,
-      "msrp_ratio": 1.17,
-      "msrp_diff_yen": 1000,
-      "high_yen": 7000,
-      "median_yen": 6800,
+      "msrp_ratio": 1.13,
+      "msrp_diff_yen": 800,
+      "high_yen": 6800,
+      "median_yen": 6600,
       "low_yen": 6000,
-      "second_best_yen": 7000,
-      "top_lead_yen": 0,
-      "spread_yen": 1000,
-      "spread_rate": 0.1429,
+      "second_best_yen": 6700,
+      "top_lead_yen": 100,
+      "spread_yen": 800,
+      "spread_rate": 0.1176,
       "store_count": 5,
       "condition_inferred": false,
-      "no_shrink_high_yen": 6700,
+      "no_shrink_high_yen": 6500,
       "no_shrink_gap_yen": 300,
-      "no_shrink_gap_rate": 0.0429,
-      "prev_diff_yen": 250,
-      "week_diff_yen": -650,
-      "mercari_break_even_yen": 8488,
-      "yahoo_break_even_yen": 8042,
+      "no_shrink_gap_rate": 0.0441,
+      "prev_diff_yen": -450,
+      "week_diff_yen": -1000,
+      "mercari_break_even_yen": 8266,
+      "yahoo_break_even_yen": 7831,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 9000
-        },
         {
           "date": "2026-10-19",
           "price": 9000
@@ -675,6 +659,10 @@
         {
           "date": "2026-11-27",
           "price": 7250
+        },
+        {
+          "date": "2026-11-28",
+          "price": 6800
         }
       ]
     },
@@ -685,29 +673,25 @@
       "set_code": "M4",
       "release_date": "2026-03-13",
       "msrp_yen": 5400,
-      "msrp_ratio": 1.46,
-      "msrp_diff_yen": 2500,
-      "high_yen": 7900,
-      "median_yen": 7800,
+      "msrp_ratio": 1.43,
+      "msrp_diff_yen": 2300,
+      "high_yen": 7700,
+      "median_yen": 7500,
       "low_yen": 6500,
-      "second_best_yen": 7800,
-      "top_lead_yen": 100,
-      "spread_yen": 1400,
-      "spread_rate": 0.1772,
+      "second_best_yen": 7500,
+      "top_lead_yen": 200,
+      "spread_yen": 1200,
+      "spread_rate": 0.1558,
       "store_count": 5,
       "condition_inferred": false,
-      "no_shrink_high_yen": 7500,
+      "no_shrink_high_yen": 7300,
       "no_shrink_gap_yen": 400,
-      "no_shrink_gap_rate": 0.0506,
-      "prev_diff_yen": 50,
-      "week_diff_yen": -450,
-      "mercari_break_even_yen": 9488,
-      "yahoo_break_even_yen": 8989,
+      "no_shrink_gap_rate": 0.0519,
+      "prev_diff_yen": -350,
+      "week_diff_yen": -800,
+      "mercari_break_even_yen": 9266,
+      "yahoo_break_even_yen": 8778,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 9000
-        },
         {
           "date": "2026-10-19",
           "price": 9000
@@ -823,6 +807,10 @@
         {
           "date": "2026-11-27",
           "price": 8050
+        },
+        {
+          "date": "2026-11-28",
+          "price": 7700
         }
       ]
     },
@@ -836,10 +824,10 @@
       "msrp_ratio": 1.39,
       "msrp_diff_yen": 2100,
       "high_yen": 7500,
-      "median_yen": 7300,
+      "median_yen": 7200,
       "low_yen": 6500,
-      "second_best_yen": 7450,
-      "top_lead_yen": 50,
+      "second_best_yen": 7300,
+      "top_lead_yen": 200,
       "spread_yen": 1000,
       "spread_rate": 0.1333,
       "store_count": 5,
@@ -847,15 +835,11 @@
       "no_shrink_high_yen": 7000,
       "no_shrink_gap_yen": 500,
       "no_shrink_gap_rate": 0.0667,
-      "prev_diff_yen": 200,
-      "week_diff_yen": 200,
+      "prev_diff_yen": -200,
+      "week_diff_yen": 0,
       "mercari_break_even_yen": 9044,
       "yahoo_break_even_yen": 8568,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 8300
-        },
         {
           "date": "2026-10-19",
           "price": 8300
@@ -971,6 +955,10 @@
         {
           "date": "2026-11-27",
           "price": 7700
+        },
+        {
+          "date": "2026-11-28",
+          "price": 7500
         }
       ]
     },
@@ -981,29 +969,25 @@
       "set_code": "M2a",
       "release_date": "2025-11-28",
       "msrp_yen": 5500,
-      "msrp_ratio": 2.0,
-      "msrp_diff_yen": 5500,
-      "high_yen": 11000,
-      "median_yen": 11000,
+      "msrp_ratio": 1.98,
+      "msrp_diff_yen": 5400,
+      "high_yen": 10900,
+      "median_yen": 10600,
       "low_yen": 10000,
-      "second_best_yen": 11000,
-      "top_lead_yen": 0,
-      "spread_yen": 1000,
-      "spread_rate": 0.0909,
-      "store_count": 5,
+      "second_best_yen": 10600,
+      "top_lead_yen": 300,
+      "spread_yen": 900,
+      "spread_rate": 0.0826,
+      "store_count": 4,
       "condition_inferred": false,
-      "no_shrink_high_yen": 10200,
-      "no_shrink_gap_yen": 800,
-      "no_shrink_gap_rate": 0.0727,
-      "prev_diff_yen": 100,
-      "week_diff_yen": -1100,
-      "mercari_break_even_yen": 12933,
-      "yahoo_break_even_yen": 12252,
+      "no_shrink_high_yen": 10000,
+      "no_shrink_gap_yen": 900,
+      "no_shrink_gap_rate": 0.0826,
+      "prev_diff_yen": -200,
+      "week_diff_yen": -1300,
+      "mercari_break_even_yen": 12822,
+      "yahoo_break_even_yen": 12147,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 12800
-        },
         {
           "date": "2026-10-19",
           "price": 12800
@@ -1119,6 +1103,10 @@
         {
           "date": "2026-11-27",
           "price": 11100
+        },
+        {
+          "date": "2026-11-28",
+          "price": 10900
         }
       ]
     },
@@ -1132,7 +1120,7 @@
       "msrp_ratio": 2.87,
       "msrp_diff_yen": 10100,
       "high_yen": 15500,
-      "median_yen": 15500,
+      "median_yen": 15000,
       "low_yen": 14000,
       "second_best_yen": 15500,
       "top_lead_yen": 0,
@@ -1144,14 +1132,10 @@
       "no_shrink_gap_yen": 2500,
       "no_shrink_gap_rate": 0.1613,
       "prev_diff_yen": -500,
-      "week_diff_yen": -1000,
+      "week_diff_yen": -1500,
       "mercari_break_even_yen": 17933,
       "yahoo_break_even_yen": 16989,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 18500
-        },
         {
           "date": "2026-10-19",
           "price": 18500
@@ -1267,6 +1251,10 @@
         {
           "date": "2026-11-27",
           "price": 16000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 15500
         }
       ]
     },
@@ -1280,10 +1268,10 @@
       "msrp_ratio": 1.3,
       "msrp_diff_yen": 1600,
       "high_yen": 7000,
-      "median_yen": 6800,
+      "median_yen": 6600,
       "low_yen": 6000,
-      "second_best_yen": 7000,
-      "top_lead_yen": 0,
+      "second_best_yen": 6800,
+      "top_lead_yen": 200,
       "spread_yen": 1000,
       "spread_rate": 0.1429,
       "store_count": 6,
@@ -1291,15 +1279,11 @@
       "no_shrink_high_yen": 6500,
       "no_shrink_gap_yen": 500,
       "no_shrink_gap_rate": 0.0714,
-      "prev_diff_yen": 0,
-      "week_diff_yen": -600,
+      "prev_diff_yen": -200,
+      "week_diff_yen": -800,
       "mercari_break_even_yen": 8488,
       "yahoo_break_even_yen": 8042,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 8500
-        },
         {
           "date": "2026-10-19",
           "price": 7800
@@ -1415,6 +1399,10 @@
         {
           "date": "2026-11-27",
           "price": 7200
+        },
+        {
+          "date": "2026-11-28",
+          "price": 7000
         }
       ]
     },
@@ -1425,29 +1413,25 @@
       "set_code": "M1S",
       "release_date": "2025-08-01",
       "msrp_yen": 5400,
-      "msrp_ratio": 1.26,
-      "msrp_diff_yen": 1400,
-      "high_yen": 6800,
-      "median_yen": 6600,
+      "msrp_ratio": 1.22,
+      "msrp_diff_yen": 1200,
+      "high_yen": 6600,
+      "median_yen": 6500,
       "low_yen": 6000,
-      "second_best_yen": 6600,
-      "top_lead_yen": 200,
-      "spread_yen": 800,
-      "spread_rate": 0.1176,
+      "second_best_yen": 6500,
+      "top_lead_yen": 100,
+      "spread_yen": 600,
+      "spread_rate": 0.0909,
       "store_count": 5,
       "condition_inferred": false,
-      "no_shrink_high_yen": 6000,
-      "no_shrink_gap_yen": 800,
-      "no_shrink_gap_rate": 0.1176,
-      "prev_diff_yen": -100,
-      "week_diff_yen": -100,
-      "mercari_break_even_yen": 8266,
-      "yahoo_break_even_yen": 7831,
+      "no_shrink_high_yen": 5500,
+      "no_shrink_gap_yen": 1100,
+      "no_shrink_gap_rate": 0.1667,
+      "prev_diff_yen": -300,
+      "week_diff_yen": -400,
+      "mercari_break_even_yen": 8044,
+      "yahoo_break_even_yen": 7621,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 8200
-        },
         {
           "date": "2026-10-19",
           "price": 8200
@@ -1563,6 +1547,10 @@
         {
           "date": "2026-11-27",
           "price": 6900
+        },
+        {
+          "date": "2026-11-28",
+          "price": 6600
         }
       ]
     },
@@ -1576,10 +1564,10 @@
       "msrp_ratio": 4.31,
       "msrp_diff_yen": 19200,
       "high_yen": 25000,
-      "median_yen": 24900,
+      "median_yen": 24650,
       "low_yen": 21000,
-      "second_best_yen": 25000,
-      "top_lead_yen": 0,
+      "second_best_yen": 24800,
+      "top_lead_yen": 200,
       "spread_yen": 4000,
       "spread_rate": 0.16,
       "store_count": 4,
@@ -1587,8 +1575,8 @@
       "no_shrink_high_yen": 25000,
       "no_shrink_gap_yen": 0,
       "no_shrink_gap_rate": 0.0,
-      "prev_diff_yen": 2000,
-      "week_diff_yen": 2000,
+      "prev_diff_yen": -200,
+      "week_diff_yen": 1800,
       "mercari_break_even_yen": 28488,
       "yahoo_break_even_yen": 26989,
       "trend": [
@@ -1671,6 +1659,10 @@
         {
           "date": "2026-11-27",
           "price": 25000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 24800
         }
       ]
     },
@@ -1681,29 +1673,25 @@
       "set_code": "SV11B",
       "release_date": "2025-06-06",
       "msrp_yen": 5800,
-      "msrp_ratio": 4.02,
-      "msrp_diff_yen": 17490,
-      "high_yen": 23290,
+      "msrp_ratio": 3.95,
+      "msrp_diff_yen": 17100,
+      "high_yen": 22900,
       "median_yen": 22000,
       "low_yen": 20000,
       "second_best_yen": 22000,
-      "top_lead_yen": 1290,
-      "spread_yen": 3290,
-      "spread_rate": 0.1413,
+      "top_lead_yen": 900,
+      "spread_yen": 2900,
+      "spread_rate": 0.1266,
       "store_count": 5,
       "condition_inferred": false,
       "no_shrink_high_yen": 21000,
-      "no_shrink_gap_yen": 2290,
-      "no_shrink_gap_rate": 0.0983,
-      "prev_diff_yen": 1290,
-      "week_diff_yen": 1290,
-      "mercari_break_even_yen": 26588,
-      "yahoo_break_even_yen": 25189,
+      "no_shrink_gap_yen": 1900,
+      "no_shrink_gap_rate": 0.083,
+      "prev_diff_yen": -390,
+      "week_diff_yen": 900,
+      "mercari_break_even_yen": 26155,
+      "yahoo_break_even_yen": 24778,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 21000
-        },
         {
           "date": "2026-10-19",
           "price": 21000
@@ -1819,6 +1807,10 @@
         {
           "date": "2026-11-27",
           "price": 23290
+        },
+        {
+          "date": "2026-11-28",
+          "price": 22900
         }
       ]
     },
@@ -1848,10 +1840,6 @@
       "mercari_break_even_yen": 24044,
       "yahoo_break_even_yen": 22778,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 19500
-        },
         {
           "date": "2026-10-19",
           "price": 19500
@@ -1966,6 +1954,10 @@
         },
         {
           "date": "2026-11-27",
+          "price": 21000
+        },
+        {
+          "date": "2026-11-28",
           "price": 21000
         }
       ]
@@ -2075,6 +2067,10 @@
         {
           "date": "2026-11-27",
           "price": 21000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 21000
         }
       ]
     },
@@ -2085,29 +2081,25 @@
       "set_code": "SV10",
       "release_date": "2025-04-18",
       "msrp_yen": 5400,
-      "msrp_ratio": 3.89,
-      "msrp_diff_yen": 15600,
-      "high_yen": 21000,
-      "median_yen": 20500,
+      "msrp_ratio": 3.8,
+      "msrp_diff_yen": 15100,
+      "high_yen": 20500,
+      "median_yen": 20000,
       "low_yen": 19000,
-      "second_best_yen": 20800,
-      "top_lead_yen": 200,
-      "spread_yen": 2000,
-      "spread_rate": 0.0952,
+      "second_best_yen": 20000,
+      "top_lead_yen": 500,
+      "spread_yen": 1500,
+      "spread_rate": 0.0732,
       "store_count": 5,
       "condition_inferred": false,
-      "no_shrink_high_yen": 19500,
+      "no_shrink_high_yen": 19000,
       "no_shrink_gap_yen": 1500,
-      "no_shrink_gap_rate": 0.0714,
-      "prev_diff_yen": -500,
-      "week_diff_yen": -500,
-      "mercari_break_even_yen": 24044,
-      "yahoo_break_even_yen": 22778,
+      "no_shrink_gap_rate": 0.0732,
+      "prev_diff_yen": -1000,
+      "week_diff_yen": -1500,
+      "mercari_break_even_yen": 23488,
+      "yahoo_break_even_yen": 22252,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 22000
-        },
         {
           "date": "2026-10-19",
           "price": 22000
@@ -2223,6 +2215,10 @@
         {
           "date": "2026-11-27",
           "price": 21500
+        },
+        {
+          "date": "2026-11-28",
+          "price": 20500
         }
       ]
     },
@@ -2236,7 +2232,7 @@
       "msrp_ratio": 3.24,
       "msrp_diff_yen": 12100,
       "high_yen": 17500,
-      "median_yen": 17500,
+      "median_yen": 17400,
       "low_yen": 14500,
       "second_best_yen": 17500,
       "top_lead_yen": 0,
@@ -2252,10 +2248,6 @@
       "mercari_break_even_yen": 20155,
       "yahoo_break_even_yen": 19094,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 15000
-        },
         {
           "date": "2026-10-19",
           "price": 15000
@@ -2371,6 +2363,10 @@
         {
           "date": "2026-11-27",
           "price": 17500
+        },
+        {
+          "date": "2026-11-28",
+          "price": 17500
         }
       ]
     },
@@ -2384,7 +2380,7 @@
       "msrp_ratio": 1.81,
       "msrp_diff_yen": 4400,
       "high_yen": 9800,
-      "median_yen": 9500,
+      "median_yen": 9350,
       "low_yen": 8000,
       "second_best_yen": 9500,
       "top_lead_yen": 300,
@@ -2392,18 +2388,14 @@
       "spread_rate": 0.1837,
       "store_count": 5,
       "condition_inferred": false,
-      "no_shrink_high_yen": 9000,
-      "no_shrink_gap_yen": 800,
-      "no_shrink_gap_rate": 0.0816,
-      "prev_diff_yen": 300,
+      "no_shrink_high_yen": 8800,
+      "no_shrink_gap_yen": 1000,
+      "no_shrink_gap_rate": 0.102,
+      "prev_diff_yen": 0,
       "week_diff_yen": 300,
       "mercari_break_even_yen": 11599,
       "yahoo_break_even_yen": 10989,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 10500
-        },
         {
           "date": "2026-10-19",
           "price": 10500
@@ -2519,6 +2511,10 @@
         {
           "date": "2026-11-27",
           "price": 9800
+        },
+        {
+          "date": "2026-11-28",
+          "price": 9800
         }
       ]
     },
@@ -2534,8 +2530,8 @@
       "high_yen": 15600,
       "median_yen": 15500,
       "low_yen": 14000,
-      "second_best_yen": 15600,
-      "top_lead_yen": 0,
+      "second_best_yen": 15500,
+      "top_lead_yen": 100,
       "spread_yen": 1600,
       "spread_rate": 0.1026,
       "store_count": 5,
@@ -2543,15 +2539,11 @@
       "no_shrink_high_yen": 14800,
       "no_shrink_gap_yen": 800,
       "no_shrink_gap_rate": 0.0513,
-      "prev_diff_yen": 150,
-      "week_diff_yen": -850,
+      "prev_diff_yen": -50,
+      "week_diff_yen": -900,
       "mercari_break_even_yen": 18044,
       "yahoo_break_even_yen": 17094,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 19500
-        },
         {
           "date": "2026-10-19",
           "price": 19500
@@ -2667,6 +2659,10 @@
         {
           "date": "2026-11-27",
           "price": 15650
+        },
+        {
+          "date": "2026-11-28",
+          "price": 15600
         }
       ]
     },
@@ -2682,8 +2678,8 @@
       "high_yen": 26800,
       "median_yen": 26600,
       "low_yen": 20000,
-      "second_best_yen": 26650,
-      "top_lead_yen": 150,
+      "second_best_yen": 26600,
+      "top_lead_yen": 200,
       "spread_yen": 6800,
       "spread_rate": 0.2537,
       "store_count": 5,
@@ -2691,15 +2687,11 @@
       "no_shrink_high_yen": 25800,
       "no_shrink_gap_yen": 1000,
       "no_shrink_gap_rate": 0.0373,
-      "prev_diff_yen": 200,
+      "prev_diff_yen": 0,
       "week_diff_yen": 200,
       "mercari_break_even_yen": 30488,
       "yahoo_break_even_yen": 28884,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 25000
-        },
         {
           "date": "2026-10-19",
           "price": 25000
@@ -2815,6 +2807,10 @@
         {
           "date": "2026-11-27",
           "price": 26800
+        },
+        {
+          "date": "2026-11-28",
+          "price": 26800
         }
       ]
     },
@@ -2828,10 +2824,10 @@
       "msrp_ratio": 2.83,
       "msrp_diff_yen": 9900,
       "high_yen": 15300,
-      "median_yen": 15100,
+      "median_yen": 15050,
       "low_yen": 14500,
-      "second_best_yen": 15150,
-      "top_lead_yen": 150,
+      "second_best_yen": 15100,
+      "top_lead_yen": 200,
       "spread_yen": 800,
       "spread_rate": 0.0523,
       "store_count": 5,
@@ -2839,15 +2835,11 @@
       "no_shrink_high_yen": 14300,
       "no_shrink_gap_yen": 1000,
       "no_shrink_gap_rate": 0.0654,
-      "prev_diff_yen": 300,
+      "prev_diff_yen": 0,
       "week_diff_yen": 300,
       "mercari_break_even_yen": 17711,
       "yahoo_break_even_yen": 16778,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 14500
-        },
         {
           "date": "2026-10-19",
           "price": 14500
@@ -2963,6 +2955,10 @@
         {
           "date": "2026-11-27",
           "price": 15300
+        },
+        {
+          "date": "2026-11-28",
+          "price": 15300
         }
       ]
     },
@@ -2973,29 +2969,25 @@
       "set_code": "SV7",
       "release_date": "2024-07-19",
       "msrp_yen": 5400,
-      "msrp_ratio": 2.06,
-      "msrp_diff_yen": 5700,
-      "high_yen": 11100,
+      "msrp_ratio": 2.04,
+      "msrp_diff_yen": 5600,
+      "high_yen": 11000,
       "median_yen": 11000,
       "low_yen": 10000,
       "second_best_yen": 11000,
-      "top_lead_yen": 100,
-      "spread_yen": 1100,
-      "spread_rate": 0.0991,
+      "top_lead_yen": 0,
+      "spread_yen": 1000,
+      "spread_rate": 0.0909,
       "store_count": 6,
       "condition_inferred": true,
       "no_shrink_high_yen": 11000,
-      "no_shrink_gap_yen": 100,
-      "no_shrink_gap_rate": 0.009,
-      "prev_diff_yen": 200,
-      "week_diff_yen": 200,
-      "mercari_break_even_yen": 13044,
-      "yahoo_break_even_yen": 12357,
+      "no_shrink_gap_yen": 0,
+      "no_shrink_gap_rate": 0.0,
+      "prev_diff_yen": -200,
+      "week_diff_yen": 0,
+      "mercari_break_even_yen": 12933,
+      "yahoo_break_even_yen": 12252,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 10000
-        },
         {
           "date": "2026-10-19",
           "price": 10000
@@ -3111,6 +3103,10 @@
         {
           "date": "2026-11-27",
           "price": 11200
+        },
+        {
+          "date": "2026-11-28",
+          "price": 11000
         }
       ]
     },
@@ -3121,24 +3117,24 @@
       "set_code": "SV6a",
       "release_date": "2024-06-07",
       "msrp_yen": 5400,
-      "msrp_ratio": 2.1,
-      "msrp_diff_yen": 5950,
-      "high_yen": 11350,
-      "median_yen": 11200,
+      "msrp_ratio": 2.04,
+      "msrp_diff_yen": 5600,
+      "high_yen": 11000,
+      "median_yen": 11000,
       "low_yen": 10000,
-      "second_best_yen": 11300,
-      "top_lead_yen": 50,
-      "spread_yen": 1350,
-      "spread_rate": 0.1189,
+      "second_best_yen": 11000,
+      "top_lead_yen": 0,
+      "spread_yen": 1000,
+      "spread_rate": 0.0909,
       "store_count": 5,
       "condition_inferred": true,
       "no_shrink_high_yen": 11000,
-      "no_shrink_gap_yen": 350,
-      "no_shrink_gap_rate": 0.0308,
-      "prev_diff_yen": 1850,
-      "week_diff_yen": 1850,
-      "mercari_break_even_yen": 13322,
-      "yahoo_break_even_yen": 12621,
+      "no_shrink_gap_yen": 0,
+      "no_shrink_gap_rate": 0.0,
+      "prev_diff_yen": -350,
+      "week_diff_yen": 1500,
+      "mercari_break_even_yen": 12933,
+      "yahoo_break_even_yen": 12252,
       "trend": [
         {
           "date": "2026-08-30",
@@ -3175,6 +3171,10 @@
         {
           "date": "2026-11-27",
           "price": 11350
+        },
+        {
+          "date": "2026-11-28",
+          "price": 11000
         }
       ]
     },
@@ -3185,29 +3185,25 @@
       "set_code": "SV6",
       "release_date": "2024-04-26",
       "msrp_yen": 5400,
-      "msrp_ratio": 2.06,
-      "msrp_diff_yen": 5700,
-      "high_yen": 11100,
-      "median_yen": 11000,
+      "msrp_ratio": 2.04,
+      "msrp_diff_yen": 5600,
+      "high_yen": 11000,
+      "median_yen": 10800,
       "low_yen": 10000,
-      "second_best_yen": 11000,
+      "second_best_yen": 10900,
       "top_lead_yen": 100,
-      "spread_yen": 1100,
-      "spread_rate": 0.0991,
+      "spread_yen": 1000,
+      "spread_rate": 0.0909,
       "store_count": 5,
       "condition_inferred": false,
       "no_shrink_high_yen": 8500,
-      "no_shrink_gap_yen": 2600,
-      "no_shrink_gap_rate": 0.2342,
-      "prev_diff_yen": 100,
-      "week_diff_yen": -400,
-      "mercari_break_even_yen": 13044,
-      "yahoo_break_even_yen": 12357,
+      "no_shrink_gap_yen": 2500,
+      "no_shrink_gap_rate": 0.2273,
+      "prev_diff_yen": -100,
+      "week_diff_yen": -500,
+      "mercari_break_even_yen": 12933,
+      "yahoo_break_even_yen": 12252,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 12000
-        },
         {
           "date": "2026-10-19",
           "price": 12000
@@ -3323,6 +3319,10 @@
         {
           "date": "2026-11-27",
           "price": 11100
+        },
+        {
+          "date": "2026-11-28",
+          "price": 11000
         }
       ]
     },
@@ -3333,29 +3333,25 @@
       "set_code": "SV5a",
       "release_date": "2024-03-22",
       "msrp_yen": 5400,
-      "msrp_ratio": 2.13,
-      "msrp_diff_yen": 6100,
-      "high_yen": 11500,
+      "msrp_ratio": 2.11,
+      "msrp_diff_yen": 6000,
+      "high_yen": 11400,
       "median_yen": 11300,
       "low_yen": 10500,
-      "second_best_yen": 11500,
+      "second_best_yen": 11400,
       "top_lead_yen": 0,
-      "spread_yen": 1000,
-      "spread_rate": 0.087,
+      "spread_yen": 900,
+      "spread_rate": 0.0789,
       "store_count": 5,
       "condition_inferred": false,
       "no_shrink_high_yen": 11000,
-      "no_shrink_gap_yen": 500,
-      "no_shrink_gap_rate": 0.0435,
-      "prev_diff_yen": 350,
-      "week_diff_yen": 350,
-      "mercari_break_even_yen": 13488,
-      "yahoo_break_even_yen": 12778,
+      "no_shrink_gap_yen": 400,
+      "no_shrink_gap_rate": 0.0351,
+      "prev_diff_yen": -450,
+      "week_diff_yen": -100,
+      "mercari_break_even_yen": 13377,
+      "yahoo_break_even_yen": 12673,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 11500
-        },
         {
           "date": "2026-10-19",
           "price": 11500
@@ -3471,6 +3467,10 @@
         {
           "date": "2026-11-27",
           "price": 11850
+        },
+        {
+          "date": "2026-11-28",
+          "price": 11400
         }
       ]
     },
@@ -3484,10 +3484,10 @@
       "msrp_ratio": 2.22,
       "msrp_diff_yen": 6600,
       "high_yen": 12000,
-      "median_yen": 11200,
+      "median_yen": 11000,
       "low_yen": 10000,
-      "second_best_yen": 11200,
-      "top_lead_yen": 800,
+      "second_best_yen": 11100,
+      "top_lead_yen": 900,
       "spread_yen": 2000,
       "spread_rate": 0.1667,
       "store_count": 5,
@@ -3496,14 +3496,10 @@
       "no_shrink_gap_yen": 3000,
       "no_shrink_gap_rate": 0.25,
       "prev_diff_yen": 0,
-      "week_diff_yen": 500,
+      "week_diff_yen": 0,
       "mercari_break_even_yen": 14044,
       "yahoo_break_even_yen": 13305,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 11500
-        },
         {
           "date": "2026-10-19",
           "price": 11500
@@ -3619,6 +3615,10 @@
         {
           "date": "2026-11-27",
           "price": 12000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 12000
         }
       ]
     },
@@ -3634,8 +3634,8 @@
       "high_yen": 10500,
       "median_yen": 10300,
       "low_yen": 9000,
-      "second_best_yen": 10400,
-      "top_lead_yen": 100,
+      "second_best_yen": 10350,
+      "top_lead_yen": 150,
       "spread_yen": 1500,
       "spread_rate": 0.1429,
       "store_count": 5,
@@ -3643,15 +3643,11 @@
       "no_shrink_high_yen": 9000,
       "no_shrink_gap_yen": 1500,
       "no_shrink_gap_rate": 0.1429,
-      "prev_diff_yen": 700,
-      "week_diff_yen": 700,
+      "prev_diff_yen": -200,
+      "week_diff_yen": 500,
       "mercari_break_even_yen": 12377,
       "yahoo_break_even_yen": 11726,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 10500
-        },
         {
           "date": "2026-10-19",
           "price": 10500
@@ -3767,6 +3763,10 @@
         {
           "date": "2026-11-27",
           "price": 10700
+        },
+        {
+          "date": "2026-11-28",
+          "price": 10500
         }
       ]
     },
@@ -3777,29 +3777,25 @@
       "set_code": "SV4a",
       "release_date": "2023-12-01",
       "msrp_yen": 5500,
-      "msrp_ratio": 2.65,
-      "msrp_diff_yen": 9100,
-      "high_yen": 14600,
-      "median_yen": 14350,
+      "msrp_ratio": 2.69,
+      "msrp_diff_yen": 9300,
+      "high_yen": 14800,
+      "median_yen": 14400,
       "low_yen": 13000,
       "second_best_yen": 14500,
-      "top_lead_yen": 100,
-      "spread_yen": 1600,
-      "spread_rate": 0.1096,
+      "top_lead_yen": 300,
+      "spread_yen": 1800,
+      "spread_rate": 0.1216,
       "store_count": 5,
       "condition_inferred": false,
       "no_shrink_high_yen": 13600,
-      "no_shrink_gap_yen": 1000,
-      "no_shrink_gap_rate": 0.0685,
-      "prev_diff_yen": 100,
-      "week_diff_yen": -1400,
-      "mercari_break_even_yen": 16933,
-      "yahoo_break_even_yen": 16042,
+      "no_shrink_gap_yen": 1200,
+      "no_shrink_gap_rate": 0.0811,
+      "prev_diff_yen": 200,
+      "week_diff_yen": -1200,
+      "mercari_break_even_yen": 17155,
+      "yahoo_break_even_yen": 16252,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 17200
-        },
         {
           "date": "2026-10-19",
           "price": 17200
@@ -3915,6 +3911,10 @@
         {
           "date": "2026-11-27",
           "price": 14600
+        },
+        {
+          "date": "2026-11-28",
+          "price": 14800
         }
       ]
     },
@@ -3928,26 +3928,22 @@
       "msrp_ratio": 1.85,
       "msrp_diff_yen": 4600,
       "high_yen": 10000,
-      "median_yen": 9750,
-      "low_yen": 9500,
+      "median_yen": 9600,
+      "low_yen": 9400,
       "second_best_yen": 10000,
       "top_lead_yen": 0,
-      "spread_yen": 500,
-      "spread_rate": 0.05,
+      "spread_yen": 600,
+      "spread_rate": 0.06,
       "store_count": 5,
       "condition_inferred": false,
       "no_shrink_high_yen": 8500,
       "no_shrink_gap_yen": 1500,
       "no_shrink_gap_rate": 0.15,
-      "prev_diff_yen": -1000,
+      "prev_diff_yen": 0,
       "week_diff_yen": -1000,
       "mercari_break_even_yen": 11822,
       "yahoo_break_even_yen": 11199,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 10500
-        },
         {
           "date": "2026-10-19",
           "price": 10500
@@ -4063,6 +4059,10 @@
         {
           "date": "2026-11-27",
           "price": 10000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 10000
         }
       ]
     },
@@ -4076,26 +4076,22 @@
       "msrp_ratio": 1.76,
       "msrp_diff_yen": 4100,
       "high_yen": 9500,
-      "median_yen": 9300,
+      "median_yen": 9200,
       "low_yen": 9000,
-      "second_best_yen": 9350,
-      "top_lead_yen": 150,
+      "second_best_yen": 9300,
+      "top_lead_yen": 200,
       "spread_yen": 500,
       "spread_rate": 0.0526,
       "store_count": 5,
       "condition_inferred": false,
-      "no_shrink_high_yen": 8000,
-      "no_shrink_gap_yen": 1500,
-      "no_shrink_gap_rate": 0.1579,
-      "prev_diff_yen": 100,
-      "week_diff_yen": 100,
+      "no_shrink_high_yen": 8200,
+      "no_shrink_gap_yen": 1300,
+      "no_shrink_gap_rate": 0.1368,
+      "prev_diff_yen": -100,
+      "week_diff_yen": 0,
       "mercari_break_even_yen": 11266,
       "yahoo_break_even_yen": 10673,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 9500
-        },
         {
           "date": "2026-10-19",
           "price": 9500
@@ -4211,6 +4207,10 @@
         {
           "date": "2026-11-27",
           "price": 9600
+        },
+        {
+          "date": "2026-11-28",
+          "price": 9500
         }
       ]
     },
@@ -4221,24 +4221,24 @@
       "set_code": "SV3a",
       "release_date": "2023-09-22",
       "msrp_yen": 5400,
-      "msrp_ratio": 2.66,
-      "msrp_diff_yen": 8950,
-      "high_yen": 14350,
-      "median_yen": 14300,
+      "msrp_ratio": 2.65,
+      "msrp_diff_yen": 8900,
+      "high_yen": 14300,
+      "median_yen": 14150,
       "low_yen": 13000,
       "second_best_yen": 14300,
-      "top_lead_yen": 50,
-      "spread_yen": 1350,
-      "spread_rate": 0.0941,
+      "top_lead_yen": 0,
+      "spread_yen": 1300,
+      "spread_rate": 0.0909,
       "store_count": 5,
       "condition_inferred": true,
       "no_shrink_high_yen": 14000,
-      "no_shrink_gap_yen": 350,
-      "no_shrink_gap_rate": 0.0244,
-      "prev_diff_yen": 600,
-      "week_diff_yen": 600,
-      "mercari_break_even_yen": 16655,
-      "yahoo_break_even_yen": 15778,
+      "no_shrink_gap_yen": 300,
+      "no_shrink_gap_rate": 0.021,
+      "prev_diff_yen": -300,
+      "week_diff_yen": 300,
+      "mercari_break_even_yen": 16599,
+      "yahoo_break_even_yen": 15726,
       "trend": [
         {
           "date": "2026-09-21",
@@ -4275,6 +4275,10 @@
         {
           "date": "2026-11-27",
           "price": 14600
+        },
+        {
+          "date": "2026-11-28",
+          "price": 14300
         }
       ]
     },
@@ -4288,10 +4292,10 @@
       "msrp_ratio": 3.43,
       "msrp_diff_yen": 13100,
       "high_yen": 18500,
-      "median_yen": 18300,
+      "median_yen": 18200,
       "low_yen": 16000,
-      "second_best_yen": 18350,
-      "top_lead_yen": 150,
+      "second_best_yen": 18300,
+      "top_lead_yen": 200,
       "spread_yen": 2500,
       "spread_rate": 0.1351,
       "store_count": 5,
@@ -4304,10 +4308,6 @@
       "mercari_break_even_yen": 21266,
       "yahoo_break_even_yen": 20147,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 18000
-        },
         {
           "date": "2026-10-19",
           "price": 18000
@@ -4423,6 +4423,10 @@
         {
           "date": "2026-11-27",
           "price": 18500
+        },
+        {
+          "date": "2026-11-28",
+          "price": 18500
         }
       ]
     },
@@ -4433,29 +4437,25 @@
       "set_code": "SV2a",
       "release_date": "2023-06-16",
       "msrp_yen": 5800,
-      "msrp_ratio": 7.76,
-      "msrp_diff_yen": 39200,
-      "high_yen": 45000,
-      "median_yen": 43500,
+      "msrp_ratio": 7.41,
+      "msrp_diff_yen": 37200,
+      "high_yen": 43000,
+      "median_yen": 41000,
       "low_yen": 35000,
-      "second_best_yen": 43800,
-      "top_lead_yen": 1200,
-      "spread_yen": 10000,
-      "spread_rate": 0.2222,
+      "second_best_yen": 41500,
+      "top_lead_yen": 1500,
+      "spread_yen": 8000,
+      "spread_rate": 0.186,
       "store_count": 5,
       "condition_inferred": false,
-      "no_shrink_high_yen": 41000,
-      "no_shrink_gap_yen": 4000,
-      "no_shrink_gap_rate": 0.0889,
-      "prev_diff_yen": 0,
-      "week_diff_yen": -2500,
-      "mercari_break_even_yen": 50711,
-      "yahoo_break_even_yen": 48042,
+      "no_shrink_high_yen": 40000,
+      "no_shrink_gap_yen": 3000,
+      "no_shrink_gap_rate": 0.0698,
+      "prev_diff_yen": -2000,
+      "week_diff_yen": -4500,
+      "mercari_break_even_yen": 48488,
+      "yahoo_break_even_yen": 45936,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 48500
-        },
         {
           "date": "2026-10-19",
           "price": 48500
@@ -4571,6 +4571,10 @@
         {
           "date": "2026-11-27",
           "price": 45000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 43000
         }
       ]
     },
@@ -4581,29 +4585,25 @@
       "set_code": "SV2P",
       "release_date": "2023-04-14",
       "msrp_yen": 5400,
-      "msrp_ratio": 1.94,
-      "msrp_diff_yen": 5100,
-      "high_yen": 10500,
+      "msrp_ratio": 1.92,
+      "msrp_diff_yen": 4950,
+      "high_yen": 10350,
       "median_yen": 10300,
       "low_yen": 9500,
-      "second_best_yen": 10400,
-      "top_lead_yen": 100,
-      "spread_yen": 1000,
-      "spread_rate": 0.0952,
+      "second_best_yen": 10300,
+      "top_lead_yen": 50,
+      "spread_yen": 850,
+      "spread_rate": 0.0821,
       "store_count": 5,
       "condition_inferred": false,
       "no_shrink_high_yen": 9600,
-      "no_shrink_gap_yen": 900,
-      "no_shrink_gap_rate": 0.0857,
-      "prev_diff_yen": 500,
-      "week_diff_yen": 0,
-      "mercari_break_even_yen": 12377,
-      "yahoo_break_even_yen": 11726,
+      "no_shrink_gap_yen": 750,
+      "no_shrink_gap_rate": 0.0725,
+      "prev_diff_yen": -150,
+      "week_diff_yen": -150,
+      "mercari_break_even_yen": 12211,
+      "yahoo_break_even_yen": 11568,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 10500
-        },
         {
           "date": "2026-10-19",
           "price": 10500
@@ -4719,6 +4719,10 @@
         {
           "date": "2026-11-27",
           "price": 10500
+        },
+        {
+          "date": "2026-11-28",
+          "price": 10350
         }
       ]
     },
@@ -4734,8 +4738,8 @@
       "high_yen": 10100,
       "median_yen": 10000,
       "low_yen": 9500,
-      "second_best_yen": 10050,
-      "top_lead_yen": 50,
+      "second_best_yen": 10000,
+      "top_lead_yen": 100,
       "spread_yen": 600,
       "spread_rate": 0.0594,
       "store_count": 5,
@@ -4743,15 +4747,11 @@
       "no_shrink_high_yen": 9400,
       "no_shrink_gap_yen": 700,
       "no_shrink_gap_rate": 0.0693,
-      "prev_diff_yen": 1150,
-      "week_diff_yen": 1150,
+      "prev_diff_yen": -50,
+      "week_diff_yen": 1100,
       "mercari_break_even_yen": 11933,
       "yahoo_break_even_yen": 11305,
       "trend": [
-        {
-          "date": "2026-10-14",
-          "price": 10000
-        },
         {
           "date": "2026-10-15",
           "price": 10000
@@ -4867,6 +4867,10 @@
         {
           "date": "2026-11-27",
           "price": 10150
+        },
+        {
+          "date": "2026-11-28",
+          "price": 10100
         }
       ]
     },
@@ -4880,7 +4884,7 @@
       "msrp_ratio": 3.33,
       "msrp_diff_yen": 12600,
       "high_yen": 18000,
-      "median_yen": 17610,
+      "median_yen": 17750,
       "low_yen": 16000,
       "second_best_yen": 17800,
       "top_lead_yen": 200,
@@ -4891,15 +4895,11 @@
       "no_shrink_high_yen": 16800,
       "no_shrink_gap_yen": 1200,
       "no_shrink_gap_rate": 0.0667,
-      "prev_diff_yen": 1500,
+      "prev_diff_yen": 0,
       "week_diff_yen": 1500,
       "mercari_break_even_yen": 20711,
       "yahoo_break_even_yen": 19621,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 16500
-        },
         {
           "date": "2026-10-19",
           "price": 16500
@@ -5015,6 +5015,10 @@
         {
           "date": "2026-11-27",
           "price": 18000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 18000
         }
       ]
     },
@@ -5028,10 +5032,10 @@
       "msrp_ratio": 2.5,
       "msrp_diff_yen": 8100,
       "high_yen": 13500,
-      "median_yen": 13400,
+      "median_yen": 13250,
       "low_yen": 12000,
-      "second_best_yen": 13500,
-      "top_lead_yen": 0,
+      "second_best_yen": 13400,
+      "top_lead_yen": 100,
       "spread_yen": 1500,
       "spread_rate": 0.1111,
       "store_count": 5,
@@ -5039,15 +5043,11 @@
       "no_shrink_high_yen": 12600,
       "no_shrink_gap_yen": 900,
       "no_shrink_gap_rate": 0.0667,
-      "prev_diff_yen": 500,
+      "prev_diff_yen": 0,
       "week_diff_yen": 500,
       "mercari_break_even_yen": 15711,
       "yahoo_break_even_yen": 14884,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 13200
-        },
         {
           "date": "2026-10-19",
           "price": 13200
@@ -5163,6 +5163,10 @@
         {
           "date": "2026-11-27",
           "price": 13500
+        },
+        {
+          "date": "2026-11-28",
+          "price": 13500
         }
       ]
     },
@@ -5176,10 +5180,10 @@
       "msrp_ratio": 1.76,
       "msrp_diff_yen": 4100,
       "high_yen": 9500,
-      "median_yen": 9500,
+      "median_yen": 9300,
       "low_yen": 9000,
-      "second_best_yen": 9500,
-      "top_lead_yen": 0,
+      "second_best_yen": 9350,
+      "top_lead_yen": 150,
       "spread_yen": 500,
       "spread_rate": 0.0526,
       "store_count": 5,
@@ -5187,15 +5191,11 @@
       "no_shrink_high_yen": 9000,
       "no_shrink_gap_yen": 500,
       "no_shrink_gap_rate": 0.0526,
-      "prev_diff_yen": 400,
-      "week_diff_yen": 400,
+      "prev_diff_yen": -400,
+      "week_diff_yen": 0,
       "mercari_break_even_yen": 11266,
       "yahoo_break_even_yen": 10673,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 9500
-        },
         {
           "date": "2026-10-19",
           "price": 9500
@@ -5311,6 +5311,10 @@
         {
           "date": "2026-11-27",
           "price": 9900
+        },
+        {
+          "date": "2026-11-28",
+          "price": 9500
         }
       ]
     },
@@ -5325,17 +5329,17 @@
       "msrp_diff_yen": 14500,
       "high_yen": 42000,
       "median_yen": 40000,
-      "low_yen": 40000,
+      "low_yen": 38000,
       "second_best_yen": 40000,
       "top_lead_yen": 2000,
-      "spread_yen": 2000,
-      "spread_rate": 0.0476,
+      "spread_yen": 4000,
+      "spread_rate": 0.0952,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": -2000,
       "week_diff_yen": null,
       "mercari_break_even_yen": 47377,
       "yahoo_break_even_yen": 44884,
@@ -5343,6 +5347,10 @@
         {
           "date": "2026-11-27",
           "price": 40000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 38000
         }
       ]
     },
@@ -5415,6 +5423,10 @@
         {
           "date": "2026-11-27",
           "price": 10000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 10000
         }
       ]
     },
@@ -5439,13 +5451,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 10488,
       "yahoo_break_even_yen": 9936,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 8800
+        },
+        {
+          "date": "2026-11-28",
           "price": 8800
         }
       ]
@@ -5457,24 +5473,24 @@
       "set_code": "PC",
       "release_date": "2025-08-01",
       "msrp_yen": 2090,
-      "msrp_ratio": 4.07,
-      "msrp_diff_yen": 6410,
-      "high_yen": 8500,
+      "msrp_ratio": 3.83,
+      "msrp_diff_yen": 5910,
+      "high_yen": 8000,
       "median_yen": 8000,
       "low_yen": 8000,
       "second_best_yen": 8000,
-      "top_lead_yen": 500,
-      "spread_yen": 500,
-      "spread_rate": 0.0588,
+      "top_lead_yen": 0,
+      "spread_yen": 0,
+      "spread_rate": 0.0,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": -1500,
-      "week_diff_yen": -1500,
-      "mercari_break_even_yen": 10155,
-      "yahoo_break_even_yen": 9621,
+      "prev_diff_yen": -500,
+      "week_diff_yen": -2000,
+      "mercari_break_even_yen": 9599,
+      "yahoo_break_even_yen": 9094,
       "trend": [
         {
           "date": "2026-11-18",
@@ -5511,6 +5527,10 @@
         {
           "date": "2026-11-27",
           "price": 8500
+        },
+        {
+          "date": "2026-11-28",
+          "price": 8000
         }
       ]
     },
@@ -5521,28 +5541,32 @@
       "set_code": "PC",
       "release_date": "2025-08-01",
       "msrp_yen": 2090,
-      "msrp_ratio": 4.07,
-      "msrp_diff_yen": 6410,
-      "high_yen": 8500,
+      "msrp_ratio": 3.83,
+      "msrp_diff_yen": 5910,
+      "high_yen": 8000,
       "median_yen": 8000,
       "low_yen": 8000,
       "second_best_yen": 8000,
-      "top_lead_yen": 500,
-      "spread_yen": 500,
-      "spread_rate": 0.0588,
+      "top_lead_yen": 0,
+      "spread_yen": 0,
+      "spread_rate": 0.0,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": -500,
       "week_diff_yen": null,
-      "mercari_break_even_yen": 10155,
-      "yahoo_break_even_yen": 9621,
+      "mercari_break_even_yen": 9599,
+      "yahoo_break_even_yen": 9094,
       "trend": [
         {
           "date": "2026-11-27",
           "price": 8500
+        },
+        {
+          "date": "2026-11-28",
+          "price": 8000
         }
       ]
     },
@@ -5567,13 +5591,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 18488,
       "yahoo_break_even_yen": 17515,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 16000
+        },
+        {
+          "date": "2026-11-28",
           "price": 16000
         }
       ]
@@ -5585,29 +5613,25 @@
       "set_code": "S12a",
       "release_date": "2022-12-02",
       "msrp_yen": 5500,
-      "msrp_ratio": 4.91,
-      "msrp_diff_yen": 21500,
-      "high_yen": 27000,
-      "median_yen": 26500,
+      "msrp_ratio": 4.84,
+      "msrp_diff_yen": 21100,
+      "high_yen": 26600,
+      "median_yen": 26000,
       "low_yen": 21000,
-      "second_best_yen": 26600,
-      "top_lead_yen": 400,
-      "spread_yen": 6000,
-      "spread_rate": 0.2222,
+      "second_best_yen": 26100,
+      "top_lead_yen": 500,
+      "spread_yen": 5600,
+      "spread_rate": 0.2105,
       "store_count": 5,
       "condition_inferred": false,
-      "no_shrink_high_yen": 25800,
-      "no_shrink_gap_yen": 1200,
-      "no_shrink_gap_rate": 0.0444,
-      "prev_diff_yen": 0,
-      "week_diff_yen": -500,
-      "mercari_break_even_yen": 30711,
-      "yahoo_break_even_yen": 29094,
+      "no_shrink_high_yen": 25200,
+      "no_shrink_gap_yen": 1400,
+      "no_shrink_gap_rate": 0.0526,
+      "prev_diff_yen": -400,
+      "week_diff_yen": -900,
+      "mercari_break_even_yen": 30266,
+      "yahoo_break_even_yen": 28673,
       "trend": [
-        {
-          "date": "2026-10-18",
-          "price": 26500
-        },
         {
           "date": "2026-10-19",
           "price": 26500
@@ -5723,6 +5747,10 @@
         {
           "date": "2026-11-27",
           "price": 27000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 26600
         }
       ]
     },
@@ -5736,24 +5764,28 @@
       "msrp_ratio": 4.04,
       "msrp_diff_yen": 15050,
       "high_yen": 20000,
-      "median_yen": 19925,
-      "low_yen": 19500,
+      "median_yen": 19750,
+      "low_yen": 19350,
       "second_best_yen": 20000,
       "top_lead_yen": 0,
-      "spread_yen": 500,
-      "spread_rate": 0.025,
+      "spread_yen": 650,
+      "spread_rate": 0.0325,
       "store_count": 4,
       "condition_inferred": true,
       "no_shrink_high_yen": 20000,
       "no_shrink_gap_yen": 0,
       "no_shrink_gap_rate": 0.0,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 22933,
       "yahoo_break_even_yen": 21726,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 20000
+        },
+        {
+          "date": "2026-11-28",
           "price": 20000
         }
       ]
@@ -5765,24 +5797,24 @@
       "set_code": "S11a",
       "release_date": "2022-09-02",
       "msrp_yen": 5200,
-      "msrp_ratio": 2.02,
-      "msrp_diff_yen": 5300,
-      "high_yen": 10500,
-      "median_yen": 10150,
+      "msrp_ratio": 1.98,
+      "msrp_diff_yen": 5100,
+      "high_yen": 10300,
+      "median_yen": 10050,
       "low_yen": 9500,
-      "second_best_yen": 10300,
+      "second_best_yen": 10100,
       "top_lead_yen": 200,
-      "spread_yen": 1000,
-      "spread_rate": 0.0952,
+      "spread_yen": 800,
+      "spread_rate": 0.0777,
       "store_count": 4,
       "condition_inferred": true,
       "no_shrink_high_yen": 9500,
-      "no_shrink_gap_yen": 1000,
-      "no_shrink_gap_rate": 0.0952,
-      "prev_diff_yen": 1200,
-      "week_diff_yen": 1200,
-      "mercari_break_even_yen": 12377,
-      "yahoo_break_even_yen": 11726,
+      "no_shrink_gap_yen": 800,
+      "no_shrink_gap_rate": 0.0777,
+      "prev_diff_yen": -400,
+      "week_diff_yen": 800,
+      "mercari_break_even_yen": 12155,
+      "yahoo_break_even_yen": 11515,
       "trend": [
         {
           "date": "2026-09-16",
@@ -5839,6 +5871,10 @@
         {
           "date": "2026-11-27",
           "price": 10700
+        },
+        {
+          "date": "2026-11-28",
+          "price": 10300
         }
       ]
     },
@@ -5849,29 +5885,25 @@
       "set_code": "S11",
       "release_date": "2022-07-15",
       "msrp_yen": 4950,
-      "msrp_ratio": 9.09,
-      "msrp_diff_yen": 40050,
-      "high_yen": 45000,
-      "median_yen": 44375,
-      "low_yen": 43750,
-      "second_best_yen": 43750,
-      "top_lead_yen": 1250,
-      "spread_yen": 1250,
-      "spread_rate": 0.0278,
+      "msrp_ratio": 8.99,
+      "msrp_diff_yen": 39550,
+      "high_yen": 44500,
+      "median_yen": 43625,
+      "low_yen": 42750,
+      "second_best_yen": 42750,
+      "top_lead_yen": 1750,
+      "spread_yen": 1750,
+      "spread_rate": 0.0393,
       "store_count": 2,
       "condition_inferred": false,
       "no_shrink_high_yen": 42000,
-      "no_shrink_gap_yen": 3000,
-      "no_shrink_gap_rate": 0.0667,
-      "prev_diff_yen": -2000,
-      "week_diff_yen": -2000,
-      "mercari_break_even_yen": 50711,
-      "yahoo_break_even_yen": 48042,
+      "no_shrink_gap_yen": 2500,
+      "no_shrink_gap_rate": 0.0562,
+      "prev_diff_yen": -500,
+      "week_diff_yen": -2500,
+      "mercari_break_even_yen": 50155,
+      "yahoo_break_even_yen": 47515,
       "trend": [
-        {
-          "date": "2026-10-17",
-          "price": 43000
-        },
         {
           "date": "2026-10-18",
           "price": 43000
@@ -5987,6 +6019,10 @@
         {
           "date": "2026-11-27",
           "price": 45000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 44500
         }
       ]
     },
@@ -6000,26 +6036,22 @@
       "msrp_ratio": 3.94,
       "msrp_diff_yen": 15300,
       "high_yen": 20500,
-      "median_yen": 19600,
-      "low_yen": 19500,
-      "second_best_yen": 19600,
-      "top_lead_yen": 900,
-      "spread_yen": 1000,
-      "spread_rate": 0.0488,
+      "median_yen": 19500,
+      "low_yen": 19350,
+      "second_best_yen": 19500,
+      "top_lead_yen": 1000,
+      "spread_yen": 1150,
+      "spread_rate": 0.0561,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": -150,
-      "week_diff_yen": -150,
+      "prev_diff_yen": -350,
+      "week_diff_yen": -500,
       "mercari_break_even_yen": 23488,
       "yahoo_break_even_yen": 22252,
       "trend": [
-        {
-          "date": "2026-10-14",
-          "price": 20000
-        },
         {
           "date": "2026-10-15",
           "price": 20000
@@ -6135,6 +6167,10 @@
         {
           "date": "2026-11-27",
           "price": 19850
+        },
+        {
+          "date": "2026-11-28",
+          "price": 19500
         }
       ]
     },
@@ -6148,26 +6184,22 @@
       "msrp_ratio": 3.94,
       "msrp_diff_yen": 15300,
       "high_yen": 20500,
-      "median_yen": 19650,
-      "low_yen": 19500,
-      "second_best_yen": 19650,
-      "top_lead_yen": 850,
-      "spread_yen": 1000,
-      "spread_rate": 0.0488,
+      "median_yen": 19500,
+      "low_yen": 19100,
+      "second_best_yen": 19500,
+      "top_lead_yen": 1000,
+      "spread_yen": 1400,
+      "spread_rate": 0.0683,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": -4350,
-      "week_diff_yen": -4350,
+      "prev_diff_yen": -150,
+      "week_diff_yen": -4500,
       "mercari_break_even_yen": 23488,
       "yahoo_break_even_yen": 22252,
       "trend": [
-        {
-          "date": "2026-09-01",
-          "price": 28000
-        },
         {
           "date": "2026-09-02",
           "price": 28000
@@ -6283,6 +6315,10 @@
         {
           "date": "2026-11-27",
           "price": 19650
+        },
+        {
+          "date": "2026-11-28",
+          "price": 19500
         }
       ]
     },
@@ -6293,29 +6329,25 @@
       "set_code": "S10D",
       "release_date": "2022-04-08",
       "msrp_yen": 4950,
-      "msrp_ratio": 3.79,
-      "msrp_diff_yen": 13800,
-      "high_yen": 18750,
-      "median_yen": 18500,
+      "msrp_ratio": 3.74,
+      "msrp_diff_yen": 13550,
+      "high_yen": 18500,
+      "median_yen": 18350,
       "low_yen": 18000,
-      "second_best_yen": 18500,
-      "top_lead_yen": 250,
-      "spread_yen": 750,
-      "spread_rate": 0.04,
+      "second_best_yen": 18350,
+      "top_lead_yen": 150,
+      "spread_yen": 500,
+      "spread_rate": 0.027,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 4050,
-      "week_diff_yen": 4050,
-      "mercari_break_even_yen": 21544,
-      "yahoo_break_even_yen": 20410,
+      "prev_diff_yen": -250,
+      "week_diff_yen": 3800,
+      "mercari_break_even_yen": 21266,
+      "yahoo_break_even_yen": 20147,
       "trend": [
-        {
-          "date": "2026-08-31",
-          "price": 13800
-        },
         {
           "date": "2026-09-01",
           "price": 13500
@@ -6431,6 +6463,10 @@
         {
           "date": "2026-11-27",
           "price": 18750
+        },
+        {
+          "date": "2026-11-28",
+          "price": 18500
         }
       ]
     },
@@ -6444,10 +6480,10 @@
       "msrp_ratio": 3.03,
       "msrp_diff_yen": 10050,
       "high_yen": 15000,
-      "median_yen": 14670,
+      "median_yen": 14800,
       "low_yen": 13000,
-      "second_best_yen": 14670,
-      "top_lead_yen": 330,
+      "second_best_yen": 14800,
+      "top_lead_yen": 200,
       "spread_yen": 2000,
       "spread_rate": 0.1333,
       "store_count": 3,
@@ -6455,15 +6491,11 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 4000,
+      "prev_diff_yen": 0,
       "week_diff_yen": 4000,
       "mercari_break_even_yen": 17377,
       "yahoo_break_even_yen": 16463,
       "trend": [
-        {
-          "date": "2026-08-31",
-          "price": 14500
-        },
         {
           "date": "2026-09-01",
           "price": 14000
@@ -6579,6 +6611,10 @@
         {
           "date": "2026-11-27",
           "price": 15000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 15000
         }
       ]
     },
@@ -6589,24 +6625,24 @@
       "set_code": "S9a",
       "release_date": "2022-02-25",
       "msrp_yen": 5200,
-      "msrp_ratio": 2.41,
-      "msrp_diff_yen": 7350,
-      "high_yen": 12550,
+      "msrp_ratio": 2.4,
+      "msrp_diff_yen": 7300,
+      "high_yen": 12500,
       "median_yen": 12500,
       "low_yen": 12500,
       "second_best_yen": 12500,
-      "top_lead_yen": 50,
-      "spread_yen": 50,
-      "spread_rate": 0.004,
+      "top_lead_yen": 0,
+      "spread_yen": 0,
+      "spread_rate": 0.0,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 2750,
-      "week_diff_yen": 2750,
-      "mercari_break_even_yen": 14655,
-      "yahoo_break_even_yen": 13884,
+      "prev_diff_yen": -50,
+      "week_diff_yen": 2700,
+      "mercari_break_even_yen": 14599,
+      "yahoo_break_even_yen": 13831,
       "trend": [
         {
           "date": "2026-08-29",
@@ -6679,6 +6715,10 @@
         {
           "date": "2026-11-27",
           "price": 12550
+        },
+        {
+          "date": "2026-11-28",
+          "price": 12500
         }
       ]
     },
@@ -6692,10 +6732,10 @@
       "msrp_ratio": 4.24,
       "msrp_diff_yen": 16050,
       "high_yen": 21000,
-      "median_yen": 21000,
+      "median_yen": 20850,
       "low_yen": 20500,
-      "second_best_yen": 21000,
-      "top_lead_yen": 0,
+      "second_best_yen": 20850,
+      "top_lead_yen": 150,
       "spread_yen": 500,
       "spread_rate": 0.0238,
       "store_count": 3,
@@ -6703,7 +6743,7 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 3000,
+      "prev_diff_yen": 0,
       "week_diff_yen": 3000,
       "mercari_break_even_yen": 24044,
       "yahoo_break_even_yen": 22778,
@@ -6771,6 +6811,10 @@
         {
           "date": "2026-11-27",
           "price": 21000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 21000
         }
       ]
     },
@@ -6784,19 +6828,19 @@
       "msrp_ratio": 5.27,
       "msrp_diff_yen": 23500,
       "high_yen": 29000,
-      "median_yen": 29000,
-      "low_yen": 26750,
-      "second_best_yen": 29000,
-      "top_lead_yen": 0,
-      "spread_yen": 2250,
-      "spread_rate": 0.0776,
+      "median_yen": 28000,
+      "low_yen": 26000,
+      "second_best_yen": 28000,
+      "top_lead_yen": 1000,
+      "spread_yen": 3000,
+      "spread_rate": 0.1034,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 4000,
-      "week_diff_yen": 4000,
+      "prev_diff_yen": -1000,
+      "week_diff_yen": 3000,
       "mercari_break_even_yen": 32933,
       "yahoo_break_even_yen": 31199,
       "trend": [
@@ -6863,6 +6907,10 @@
         {
           "date": "2026-11-27",
           "price": 29000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 28000
         }
       ]
     },
@@ -6873,29 +6921,25 @@
       "set_code": "S8a",
       "release_date": "2021-10-22",
       "msrp_yen": 4752,
-      "msrp_ratio": 11.26,
-      "msrp_diff_yen": 48748,
-      "high_yen": 53500,
-      "median_yen": 52625,
+      "msrp_ratio": 11.15,
+      "msrp_diff_yen": 48248,
+      "high_yen": 53000,
+      "median_yen": 52375,
       "low_yen": 51750,
       "second_best_yen": 51750,
-      "top_lead_yen": 1750,
-      "spread_yen": 1750,
-      "spread_rate": 0.0327,
+      "top_lead_yen": 1250,
+      "spread_yen": 1250,
+      "spread_rate": 0.0236,
       "store_count": 2,
       "condition_inferred": false,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 3500,
-      "week_diff_yen": 3500,
-      "mercari_break_even_yen": 60155,
-      "yahoo_break_even_yen": 56989,
+      "prev_diff_yen": -500,
+      "week_diff_yen": 3000,
+      "mercari_break_even_yen": 59599,
+      "yahoo_break_even_yen": 56463,
       "trend": [
-        {
-          "date": "2026-10-14",
-          "price": 50000
-        },
         {
           "date": "2026-10-15",
           "price": 50000
@@ -7011,6 +7055,10 @@
         {
           "date": "2026-11-27",
           "price": 53500
+        },
+        {
+          "date": "2026-11-28",
+          "price": 53000
         }
       ]
     },
@@ -7021,29 +7069,25 @@
       "set_code": "S8",
       "release_date": "2021-09-24",
       "msrp_yen": 4950,
-      "msrp_ratio": 11.52,
-      "msrp_diff_yen": 52050,
-      "high_yen": 57000,
-      "median_yen": 56000,
-      "low_yen": 55000,
-      "second_best_yen": 55000,
-      "top_lead_yen": 2000,
-      "spread_yen": 2000,
-      "spread_rate": 0.0351,
-      "store_count": 2,
-      "condition_inferred": false,
+      "msrp_ratio": 11.11,
+      "msrp_diff_yen": 50050,
+      "high_yen": 55000,
+      "median_yen": 54500,
+      "low_yen": 52000,
+      "second_best_yen": 54500,
+      "top_lead_yen": 500,
+      "spread_yen": 3000,
+      "spread_rate": 0.0545,
+      "store_count": 3,
+      "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 12000,
-      "week_diff_yen": 12000,
-      "mercari_break_even_yen": 64044,
-      "yahoo_break_even_yen": 60673,
+      "prev_diff_yen": -2000,
+      "week_diff_yen": 10000,
+      "mercari_break_even_yen": 61822,
+      "yahoo_break_even_yen": 58568,
       "trend": [
-        {
-          "date": "2026-09-05",
-          "price": 51000
-        },
         {
           "date": "2026-09-06",
           "price": 51000
@@ -7159,6 +7203,10 @@
         {
           "date": "2026-11-27",
           "price": 57000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 55000
         }
       ]
     },
@@ -7172,19 +7220,19 @@
       "msrp_ratio": 43.54,
       "msrp_diff_yen": 210550,
       "high_yen": 215500,
-      "median_yen": 215250,
-      "low_yen": 215000,
-      "second_best_yen": 215000,
-      "top_lead_yen": 500,
-      "spread_yen": 500,
-      "spread_rate": 0.0023,
-      "store_count": 2,
-      "condition_inferred": false,
+      "median_yen": 210000,
+      "low_yen": 210000,
+      "second_best_yen": 210000,
+      "top_lead_yen": 5500,
+      "spread_yen": 5500,
+      "spread_rate": 0.0255,
+      "store_count": 3,
+      "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": -2000,
-      "week_diff_yen": -2000,
+      "prev_diff_yen": -2500,
+      "week_diff_yen": -4500,
       "mercari_break_even_yen": 240155,
       "yahoo_break_even_yen": 227515,
       "trend": [
@@ -7291,6 +7339,10 @@
         {
           "date": "2026-11-27",
           "price": 218000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 215500
         }
       ]
     },
@@ -7305,25 +7357,21 @@
       "msrp_diff_yen": 13050,
       "high_yen": 18000,
       "median_yen": 18000,
-      "low_yen": 17900,
+      "low_yen": 17600,
       "second_best_yen": 18000,
       "top_lead_yen": 0,
-      "spread_yen": 100,
-      "spread_rate": 0.0056,
+      "spread_yen": 400,
+      "spread_rate": 0.0222,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 2000,
+      "prev_diff_yen": 0,
       "week_diff_yen": 2000,
       "mercari_break_even_yen": 20711,
       "yahoo_break_even_yen": 19621,
       "trend": [
-        {
-          "date": "2026-08-31",
-          "price": 16000
-        },
         {
           "date": "2026-09-01",
           "price": 16000
@@ -7439,6 +7487,10 @@
         {
           "date": "2026-11-27",
           "price": 18000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 18000
         }
       ]
     },
@@ -7449,24 +7501,24 @@
       "set_code": "S6a",
       "release_date": "2021-05-28",
       "msrp_yen": 4950,
-      "msrp_ratio": 24.55,
-      "msrp_diff_yen": 116550,
-      "high_yen": 121500,
-      "median_yen": 120750,
-      "low_yen": 120000,
-      "second_best_yen": 120000,
-      "top_lead_yen": 1500,
-      "spread_yen": 1500,
-      "spread_rate": 0.0123,
-      "store_count": 2,
-      "condition_inferred": false,
+      "msrp_ratio": 24.24,
+      "msrp_diff_yen": 115050,
+      "high_yen": 120000,
+      "median_yen": 118000,
+      "low_yen": 118000,
+      "second_best_yen": 118000,
+      "top_lead_yen": 2000,
+      "spread_yen": 2000,
+      "spread_rate": 0.0167,
+      "store_count": 3,
+      "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 11500,
-      "week_diff_yen": 11500,
-      "mercari_break_even_yen": 135711,
-      "yahoo_break_even_yen": 128568,
+      "prev_diff_yen": -1500,
+      "week_diff_yen": 10000,
+      "mercari_break_even_yen": 134044,
+      "yahoo_break_even_yen": 126989,
       "trend": [
         {
           "date": "2026-08-23",
@@ -7579,6 +7631,10 @@
         {
           "date": "2026-11-27",
           "price": 121500
+        },
+        {
+          "date": "2026-11-28",
+          "price": 120000
         }
       ]
     },
@@ -7592,18 +7648,18 @@
       "msrp_ratio": 4.06,
       "msrp_diff_yen": 15150,
       "high_yen": 20100,
-      "median_yen": 20050,
-      "low_yen": 20000,
+      "median_yen": 20000,
+      "low_yen": 19000,
       "second_best_yen": 20000,
       "top_lead_yen": 100,
-      "spread_yen": 100,
-      "spread_rate": 0.005,
-      "store_count": 2,
-      "condition_inferred": false,
+      "spread_yen": 1100,
+      "spread_rate": 0.0547,
+      "store_count": 3,
+      "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 2600,
+      "prev_diff_yen": 0,
       "week_diff_yen": 2600,
       "mercari_break_even_yen": 23044,
       "yahoo_break_even_yen": 21831,
@@ -7687,6 +7743,10 @@
         {
           "date": "2026-11-27",
           "price": 20100
+        },
+        {
+          "date": "2026-11-28",
+          "price": 20100
         }
       ]
     },
@@ -7700,18 +7760,18 @@
       "msrp_ratio": 3.64,
       "msrp_diff_yen": 13050,
       "high_yen": 18000,
-      "median_yen": 17950,
-      "low_yen": 17900,
+      "median_yen": 17900,
+      "low_yen": 17000,
       "second_best_yen": 17900,
       "top_lead_yen": 100,
-      "spread_yen": 100,
-      "spread_rate": 0.0056,
-      "store_count": 2,
-      "condition_inferred": false,
+      "spread_yen": 1000,
+      "spread_rate": 0.0556,
+      "store_count": 3,
+      "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 3000,
+      "prev_diff_yen": 0,
       "week_diff_yen": 3000,
       "mercari_break_even_yen": 20711,
       "yahoo_break_even_yen": 19621,
@@ -7763,6 +7823,10 @@
         {
           "date": "2026-11-27",
           "price": 18000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 18000
         }
       ]
     },
@@ -7773,29 +7837,25 @@
       "set_code": "S5a",
       "release_date": "2021-03-19",
       "msrp_yen": 4950,
-      "msrp_ratio": 8.48,
-      "msrp_diff_yen": 37050,
-      "high_yen": 42000,
+      "msrp_ratio": 8.08,
+      "msrp_diff_yen": 35050,
+      "high_yen": 40000,
       "median_yen": 40000,
       "low_yen": 37750,
       "second_best_yen": 40000,
-      "top_lead_yen": 2000,
-      "spread_yen": 4250,
-      "spread_rate": 0.1012,
+      "top_lead_yen": 0,
+      "spread_yen": 2250,
+      "spread_rate": 0.0563,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 2000,
+      "prev_diff_yen": 0,
       "week_diff_yen": 2000,
-      "mercari_break_even_yen": 47377,
-      "yahoo_break_even_yen": 44884,
+      "mercari_break_even_yen": 45155,
+      "yahoo_break_even_yen": 42778,
       "trend": [
-        {
-          "date": "2026-10-14",
-          "price": 38000
-        },
         {
           "date": "2026-10-15",
           "price": 38000
@@ -7911,6 +7971,10 @@
         {
           "date": "2026-11-27",
           "price": 40000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 40000
         }
       ]
     },
@@ -7935,13 +7999,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 47377,
       "yahoo_break_even_yen": 44884,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 40000
+        },
+        {
+          "date": "2026-11-28",
           "price": 40000
         }
       ]
@@ -7957,23 +8025,27 @@
       "msrp_diff_yen": 37050,
       "high_yen": 42000,
       "median_yen": 40000,
-      "low_yen": 38500,
+      "low_yen": 38000,
       "second_best_yen": 40000,
       "top_lead_yen": 2000,
-      "spread_yen": 3500,
-      "spread_rate": 0.0833,
+      "spread_yen": 4000,
+      "spread_rate": 0.0952,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 47377,
       "yahoo_break_even_yen": 44884,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 40000
+        },
+        {
+          "date": "2026-11-28",
           "price": 40000
         }
       ]
@@ -7985,28 +8057,32 @@
       "set_code": "S4a",
       "release_date": "2020-11-20",
       "msrp_yen": 5500,
-      "msrp_ratio": 3.6,
-      "msrp_diff_yen": 14300,
-      "high_yen": 19800,
-      "median_yen": 19750,
+      "msrp_ratio": 3.64,
+      "msrp_diff_yen": 14500,
+      "high_yen": 20000,
+      "median_yen": 19650,
       "low_yen": 19000,
-      "second_best_yen": 19750,
-      "top_lead_yen": 50,
-      "spread_yen": 800,
-      "spread_rate": 0.0404,
+      "second_best_yen": 19650,
+      "top_lead_yen": 350,
+      "spread_yen": 1000,
+      "spread_rate": 0.05,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 200,
       "week_diff_yen": null,
-      "mercari_break_even_yen": 22711,
-      "yahoo_break_even_yen": 21515,
+      "mercari_break_even_yen": 22933,
+      "yahoo_break_even_yen": 21726,
       "trend": [
         {
           "date": "2026-11-27",
           "price": 19800
+        },
+        {
+          "date": "2026-11-28",
+          "price": 20000
         }
       ]
     },
@@ -8017,29 +8093,25 @@
       "set_code": "S4",
       "release_date": "2020-09-18",
       "msrp_yen": 4950,
-      "msrp_ratio": 9.49,
-      "msrp_diff_yen": 42050,
-      "high_yen": 47000,
-      "median_yen": 46250,
-      "low_yen": 45500,
-      "second_best_yen": 45500,
+      "msrp_ratio": 9.8,
+      "msrp_diff_yen": 43550,
+      "high_yen": 48500,
+      "median_yen": 47000,
+      "low_yen": 45250,
+      "second_best_yen": 47000,
       "top_lead_yen": 1500,
-      "spread_yen": 1500,
-      "spread_rate": 0.0319,
-      "store_count": 2,
-      "condition_inferred": false,
+      "spread_yen": 3250,
+      "spread_rate": 0.067,
+      "store_count": 3,
+      "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": 7000,
-      "week_diff_yen": 7000,
-      "mercari_break_even_yen": 52933,
-      "yahoo_break_even_yen": 50147,
+      "prev_diff_yen": 1500,
+      "week_diff_yen": 8500,
+      "mercari_break_even_yen": 54599,
+      "yahoo_break_even_yen": 51726,
       "trend": [
-        {
-          "date": "2026-10-14",
-          "price": 40000
-        },
         {
           "date": "2026-10-15",
           "price": 40000
@@ -8155,6 +8227,10 @@
         {
           "date": "2026-11-27",
           "price": 47000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 48500
         }
       ]
     },
@@ -8168,24 +8244,28 @@
       "msrp_ratio": 5.77,
       "msrp_diff_yen": 24800,
       "high_yen": 30000,
-      "median_yen": 29000,
-      "low_yen": 28000,
-      "second_best_yen": 28000,
-      "top_lead_yen": 2000,
-      "spread_yen": 2000,
-      "spread_rate": 0.0667,
+      "median_yen": 28750,
+      "low_yen": 27500,
+      "second_best_yen": 27500,
+      "top_lead_yen": 2500,
+      "spread_yen": 2500,
+      "spread_rate": 0.0833,
       "store_count": 2,
       "condition_inferred": false,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 34044,
       "yahoo_break_even_yen": 32252,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 30000
+        },
+        {
+          "date": "2026-11-28",
           "price": 30000
         }
       ]
@@ -8211,13 +8291,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 35711,
       "yahoo_break_even_yen": 33831,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 31500
+        },
+        {
+          "date": "2026-11-28",
           "price": 31500
         }
       ]
@@ -8243,13 +8327,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 39599,
       "yahoo_break_even_yen": 37515,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 35000
+        },
+        {
+          "date": "2026-11-28",
           "price": 35000
         }
       ]
@@ -8275,13 +8363,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 43488,
       "yahoo_break_even_yen": 41199,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 38500
+        },
+        {
+          "date": "2026-11-28",
           "price": 38500
         }
       ]
@@ -8307,13 +8399,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 100711,
       "yahoo_break_even_yen": 95410,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 90000
+        },
+        {
+          "date": "2026-11-28",
           "price": 90000
         }
       ]
@@ -8325,28 +8421,32 @@
       "set_code": "S1H",
       "release_date": "2019-12-06",
       "msrp_yen": 4950,
-      "msrp_ratio": 10.2,
-      "msrp_diff_yen": 45550,
-      "high_yen": 50500,
-      "median_yen": 49250,
+      "msrp_ratio": 10.15,
+      "msrp_diff_yen": 45300,
+      "high_yen": 50250,
+      "median_yen": 49125,
       "low_yen": 48000,
       "second_best_yen": 48000,
-      "top_lead_yen": 2500,
-      "spread_yen": 2500,
-      "spread_rate": 0.0495,
+      "top_lead_yen": 2250,
+      "spread_yen": 2250,
+      "spread_rate": 0.0448,
       "store_count": 2,
       "condition_inferred": false,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": -250,
       "week_diff_yen": null,
-      "mercari_break_even_yen": 56822,
-      "yahoo_break_even_yen": 53831,
+      "mercari_break_even_yen": 56544,
+      "yahoo_break_even_yen": 53568,
       "trend": [
         {
           "date": "2026-11-27",
           "price": 50500
+        },
+        {
+          "date": "2026-11-28",
+          "price": 50250
         }
       ]
     },
@@ -8371,13 +8471,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 35711,
       "yahoo_break_even_yen": 33831,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 31500
+        },
+        {
+          "date": "2026-11-28",
           "price": 31500
         }
       ]
@@ -8392,24 +8496,28 @@
       "msrp_ratio": 32.73,
       "msrp_diff_yen": 174500,
       "high_yen": 180000,
-      "median_yen": 179000,
-      "low_yen": 178000,
-      "second_best_yen": 178000,
-      "top_lead_yen": 2000,
-      "spread_yen": 2000,
-      "spread_rate": 0.0111,
+      "median_yen": 178750,
+      "low_yen": 177500,
+      "second_best_yen": 177500,
+      "top_lead_yen": 2500,
+      "spread_yen": 2500,
+      "spread_rate": 0.0139,
       "store_count": 2,
       "condition_inferred": false,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 200711,
       "yahoo_break_even_yen": 190147,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 180000
+        },
+        {
+          "date": "2026-11-28",
           "price": 180000
         }
       ]
@@ -8435,13 +8543,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 65155,
       "yahoo_break_even_yen": 61726,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 58000
+        },
+        {
+          "date": "2026-11-28",
           "price": 58000
         }
       ]
@@ -8467,13 +8579,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 167377,
       "yahoo_break_even_yen": 158568,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 150000
+        },
+        {
+          "date": "2026-11-28",
           "price": 150000
         }
       ]
@@ -8499,13 +8615,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 134044,
       "yahoo_break_even_yen": 126989,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 120000
+        },
+        {
+          "date": "2026-11-28",
           "price": 120000
         }
       ]
@@ -8531,13 +8651,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 198488,
       "yahoo_break_even_yen": 188042,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 178000
+        },
+        {
+          "date": "2026-11-28",
           "price": 178000
         }
       ]
@@ -8563,13 +8687,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 134044,
       "yahoo_break_even_yen": 126989,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 120000
+        },
+        {
+          "date": "2026-11-28",
           "price": 120000
         }
       ]
@@ -8595,13 +8723,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 95155,
       "yahoo_break_even_yen": 90147,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 85000
+        },
+        {
+          "date": "2026-11-28",
           "price": 85000
         }
       ]
@@ -8627,13 +8759,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 122933,
       "yahoo_break_even_yen": 116463,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 110000
+        },
+        {
+          "date": "2026-11-28",
           "price": 110000
         }
       ]
@@ -8659,13 +8795,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 47377,
       "yahoo_break_even_yen": 44884,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 42000
+        },
+        {
+          "date": "2026-11-28",
           "price": 42000
         }
       ]
@@ -8691,13 +8831,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 111822,
       "yahoo_break_even_yen": 105936,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 91000
+        },
+        {
+          "date": "2026-11-28",
           "price": 91000
         }
       ]
@@ -8712,24 +8856,28 @@
       "msrp_ratio": 84.85,
       "msrp_diff_yen": 415050,
       "high_yen": 420000,
-      "median_yen": 415000,
-      "low_yen": 400000,
-      "second_best_yen": 415000,
-      "top_lead_yen": 5000,
-      "spread_yen": 20000,
-      "spread_rate": 0.0476,
+      "median_yen": 420000,
+      "low_yen": 415000,
+      "second_best_yen": 420000,
+      "top_lead_yen": 0,
+      "spread_yen": 5000,
+      "spread_rate": 0.0119,
       "store_count": 3,
       "condition_inferred": true,
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 467377,
       "yahoo_break_even_yen": 442778,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 420000
+        },
+        {
+          "date": "2026-11-28",
           "price": 420000
         }
       ]
@@ -8755,13 +8903,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 195155,
       "yahoo_break_even_yen": 184884,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 175000
+        },
+        {
+          "date": "2026-11-28",
           "price": 175000
         }
       ]
@@ -8787,13 +8939,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 39599,
       "yahoo_break_even_yen": 37515,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 35000
+        },
+        {
+          "date": "2026-11-28",
           "price": 35000
         }
       ]
@@ -8819,13 +8975,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 125711,
       "yahoo_break_even_yen": 119094,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 112500
+        },
+        {
+          "date": "2026-11-28",
           "price": 112500
         }
       ]
@@ -8851,13 +9011,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 55155,
       "yahoo_break_even_yen": 52252,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 49000
+        },
+        {
+          "date": "2026-11-28",
           "price": 49000
         }
       ]
@@ -8883,13 +9047,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 70155,
       "yahoo_break_even_yen": 66463,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 62500
+        },
+        {
+          "date": "2026-11-28",
           "price": 62500
         }
       ]
@@ -8915,13 +9083,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 400711,
       "yahoo_break_even_yen": 379621,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 360000
+        },
+        {
+          "date": "2026-11-28",
           "price": 360000
         }
       ]
@@ -8947,13 +9119,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 89599,
       "yahoo_break_even_yen": 84884,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 80000
+        },
+        {
+          "date": "2026-11-28",
           "price": 80000
         }
       ]
@@ -8979,13 +9155,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 117377,
       "yahoo_break_even_yen": 111199,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 105000
+        },
+        {
+          "date": "2026-11-28",
           "price": 105000
         }
       ]
@@ -9011,13 +9191,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 65155,
       "yahoo_break_even_yen": 61726,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 58000
+        },
+        {
+          "date": "2026-11-28",
           "price": 58000
         }
       ]
@@ -9043,7 +9227,7 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": -8000,
       "week_diff_yen": null,
       "mercari_break_even_yen": 102933,
       "yahoo_break_even_yen": 97515,
@@ -9051,6 +9235,10 @@
         {
           "date": "2026-11-27",
           "price": 100000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 92000
         }
       ]
     },
@@ -9075,13 +9263,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 134044,
       "yahoo_break_even_yen": 126989,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 120000
+        },
+        {
+          "date": "2026-11-28",
           "price": 120000
         }
       ]
@@ -9107,13 +9299,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 78488,
       "yahoo_break_even_yen": 74357,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 70000
+        },
+        {
+          "date": "2026-11-28",
           "price": 70000
         }
       ]
@@ -9139,13 +9335,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 1334044,
       "yahoo_break_even_yen": 1263831,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 1200000
+        },
+        {
+          "date": "2026-11-28",
           "price": 1200000
         }
       ]
@@ -9171,13 +9371,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 289599,
       "yahoo_break_even_yen": 274357,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 260000
+        },
+        {
+          "date": "2026-11-28",
           "price": 260000
         }
       ]
@@ -9203,13 +9407,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 211822,
       "yahoo_break_even_yen": 200673,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 190000
+        },
+        {
+          "date": "2026-11-28",
           "price": 190000
         }
       ]
@@ -9235,13 +9443,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 834044,
       "yahoo_break_even_yen": 790147,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 750000
+        },
+        {
+          "date": "2026-11-28",
           "price": 750000
         }
       ]
@@ -9267,13 +9479,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 656266,
       "yahoo_break_even_yen": 621726,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 590000
+        },
+        {
+          "date": "2026-11-28",
           "price": 590000
         }
       ]
@@ -9299,13 +9515,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 245155,
       "yahoo_break_even_yen": 232252,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 220000
+        },
+        {
+          "date": "2026-11-28",
           "price": 220000
         }
       ]
@@ -9331,13 +9551,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 645155,
       "yahoo_break_even_yen": 611199,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 580000
+        },
+        {
+          "date": "2026-11-28",
           "price": 580000
         }
       ]
@@ -9363,13 +9587,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 256266,
       "yahoo_break_even_yen": 242778,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 230000
+        },
+        {
+          "date": "2026-11-28",
           "price": 230000
         }
       ]
@@ -9395,13 +9623,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 150711,
       "yahoo_break_even_yen": 142778,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 135000
+        },
+        {
+          "date": "2026-11-28",
           "price": 135000
         }
       ]
@@ -9427,13 +9659,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 756266,
       "yahoo_break_even_yen": 716463,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 680000
+        },
+        {
+          "date": "2026-11-28",
           "price": 680000
         }
       ]
@@ -9459,13 +9695,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 278488,
       "yahoo_break_even_yen": 263831,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 250000
+        },
+        {
+          "date": "2026-11-28",
           "price": 250000
         }
       ]
@@ -9491,7 +9731,7 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": -200000,
+      "prev_diff_yen": 0,
       "week_diff_yen": -200000,
       "mercari_break_even_yen": 2222933,
       "yahoo_break_even_yen": 2105936,
@@ -9607,6 +9847,10 @@
         {
           "date": "2026-11-27",
           "price": 2000000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 2000000
         }
       ]
     },
@@ -9631,13 +9875,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 1889599,
       "yahoo_break_even_yen": 1790147,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 1700000
+        },
+        {
+          "date": "2026-11-28",
           "price": 1700000
         }
       ]
@@ -9663,13 +9911,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 889599,
       "yahoo_break_even_yen": 842778,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 800000
+        },
+        {
+          "date": "2026-11-28",
           "price": 800000
         }
       ]
@@ -9695,13 +9947,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 445155,
       "yahoo_break_even_yen": 421726,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 400000
+        },
+        {
+          "date": "2026-11-28",
           "price": 400000
         }
       ]
@@ -9843,6 +10099,10 @@
         {
           "date": "2026-11-27",
           "price": 5000000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 5000000
         }
       ]
     },
@@ -9867,13 +10127,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 422933,
       "yahoo_break_even_yen": 400673,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 380000
+        },
+        {
+          "date": "2026-11-28",
           "price": 380000
         }
       ]
@@ -9899,13 +10163,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 1578488,
       "yahoo_break_even_yen": 1495410,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 1420000
+        },
+        {
+          "date": "2026-11-28",
           "price": 1420000
         }
       ]
@@ -9931,13 +10199,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 500711,
       "yahoo_break_even_yen": 474357,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 450000
+        },
+        {
+          "date": "2026-11-28",
           "price": 450000
         }
       ]
@@ -9963,13 +10235,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 711822,
       "yahoo_break_even_yen": 674357,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 640000
+        },
+        {
+          "date": "2026-11-28",
           "price": 640000
         }
       ]
@@ -9995,13 +10271,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 756266,
       "yahoo_break_even_yen": 716463,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 680000
+        },
+        {
+          "date": "2026-11-28",
           "price": 680000
         }
       ]
@@ -10027,13 +10307,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 1111822,
       "yahoo_break_even_yen": 1053305,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 1000000
+        },
+        {
+          "date": "2026-11-28",
           "price": 1000000
         }
       ]
@@ -10059,13 +10343,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 278488,
       "yahoo_break_even_yen": 263831,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 250000
+        },
+        {
+          "date": "2026-11-28",
           "price": 250000
         }
       ]
@@ -10091,13 +10379,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 1000711,
       "yahoo_break_even_yen": 948042,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 900000
+        },
+        {
+          "date": "2026-11-28",
           "price": 900000
         }
       ]
@@ -10123,13 +10415,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 445155,
       "yahoo_break_even_yen": 421726,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 400000
+        },
+        {
+          "date": "2026-11-28",
           "price": 400000
         }
       ]
@@ -10155,13 +10451,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 1222933,
       "yahoo_break_even_yen": 1158568,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 1100000
+        },
+        {
+          "date": "2026-11-28",
           "price": 1100000
         }
       ]
@@ -10187,13 +10487,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 400711,
       "yahoo_break_even_yen": 379621,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 360000
+        },
+        {
+          "date": "2026-11-28",
           "price": 360000
         }
       ]
@@ -10219,13 +10523,17 @@
       "no_shrink_high_yen": null,
       "no_shrink_gap_yen": null,
       "no_shrink_gap_rate": null,
-      "prev_diff_yen": null,
+      "prev_diff_yen": 0,
       "week_diff_yen": null,
       "mercari_break_even_yen": 378488,
       "yahoo_break_even_yen": 358568,
       "trend": [
         {
           "date": "2026-11-27",
+          "price": 340000
+        },
+        {
+          "date": "2026-11-28",
           "price": 340000
         }
       ]
@@ -10367,6 +10675,10 @@
         {
           "date": "2026-11-27",
           "price": 43000000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 43000000
         }
       ]
     },
@@ -10506,6 +10818,10 @@
         },
         {
           "date": "2026-11-27",
+          "price": 24500000
+        },
+        {
+          "date": "2026-11-28",
           "price": 24500000
         }
       ]
@@ -10647,6 +10963,10 @@
         {
           "date": "2026-11-27",
           "price": 21000000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 21000000
         }
       ]
     },
@@ -10786,6 +11106,10 @@
         },
         {
           "date": "2026-11-27",
+          "price": 20000000
+        },
+        {
+          "date": "2026-11-28",
           "price": 20000000
         }
       ]
@@ -10927,6 +11251,10 @@
         {
           "date": "2026-11-27",
           "price": 19000000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 19000000
         }
       ]
     },
@@ -11066,6 +11394,10 @@
         },
         {
           "date": "2026-11-27",
+          "price": 18000000
+        },
+        {
+          "date": "2026-11-28",
           "price": 18000000
         }
       ]
@@ -11207,6 +11539,10 @@
         {
           "date": "2026-11-27",
           "price": 15500000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 15500000
         }
       ]
     },
@@ -11346,6 +11682,10 @@
         },
         {
           "date": "2026-11-27",
+          "price": 15000000
+        },
+        {
+          "date": "2026-11-28",
           "price": 15000000
         }
       ]
@@ -11487,6 +11827,10 @@
         {
           "date": "2026-11-27",
           "price": 15000000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 15000000
         }
       ]
     },
@@ -11626,6 +11970,10 @@
         },
         {
           "date": "2026-11-27",
+          "price": 13000000
+        },
+        {
+          "date": "2026-11-28",
           "price": 13000000
         }
       ]
@@ -11767,6 +12115,10 @@
         {
           "date": "2026-11-27",
           "price": 11000000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 11000000
         }
       ]
     },
@@ -11907,6 +12259,10 @@
         {
           "date": "2026-11-27",
           "price": 10000000
+        },
+        {
+          "date": "2026-11-28",
+          "price": 10000000
         }
       ]
     },
@@ -12046,6 +12402,10 @@
         },
         {
           "date": "2026-11-27",
+          "price": 9000000
+        },
+        {
+          "date": "2026-11-28",
           "price": 9000000
         }
       ]
