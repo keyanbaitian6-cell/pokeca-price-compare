@@ -43,5 +43,14 @@ python3 product-kit/scripts/build_release_zip.py --version 2.0.0
 
 1. 公開ライブデモ <https://keyanbaitian6-cell.github.io/pokeca-price-compare/price-kit/> をスマホ・PC で開いて動作を確認する。
 2. 上記コマンドで `product-kit/dist/price-monitor-kit-v2.0.0.zip` を生成する。
-3. `sales/LP_NOTE.md` / `sales/LP_BOOTH.md` / `sales/LP_BRAIN_TIPS.md` の URL プレースホルダー（販売先・個別相談フォーム）を埋めて貼り付け、ZIP を添付して公開する。
-4. `sales/X_LAUNCH_THREAD.md` を使って X でローンチ告知する（ライブデモ URL 付き）。
+3. （任意）実機 Google スプレッドシートのスクショを撮る場合は `publish_demo_sheet.py` で過去7日分＋当日のデモデータを一発出力する：
+   ```powershell
+   product-kit\.venv\Scripts\python.exe -m pip install -r product-kit\template\requirements-google.txt
+   product-kit\.venv\Scripts\python.exe product-kit\scripts\publish_demo_sheet.py --spreadsheet-id "デモ用スプレッドシートID" --credentials "C:\secure\google-credentials.json"
+   ```
+4. `apply_sales_urls.py` で `sales/` 原稿と `site/price-kit/index.html` の URL プレースホルダーを一括差し替えし、note / BOOTH / Brain / Tips へ ZIP を添付して公開する：
+   ```powershell
+   product-kit\.venv\Scripts\python.exe product-kit\scripts\apply_sales_urls.py --sales-url "https://..." --form-url "https://..." --dry-run
+   ```
+5. `sales/X_LAUNCH_THREAD.md` を使って X でローンチ告知する（ライブデモ URL 付き）。
+6. **収益防衛（本格販売時）**：[`docs/PRIVATE_REPO_MIGRATION.md`](./docs/PRIVATE_REPO_MIGRATION.md) と `scripts/prepare_private_repo.py` を使い、有料本体を別 Private リポジトリへ分離する。

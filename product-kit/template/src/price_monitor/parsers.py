@@ -332,6 +332,10 @@ def collect_csv_feed(
 ) -> list[PriceItem]:
     """公開CSV（GoogleスプレッドシートCSV出力含む）から商品価格を読み込む。"""
     target_urls = source.urls or ([source.url] if source.url else [])
+    max_pages = min(
+        source.max_pages or config.safety.max_pages_per_source,
+        config.safety.max_pages_per_source,
+    )
     col_map = source.columns
     name_col = col_map.get("name", "商品名")
     price_col = col_map.get("price", "価格")
@@ -340,7 +344,7 @@ def collect_csv_feed(
     url_col = col_map.get("url", "URL")
 
     items: list[PriceItem] = []
-    for target_url in target_urls:
+    for target_url in target_urls[:max_pages]:
         csv_text = client.fetch_text(target_url)
         reader = csv.DictReader(io.StringIO(csv_text))
         for row in reader:

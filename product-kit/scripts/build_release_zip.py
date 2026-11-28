@@ -3,7 +3,7 @@
 
 使い方:
   python3 product-kit/scripts/build_release_zip.py
-  python3 product-kit/scripts/build_release_zip.py --version 1.0.0 --out product-kit/dist/price-monitor-kit-v1.0.0.zip
+  python3 product-kit/scripts/build_release_zip.py --version 2.0.0 --out product-kit/dist/price-monitor-kit-v2.0.0.zip
 """
 
 from __future__ import annotations
@@ -238,7 +238,7 @@ def build_release_zip(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="配布用デジタル商品ZIPを生成・検証します。")
-    parser.add_argument("--version", default=DEFAULT_VERSION, help="バージョン番号（既定: 1.0.0）")
+    parser.add_argument("--version", default=DEFAULT_VERSION, help=f"バージョン番号（既定: {DEFAULT_VERSION}）")
     parser.add_argument("--out", default="", help="出力ZIPパス（省略時: product-kit/dist/price-monitor-kit-v<version>.zip）")
     args = parser.parse_args(argv)
 

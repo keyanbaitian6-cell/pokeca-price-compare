@@ -52,6 +52,9 @@ class FakeWorksheet:
     def get_values(self, _range: str) -> list[list[Any]]:
         return self.values[1:] if len(self.values) > 1 else []
 
+    def get_all_values(self) -> list[list[Any]]:
+        return [list(r) for r in self.values]
+
 
 class FakeSpreadsheet:
     def __init__(self) -> None:
@@ -73,6 +76,9 @@ class FakeSpreadsheet:
         self._next_id += 1
         self.worksheets[title] = ws
         return ws
+
+    def del_worksheet(self, ws: FakeWorksheet) -> None:
+        self.worksheets.pop(ws.title, None)
 
     def batch_update(self, body: dict[str, Any]) -> None:
         self.batch_calls.append(body)
@@ -97,6 +103,9 @@ def test_publish_to_sheets_creates_all_tabs_and_multi_day_sparklines() -> None:
     compared, single, alerts = build_comparison(items, cfg)
 
     fake_sheet = FakeSpreadsheet()
+    fake_sheet.add_worksheet("シート1", rows=10, cols=5)
+    keep_ws = fake_sheet.add_worksheet("Sheet1", rows=10, cols=5)
+    keep_ws.values = [["手動メモ"]]
     fake_client = FakeGspreadClient(fake_sheet)
 
     # 1日目実行
@@ -157,3 +166,32 @@ def test_publish_to_sheets_creates_all_tabs_and_multi_day_sparklines() -> None:
     flat_summary = " ".join(str(cell) for row in summary_ws.values for cell in row)
     assert "HYPERLINK(" in flat_summary
     assert "INDEX(更新履歴!" in flat_summary
+
+    # 空の初期シート「シート1」は削除され、値入りシートは残ること
+    assert "シート1" not in fake_sheet.worksheets
+    assert "Sheet1" in fake_sheet.worksheets
+
+    # 更新履歴A列・サマリーB3にDATE_TIME書式が適用され、価格推移の前回比にも色分けが入ること
+    reqs = fake_sheet.batch_calls[-1]["requests"]
+    has_history_dt = any(
+        r.get("repeatCell", {}).get("range", {}).get("sheetId") == history_ws.id
+        and r["repeatCell"]["range"].get("startColumnIndex") == 0
+        and r["repeatCell"]["cell"]["userEnteredFormat"].get("numberFormat", {}).get("type") == "DATE_TIME"
+        for r in reqs
+    )
+    has_summary_dt = any(
+        r.get("repeatCell", {}).get("range", {}).get("sheetId") == summary_ws.id
+        and r["repeatCell"]["range"].get("startRowIndex") == 2
+        and r["repeatCell"]["range"].get("startColumnIndex") == 1
+        and r["repeatCell"]["cell"]["userEnteredFormat"].get("numberFormat", {}).get("type") == "DATE_TIME"
+        for r in reqs
+    )
+    has_trend_delta_color = any(
+        r.get("repeatCell", {}).get("range", {}).get("sheetId") == trend_ws.id
+        and r["repeatCell"]["range"].get("startColumnIndex") == 4
+        and "foregroundColor" in r["repeatCell"]["cell"]["userEnteredFormat"].get("textFormat", {})
+        for r in reqs
+    )
+    assert has_history_dt
+    assert has_summary_dt
+    assert has_trend_delta_color

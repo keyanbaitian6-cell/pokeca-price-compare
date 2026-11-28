@@ -39,16 +39,24 @@ flowchart LR
 
 1. GitHub にログインし、右上の **「＋」→「New repository」** を開く。
 2. Repository name（例：`my-price-monitor`）を入力し、必ず **`Private`（非公開）** を選択して作成。
-3. 作成したリポジトリ画面の **「uploading an existing file」** をクリックし、解凍した本キットの中身（フォルダごと）をドラッグ＆ドロップして **「Commit changes」**。
-   - **重要**: この時点では認証 JSON などの秘密ファイルは一切アップロードしないでください。
+3. 作成したリポジトリ画面の **「uploading an existing file」** をクリックし、解凍したフォルダ（`price-monitor-kit-v2.0.0/`）を **開いた中身**（`config.json`、`requirements.txt`、`.github/`、`src/` など全ファイル・フォルダ）を選択してドラッグ＆ドロップし、**「Commit changes」** を押します。
+   - **重要（フォルダ階層）**: 外側の `price-monitor-kit-v2.0.0/` フォルダごとアップロードせず、**`config.json` や `.github/` がリポジトリ直下（ルート）に来るように**してください（`.github/workflows/update-prices.yml` が直下にないと自動実行されません）。Mac で `.github` フォルダが見えない場合は、Finder で `Command + Shift + .`（ドット）を押すと表示されます。
+   - **重要（秘密情報）**: この時点では認証 JSON や Webhook URL などの秘密ファイルは一切アップロードしないでください。
 4. リポジトリ上部の **`Actions`** タブ → **`価格比較スプレッドシートを自動更新`** → **`Run workflow`** をクリック。
 5. `run_mode` で **`demo`** を選んで緑の **`Run workflow`** を押します！
 6. 30 秒ほど待つと ✅ 完了し、実行結果の **Summary** 画面に「サンプル商品の価格比較テーブル＆🎯目標達成一覧」が表示されます！
 
 ### ルート B：自分の PC で 3 分ローカルデモ（Python 3.10 以上がある方）
 
+**Windows（PowerShell）**
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe scripts\run_demo.py
+```
+
+**macOS / Linux**
 ```bash
-# macOS / Linux（Windows PowerShell は .venv\Scripts\python.exe に読み替え）
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python scripts/run_demo.py

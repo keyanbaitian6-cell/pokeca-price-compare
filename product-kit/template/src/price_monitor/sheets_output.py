@@ -227,6 +227,7 @@ def _basic_table_format_requests(
     currency_cols: list[int] | None = None,
     signed_currency_cols: list[int] | None = None,
     percent_cols: list[int] | None = None,
+    datetime_cols: list[int] | None = None,
     currency_symbol: str = "¥",
 ) -> list[dict[str, Any]]:
     """ヘッダー装飾・先頭行固定・ゼブラ配色・列幅・数値書式を1回の batch_update にまとめる。"""
@@ -368,7 +369,50 @@ def _basic_table_format_requests(
                     }
                 }
             )
+        for col_idx in datetime_cols or []:
+            requests.append(
+                {
+                    "repeatCell": {
+                        "range": {
+                            "sheetId": sheet_id,
+                            "startRowIndex": 1,
+                            "endRowIndex": num_rows,
+                            "startColumnIndex": col_idx,
+                            "endColumnIndex": col_idx + 1,
+                        },
+                        "cell": {
+                            "userEnteredFormat": {
+                                "numberFormat": {"type": "DATE_TIME", "pattern": "yyyy-mm-dd hh:mm"}
+                            }
+                        },
+                        "fields": "userEnteredFormat.numberFormat",
+                    }
+                }
+            )
     return requests
+
+
+def _delta_text_format_request(sheet_id: int, row_idx: int, col_idx: int, delta_val: int, mode: str) -> dict[str, Any]:
+    if delta_val == 0:
+        color = FLAT_TEXT
+        bold = False
+    else:
+        is_favorable = (delta_val < 0) if mode == "lowest" else (delta_val > 0)
+        color = GOOD_DELTA_TEXT if is_favorable else BAD_DELTA_TEXT
+        bold = True
+    return {
+        "repeatCell": {
+            "range": {
+                "sheetId": sheet_id,
+                "startRowIndex": row_idx,
+                "endRowIndex": row_idx + 1,
+                "startColumnIndex": col_idx,
+                "endColumnIndex": col_idx + 1,
+            },
+            "cell": {"userEnteredFormat": {"textFormat": {"foregroundColor": color, "bold": bold}}},
+            "fields": "userEnteredFormat.textFormat",
+        }
+    }
 
 
 def _latest_history_expr(col_letter: str) -> str:
@@ -488,6 +532,13 @@ def publish_to_sheets(
         signed_currency_cols=[4, 5],
         currency_symbol=currency,
     )
+    for row_idx, row_vals in enumerate(trend_rows, start=1):
+        for col_idx in (4, 5):
+            delta_val = row_vals[col_idx]
+            if isinstance(delta_val, int):
+                all_format_requests.append(
+                    _delta_text_format_request(trend_ws.id, row_idx, col_idx, delta_val, mode)
+                )
 
     # 3. 比較シート（2サイト以上）
     comp_headers = [
@@ -625,28 +676,7 @@ def publish_to_sheets(
         # 前回比の色分け（lowestなら値下がりがお得=緑、highestなら値上がりがお得=緑）
         delta_val = comp_values[row_idx][3]
         if isinstance(delta_val, int):
-            if delta_val == 0:
-                color = FLAT_TEXT
-                bold = False
-            else:
-                is_favorable = (delta_val < 0) if mode == "lowest" else (delta_val > 0)
-                color = GOOD_DELTA_TEXT if is_favorable else BAD_DELTA_TEXT
-                bold = True
-            all_format_requests.append(
-                {
-                    "repeatCell": {
-                        "range": {
-                            "sheetId": comp_ws.id,
-                            "startRowIndex": row_idx,
-                            "endRowIndex": row_idx + 1,
-                            "startColumnIndex": 3,
-                            "endColumnIndex": 4,
-                        },
-                        "cell": {"userEnteredFormat": {"textFormat": {"foregroundColor": color, "bold": bold}}},
-                        "fields": "userEnteredFormat.textFormat",
-                    }
-                }
-            )
+            all_format_requests.append(_delta_text_format_request(comp_ws.id, row_idx, 3, delta_val, mode))
 
     # 4. 目標アラートシート
     alert_headers = ["判定", "商品名", "状態", "目標価格", f"現在{best_label}", "目標との差", best_store_label, "商品URL"]
@@ -791,6 +821,7 @@ def publish_to_sheets(
         num_rows=len(cleaned_history) + 1,
         num_cols=len(HISTORY_HEADERS),
         col_widths=[150, 115, 165, 115, 105, 100],
+        datetime_cols=[0],
         currency_symbol=currency,
     )
 
@@ -807,14 +838,17 @@ def publish_to_sheets(
         ["単独掲載（1サイトのみ）", "=" + _latest_history_expr("E")],
         ["取得エラー", "=" + _latest_history_expr("F")],
     ]
-    if config.project.manual_update_url:
+    manual_url = config.project.manual_update_url.strip()
+    if manual_url and manual_url.startswith(("https://", "http://")):
+        safe_url = manual_url.replace('"', "")
         summary_rows.append(
-            [f'=HYPERLINK("{config.project.manual_update_url}","🔄 価格表を手動更新する")', "スマホから即時更新"]
+            [f'=HYPERLINK("{safe_url}","🔄 価格表を手動更新する")', "スマホから即時更新"]
         )
     else:
         summary_rows.append(["手動更新リンク", "config.json の manual_update_url を設定すると表示されます"])
 
     summary_rows.append([])
+    sources_header_row_idx = len(summary_rows)
     summary_rows.append(["監視中の取得元サイト", "取得方式", "参照先"])
     for source in enabled_sources:
         ref_url = source.url or (source.urls[0] if source.urls else source.collector)
@@ -824,11 +858,57 @@ def publish_to_sheets(
     all_format_requests += [
         {
             "repeatCell": {
+                "range": {"sheetId": summary_ws.id},
+                "cell": {"userEnteredFormat": {}},
+                "fields": "userEnteredFormat",
+            }
+        },
+        {
+            "repeatCell": {
                 "range": {"sheetId": summary_ws.id, "startRowIndex": 0, "endRowIndex": 1, "startColumnIndex": 0, "endColumnIndex": 3},
                 "cell": {
                     "userEnteredFormat": {
                         "backgroundColor": HEADER_BG,
                         "textFormat": {"foregroundColor": WHITE, "bold": True, "fontSize": 13},
+                    }
+                },
+                "fields": "userEnteredFormat(backgroundColor,textFormat)",
+            }
+        },
+        # 項目ラベル列を太字
+        {
+            "repeatCell": {
+                "range": {"sheetId": summary_ws.id, "startRowIndex": 2, "endRowIndex": 9, "startColumnIndex": 0, "endColumnIndex": 1},
+                "cell": {"userEnteredFormat": {"textFormat": {"bold": True}}},
+                "fields": "userEnteredFormat.textFormat",
+            }
+        },
+        # B3（最終更新）がシリアル数値ではなく日時表示になるよう明示フォーマット
+        {
+            "repeatCell": {
+                "range": {"sheetId": summary_ws.id, "startRowIndex": 2, "endRowIndex": 3, "startColumnIndex": 1, "endColumnIndex": 2},
+                "cell": {
+                    "userEnteredFormat": {
+                        "numberFormat": {"type": "DATE_TIME", "pattern": "yyyy-mm-dd hh:mm"}
+                    }
+                },
+                "fields": "userEnteredFormat.numberFormat",
+            }
+        },
+        # 監視中サイト一覧の見出し行
+        {
+            "repeatCell": {
+                "range": {
+                    "sheetId": summary_ws.id,
+                    "startRowIndex": sources_header_row_idx,
+                    "endRowIndex": sources_header_row_idx + 1,
+                    "startColumnIndex": 0,
+                    "endColumnIndex": 3,
+                },
+                "cell": {
+                    "userEnteredFormat": {
+                        "backgroundColor": HEADER_BG,
+                        "textFormat": {"foregroundColor": WHITE, "bold": True},
                     }
                 },
                 "fields": "userEnteredFormat(backgroundColor,textFormat)",
@@ -884,5 +964,20 @@ def publish_to_sheets(
 
     if all_format_requests and hasattr(spreadsheet, "batch_update"):
         spreadsheet.batch_update({"requests": all_format_requests})
+
+    # 新規スプレッドシートに残る空の初期シート（シート1 / Sheet1）を安全に片付ける
+    if hasattr(spreadsheet, "del_worksheet"):
+        for default_name in ("シート1", "Sheet1"):
+            try:
+                default_ws = spreadsheet.worksheet(default_name)
+            except Exception:
+                continue
+            existing_cells = default_ws.get_all_values() if hasattr(default_ws, "get_all_values") else [["non-empty"]]
+            is_empty = not any(str(cell).strip() for row in existing_cells for cell in row)
+            if is_empty:
+                try:
+                    spreadsheet.del_worksheet(default_ws)
+                except Exception as exc:
+                    LOGGER.debug("初期シート %s の削除をスキップしました: %s", default_name, exc)
 
     return f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/edit"

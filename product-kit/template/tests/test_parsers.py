@@ -67,6 +67,21 @@ def test_csv_feed_parser() -> None:
     assert len(items) == 3
     assert items[0].price_yen == 35500
 
+    limited = SourceConfig(
+        id="csv_limited",
+        label="CSV上限テスト",
+        type="csv_feed",
+        urls=[
+            "sample_pages/shop_delta_feed.csv",
+            "sample_pages/shop_delta_feed.csv",
+            "sample_pages/shop_delta_feed.csv",
+        ],
+        columns=source_delta.columns,
+        max_pages=2,
+    )
+    limited_items = collect_source(limited, cfg, client, fetched_at=FETCHED_AT)
+    assert len(limited_items) == 6
+
 
 def test_custom_collector_plugin_and_security() -> None:
     cfg = load_config(TEMPLATE_ROOT / "config.json")
